@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">WorkTracker</string>
+    <string name="app_name">Work Tracker</string>
+
+    <string name="main_screen_title">Activities</string>
+    <string name="add_edit_screen_title">Create Activity</string>
+
+    <string name="hint_name">Name</string>
+
+    <string name="btn_dismiss">Dismiss</string>
+
+    <string name="unfilled_field_error">To create a new activity, you need to enter a name!</string>
+
 </resources>
