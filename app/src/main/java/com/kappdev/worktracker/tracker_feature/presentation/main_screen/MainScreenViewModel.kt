@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
+import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetActivitiesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hilt_aggregated_deps._com_kappdev_worktracker_MainActivity_GeneratedInjector
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val getActivities: GetActivitiesUseCase
+    private val getActivities: GetActivitiesUseCase,
+    val stopwatchController: StopwatchController
 ) : ViewModel() {
 
     private val _activities = mutableStateOf<List<Activity>>(emptyList())

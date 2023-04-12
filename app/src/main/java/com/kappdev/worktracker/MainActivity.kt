@@ -8,35 +8,45 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kappdev.worktracker.core.navigation.SetupNavGraph
-import com.kappdev.worktracker.tracker_feature.domain.service.StopwatchService
+import com.kappdev.worktracker.tracker_feature.data.service.StopwatchService
+import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.StopwatchBar
 import com.kappdev.worktracker.ui.theme.WorkTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
+    @Inject
+    lateinit var stopwatchController: StopwatchController
 
     private lateinit var navController: NavHostController
     private lateinit var systemUiController: SystemUiController
     private lateinit var stopwatchService: StopwatchService
     private var isBound by mutableStateOf(false)
 
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             WorkTrackerTheme(
                 darkTheme = true
             ) {
-                navController = rememberNavController()
+                navController = rememberAnimatedNavController()
                 systemUiController = rememberSystemUiController()
 
                 val backgroundColor = MaterialTheme.colors.background
@@ -47,7 +57,10 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (isBound) {
-                    SetupNavGraph(navController, stopwatchService)
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        SetupNavGraph(navController, stopwatchService, stopwatchController)
+                        StopwatchBar(navController, stopwatchService, stopwatchController)
+                    }
                 }
             }
         }

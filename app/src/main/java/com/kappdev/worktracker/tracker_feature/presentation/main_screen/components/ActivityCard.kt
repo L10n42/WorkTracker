@@ -12,16 +12,15 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import com.kappdev.worktracker.ui.elevation
 import com.kappdev.worktracker.ui.spacing
-import com.kappdev.worktracker.ui.theme.ActionGreen
 
 @Composable
 fun ActivityCard(
@@ -46,7 +45,9 @@ fun ActivityCard(
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier
                 .padding(start = MaterialTheme.spacing.small)
-                .weight(1f)
+                .weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
 
         IconButton(
@@ -55,7 +56,7 @@ fun ActivityCard(
             Icon(
                 imageVector = if (isActive) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                 contentDescription = "arrow to start tracking the time",
-                tint = ActionGreen
+                tint = MaterialTheme.colors.primary
             )
         }
     }

@@ -1,16 +1,19 @@
 package com.kappdev.worktracker.di
 
 import android.app.Application
-import androidx.navigation.Navigator
+import android.content.Context
 import androidx.room.Room
 import com.kappdev.worktracker.tracker_feature.data.data_source.WorkDatabase
 import com.kappdev.worktracker.tracker_feature.data.repository.ActivityRepositoryImpl
 import com.kappdev.worktracker.tracker_feature.data.repository.SessionRepositoryImpl
+import com.kappdev.worktracker.tracker_feature.data.repository.StopwatchControllerImpl
 import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
+import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
@@ -42,6 +45,12 @@ object AppModule {
     @Named("appSessionRepository")
     fun provideSessionRepository(@Named("appDatabase") db: WorkDatabase): SessionRepository {
         return SessionRepositoryImpl(db.sessionDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStopwatchRepository(@ApplicationContext context: Context): StopwatchController {
+        return StopwatchControllerImpl(context)
     }
 
 }

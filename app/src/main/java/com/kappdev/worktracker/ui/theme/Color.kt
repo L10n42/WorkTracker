@@ -21,6 +21,7 @@ val onBackgroundDark = Color(0xFF7b7b7b)
 val onSurfaceLight = Color(0xFF1f1f1f)
 val onBackgroundLight = Color(0xFF787773)
 
+val StopRed = Color(0xFFf44336)
 val ErrorRed = Color(0xFFb85f66)
 val LightRed = Color(0xFFE27F91)
 val StrongRed = Color(0xFFDF1237)

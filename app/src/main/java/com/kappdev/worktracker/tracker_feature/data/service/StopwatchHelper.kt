@@ -1,17 +1,15 @@
-package com.kappdev.worktracker.tracker_feature.domain.service
+package com.kappdev.worktracker.tracker_feature.data.service
 
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.kappdev.worktracker.MainActivity
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.ACTION_SERVICE_START
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.ACTIVITY_ID
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.CANCEL_REQUEST_CODE
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.CLICK_REQUEST_CODE
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.RESUME_REQUEST_CODE
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.STOPWATCH_STATE
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.STOP_REQUEST_CODE
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.CANCEL_REQUEST_CODE
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.CLICK_REQUEST_CODE
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.RESUME_REQUEST_CODE
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.STOPWATCH_STATE
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.STOP_REQUEST_CODE
 
 object StopwatchHelper {
 
@@ -51,20 +49,5 @@ object StopwatchHelper {
         return PendingIntent.getService(
             context, CANCEL_REQUEST_CODE, cancelIntent, flag
         )
-    }
-
-    fun startForegroundService(context: Context, activityId: Long) {
-        Intent(context, StopwatchService::class.java).apply {
-            this.action = ACTION_SERVICE_START
-            this.putExtra(ACTIVITY_ID, activityId)
-            context.startService(this)
-        }
-    }
-
-    fun triggerForegroundService(context: Context, action: String) {
-        Intent(context, StopwatchService::class.java).apply {
-            this.action = action
-            context.startService(this)
-        }
     }
 }

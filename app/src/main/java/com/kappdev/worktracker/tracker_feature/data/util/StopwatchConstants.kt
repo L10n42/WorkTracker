@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.domain.util
+package com.kappdev.worktracker.tracker_feature.data.util
 
 object StopwatchConstants {
     const val ACTION_SERVICE_START = "ACTION_SERVICE_START"
@@ -6,6 +6,7 @@ object StopwatchConstants {
     const val ACTION_SERVICE_CANCEL = "ACTION_SERVICE_CANCEL"
 
     const val ACTIVITY_ID = "ACTIVITY_ID"
+    const val ACTIVITY_NAME = "ACTIVITY_NAME"
 
     const val STOPWATCH_STATE = "STOPWATCH_STATE"
 

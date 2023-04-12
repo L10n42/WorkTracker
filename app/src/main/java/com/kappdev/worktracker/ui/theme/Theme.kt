@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import com.kappdev.worktracker.ui.*
 
 private val DarkColorPalette = darkColors(
-    primary = PrimaryBlue,
+    primary = ActionGreen,
     primaryVariant = Purple700,
 
     secondary = Teal200,
@@ -29,7 +29,7 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = PrimaryBlue,
+    primary = ActionGreen,
     primaryVariant = Purple700,
 
     secondary = Teal200,

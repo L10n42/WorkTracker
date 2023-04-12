@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".tracker_feature.domain.service.StopwatchService"
+            android:name=".tracker_feature.data.service.StopwatchService"
             android:enabled="true"
             android:exported="false"/>
 

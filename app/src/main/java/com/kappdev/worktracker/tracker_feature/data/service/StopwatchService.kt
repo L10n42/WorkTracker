@@ -1,6 +1,5 @@
-package com.kappdev.worktracker.tracker_feature.domain.service
+package com.kappdev.worktracker.tracker_feature.data.service
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -9,18 +8,20 @@ import android.os.Binder
 import android.os.Build
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
-import com.kappdev.worktracker.tracker_feature.domain.model.Activity
+import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
-import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
+import com.kappdev.worktracker.tracker_feature.domain.model.Time
+import com.kappdev.worktracker.tracker_feature.domain.model.format
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.ACTION_SERVICE_CANCEL
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.ACTION_SERVICE_START
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.ACTION_SERVICE_STOP
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.ACTIVITY_ID
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.NOTIFICATION_CHANNEL_ID
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.NOTIFICATION_CHANNEL_NAME
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.NOTIFICATION_ID
-import com.kappdev.worktracker.tracker_feature.domain.util.StopwatchConstants.STOPWATCH_STATE
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTION_SERVICE_CANCEL
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTION_SERVICE_START
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTION_SERVICE_STOP
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTIVITY_ID
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTIVITY_NAME
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.NOTIFICATION_CHANNEL_ID
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.NOTIFICATION_CHANNEL_NAME
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.NOTIFICATION_ID
+import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.STOPWATCH_STATE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,47 +40,42 @@ class StopwatchService: Service() {
     lateinit var notificationManager: NotificationManager
 
     @Inject
-    @Named("StopwatchNotificationBuilder")
-    lateinit var notificationBuilder: NotificationCompat.Builder
-
-    @Inject
-    @Named("serviceActivityRepository")
-    lateinit var activityRepository: ActivityRepository
-
-    @Inject
     @Named("serviceSessionRepository")
     lateinit var sessionRepository: SessionRepository
 
     private val binder = StopwatchBinder()
-
     private var duration: Duration = Duration.ZERO
-    private lateinit var timer: Timer
+    private var sessionId: Long = 0
 
-    var seconds = mutableStateOf("00")
-        private set
-    var minutes = mutableStateOf("00")
-        private set
-    var hours = mutableStateOf("00")
+    private lateinit var timer: Timer
+    private lateinit var builder: NotificationCompat.Builder
+
+    var time = mutableStateOf(Time())
         private set
     var currentState = mutableStateOf(StopwatchState.Idle)
         private set
     var activityId = mutableStateOf<Long>(0)
         private set
-    private var currentActivity = Activity.Empty
-    private var sessionId: Long = 0
+    var activityName = mutableStateOf("")
+        private set
+
+    override fun onCreate() {
+        super.onCreate()
+        builder = defaultNotificationBuilder()
+    }
 
     override fun onBind(intent: Intent?) = binder
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.getStringExtra(STOPWATCH_STATE)) {
             StopwatchState.Started.name -> {
-                setStopButton()
+                setButton(Button.Stop)
                 startForegroundService()
                 startStopwatch()
             }
             StopwatchState.Stopped.name -> {
                 stopStopwatch()
-                setResumeButton()
+                setButton(Button.Resume)
             }
             StopwatchState.Canceled.name -> {
                 stopStopwatch()
@@ -91,14 +87,17 @@ class StopwatchService: Service() {
         intent?.action.let {
             when (it) {
                 ACTION_SERVICE_START -> {
-                    catchIdAndGetData(intent)
-                    setStopButton()
+                    if (activityId.value <= 0) {
+                        catchAndUpdateDataFrom(intent)
+                        startSession()
+                    }
+                    setButton(Button.Stop)
                     startForegroundService()
                     startStopwatch()
                 }
                 ACTION_SERVICE_STOP -> {
                     stopStopwatch()
-                    setResumeButton()
+                    setButton(Button.Resume)
                 }
                 ACTION_SERVICE_CANCEL -> {
                     stopStopwatch()
@@ -111,24 +110,12 @@ class StopwatchService: Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun catchIdAndGetData(intent: Intent?) {
-        if (activityId.value <= 0) {
-            val id = intent?.getLongExtra(ACTIVITY_ID, 0)
-            if (id != null && id > 0) {
-                activityId.value = id
-                getDataAndStartSession()
-            }
-        }
-    }
+    private fun catchAndUpdateDataFrom(intent: Intent?) {
+        val id = intent?.getLongExtra(ACTIVITY_ID, 0)
+        val name = intent?.getStringExtra(ACTIVITY_NAME)
 
-    private fun getDataAndStartSession() {
-        CoroutineScope(Dispatchers.IO).launch {
-            if (activityId.value > 0) {
-                currentActivity = activityRepository.getActivityById(activityId.value)
-                updateNotificationTitle()
-                startSession()
-            }
-        }
+        if (id != null && id > 0) activityId.value = id
+        if (name != null && name.isNotEmpty()) activityName.value = name
     }
 
     private fun startStopwatch() {
@@ -141,14 +128,13 @@ class StopwatchService: Service() {
     }
 
     private fun stopStopwatch() {
-        if (this::timer.isInitialized) {
-            timer.cancel()
-        }
+        if (this::timer.isInitialized) timer.cancel()
         currentState.value = StopwatchState.Stopped
+        saveSession()
     }
 
     private fun cancelStopwatch() {
-        saveSessionAndClearData()
+        saveSession(onFinish = this::clearData)
         updateTimeUnits()
     }
 
@@ -166,7 +152,7 @@ class StopwatchService: Service() {
         }
     }
 
-    private fun saveSessionAndClearData() {
+    private fun saveSession(onFinish: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
              sessionRepository.insertSession(
                  sessionRepository.getSessionById(sessionId).copy(
@@ -174,7 +160,7 @@ class StopwatchService: Service() {
                      timeInSec = duration.inWholeSeconds
                  )
             )
-            clearData()
+            onFinish()
         }
     }
 
@@ -183,20 +169,20 @@ class StopwatchService: Service() {
         duration = Duration.ZERO
         currentState.value = StopwatchState.Idle
         activityId.value = 0
-        currentActivity = Activity.Empty
+        activityName.value = ""
     }
 
     private fun updateTimeUnits() {
         duration.toComponents { hours, minutes, seconds, _ ->
-            this@StopwatchService.hours.value = hours.toInt().pad()
-            this@StopwatchService.minutes.value = minutes.pad()
-            this@StopwatchService.seconds.value = seconds.pad()
+            time.value = Time(
+                hours.toInt().pad(), minutes.pad(), seconds.pad()
+            )
         }
     }
 
     private fun startForegroundService() {
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, notificationBuilder.build())
+        startForeground(NOTIFICATION_ID, builder.build())
     }
 
     private fun stopForegroundService() {
@@ -217,43 +203,32 @@ class StopwatchService: Service() {
     }
 
     private fun updateNotification() {
-        notificationManager.notify(
-            NOTIFICATION_ID,
-            notificationBuilder
-                .setContentText(
-                    "${hours.value}:${minutes.value}:${seconds.value}"
-                ).build()
-        )
+        builder.setContentText(time.value.format())
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
-    private fun updateNotificationTitle() {
-        notificationManager.notify(
-            NOTIFICATION_ID,
-            notificationBuilder
-                .setContentTitle(currentActivity.name)
-                .build()
-        )
+    private fun setButton(button: Button) {
+        builder = defaultNotificationBuilder()
+        when (button) {
+            Button.Stop -> builder.addAction(0, "Stop", StopwatchHelper.stopPendingIntent(this))
+            Button.Resume -> builder.addAction(0, "Resume",
+                StopwatchHelper.resumePendingIntent(this)
+            )
+        }
+        builder.addAction(0, "Finish", StopwatchHelper.cancelPendingIntent(this))
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
-    @SuppressLint("RestrictedApi")
-    private fun setStopButton() {
-        notificationBuilder.mActions.removeAt(0)
-        notificationBuilder.mActions.add(
-            index = 0,
-            NotificationCompat.Action(0, "Stop", StopwatchHelper.stopPendingIntent(this))
-        )
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
+    private fun defaultNotificationBuilder(): NotificationCompat.Builder {
+        return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(activityName.value)
+            .setContentText(time.value.format())
+            .setSmallIcon(R.drawable.ic_baseline_timer_24)
+            .setOngoing(true)
+            .setContentIntent(StopwatchHelper.clickPendingIntent(this))
     }
 
-    @SuppressLint("RestrictedApi")
-    private fun setResumeButton() {
-        notificationBuilder.mActions.removeAt(0)
-        notificationBuilder.mActions.add(
-            index = 0,
-            NotificationCompat.Action(0, "Resume", StopwatchHelper.resumePendingIntent(this))
-        )
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
-    }
+    private enum class Button { Stop, Resume }
 
     inner class StopwatchBinder: Binder() {
         fun getService(): StopwatchService = this@StopwatchService
