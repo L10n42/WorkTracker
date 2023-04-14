@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.presentation.common.components.timer_bar
+package com.kappdev.worktracker.tracker_feature.presentation.common.components.timer
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon

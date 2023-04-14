@@ -24,8 +24,8 @@ import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer_bar.FinishButton
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer_bar.StopResumeButton
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.FinishButton
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.StopResumeButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.util.TimerAnimationDirection
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.elevation
@@ -46,7 +46,7 @@ fun BoxScope.CountdownBar(
     val currentRoute = navBackStackEntry?.destination?.route
 
     AnimatedVisibility(
-        visible = countdownService.currentState.value != ServiceState.Idle && currentRoute != Screen.StopwatchTimer.route,
+        visible = countdownService.currentState.value != ServiceState.Idle && currentRoute != Screen.CountdownTimer.route,
         modifier = Modifier.align(Alignment.BottomCenter),
         enter = slideInVertically { it },
         exit = slideOutVertically { it }
@@ -61,7 +61,7 @@ fun BoxScope.CountdownBar(
                 .height(56.dp)
                 .align(Alignment.BottomCenter),
             onClick = {
-                //navController.navigate(Screen.StopwatchTimer.route)
+                navController.navigate(Screen.CountdownTimer.route)
             }
         ) {
             Row(

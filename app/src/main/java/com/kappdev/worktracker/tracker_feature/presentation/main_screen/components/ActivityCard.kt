@@ -26,7 +26,8 @@ import com.kappdev.worktracker.ui.spacing
 @Composable
 fun ActivityCard(
     activity: Activity,
-    isActive: Boolean,
+    isStopwatchActive: Boolean,
+    isCountdownActive: Boolean,
     onStart: () -> Unit,
     onStartTimer: () -> Unit
 ) {
@@ -52,22 +53,18 @@ fun ActivityCard(
             overflow = TextOverflow.Ellipsis
         )
 
-        IconButton(
-            onClick = onStart,
-        ) {
-            Icon(
-                imageVector = if (isActive) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                contentDescription = "arrow to start tracking the time",
-                tint = MaterialTheme.colors.primary
-            )
-        }
-
-        IconButton(
-            onClick = onStartTimer,
-        ) {
+        IconButton(onClick = onStartTimer) {
             Icon(
                 imageVector = Icons.Rounded.Timer,
                 contentDescription = "button to start timer for current activity",
+                tint = if (isCountdownActive) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
+            )
+        }
+
+        IconButton(onClick = onStart) {
+            Icon(
+                imageVector = if (isStopwatchActive) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                contentDescription = "arrow to start tracking the time",
                 tint = MaterialTheme.colors.primary
             )
         }

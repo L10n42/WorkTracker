@@ -16,6 +16,18 @@ data class Time(
     }
 }
 
+fun Time.stringFormat(): String {
+    return buildString {
+        val hour = this@stringFormat.hours.toInt()
+        val min = this@stringFormat.minutes.toInt()
+        val sec = this@stringFormat.seconds.toInt()
+        if (hour == 1) append("$hour hour")
+        if (hour > 1) append("$hour hours")
+        if (min > 0) append(" $min min")
+        if (sec > 0) append(" $sec sec")
+    }
+}
+
 fun Time.format(): String {
     return "${this.hours}:${this.minutes}:${this.seconds}"
 }

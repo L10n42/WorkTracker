@@ -86,10 +86,11 @@ fun MainScreen(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraSmall)
             ) {
                 items(activities, key = { it.id }) { activity ->
-                    val isCurrentActivity = (stopwatchActivityId == activity.id)
+                    val isCurrentActivity = (stopwatchActivityId == activity.id) || (countdownActivityId == activity.id)
                     ActivityCard(
                         activity = activity,
-                        isActive = isCurrentActivity && stopwatchState == ServiceState.Started,
+                        isStopwatchActive = isCurrentActivity && stopwatchState == ServiceState.Started,
+                        isCountdownActive = isCurrentActivity && countdownState != ServiceState.Idle,
                         onStart = {
                             when {
                                 (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) -> {
@@ -104,9 +105,11 @@ fun MainScreen(
                             }
                         },
                         onStartTimer = {
-                            viewModel.openSheet(
-                                MainScreenBottomSheet.TimePicker(activity.id, activity.name)
-                            )
+                            if (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) {
+                                viewModel.openSheet(
+                                    MainScreenBottomSheet.TimePicker(activity.id, activity.name)
+                                )
+                            }
                         }
                     )
                 }

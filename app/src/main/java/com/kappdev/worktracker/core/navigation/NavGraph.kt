@@ -13,6 +13,7 @@ import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchS
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.components.AddEditActivityScreen
+import com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets.CountdownTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.MainScreen
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchTimerScreen
 
@@ -57,6 +58,24 @@ fun SetupNavGraph(
             }
         ) {
             StopwatchTimerScreen(navController, stopwatchService, stopwatchController)
+        }
+
+        composable(
+            Screen.CountdownTimer.route,
+            enterTransition = {
+                slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween(durationMillis = 300)
+                ) + fadeIn(animationSpec = tween(durationMillis = 300))
+            },
+            exitTransition = {
+                slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(durationMillis = 300)
+                ) + fadeOut(animationSpec = tween(durationMillis = 300))
+            }
+        ) {
+            CountdownTimerScreen(navController, countdownService, countdownController)
         }
 
         composable(

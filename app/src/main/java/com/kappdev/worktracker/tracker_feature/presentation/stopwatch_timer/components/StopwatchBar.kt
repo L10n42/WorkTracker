@@ -5,10 +5,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,12 +21,11 @@ import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer_bar.FinishButton
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer_bar.StopResumeButton
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.FinishButton
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.StopResumeButton
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.elevation
 import com.kappdev.worktracker.ui.spacing
-import com.kappdev.worktracker.ui.theme.StopRed
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

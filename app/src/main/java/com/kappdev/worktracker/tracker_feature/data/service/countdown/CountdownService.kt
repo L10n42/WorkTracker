@@ -48,11 +48,15 @@ class CountdownService: Service() {
 
     var time = mutableStateOf(Time())
         private set
+    var totalTime = mutableStateOf(Time())
+        private set
     var currentState = mutableStateOf(ServiceState.Idle)
         private set
     var activityId = mutableStateOf<Long>(0)
         private set
     var activityName = mutableStateOf("")
+        private set
+    var completionPercentage = mutableStateOf(0f)
         private set
 
     override fun onBind(intent: Intent?) = binder
@@ -116,6 +120,7 @@ class CountdownService: Service() {
         if (timerDuration != null) {
             duration = timerDuration.toDuration(DurationUnit.MILLISECONDS)
             wholeDuration = timerDuration
+            setTotalTime()
         }
     }
 
@@ -125,6 +130,7 @@ class CountdownService: Service() {
             override fun onTick(millisUntilFinished: Long) {
                 duration = duration.minus(1.seconds)
                 updateTimeUnits()
+                updateCompletionPercentage()
                 updateNotification()
             }
 
@@ -146,6 +152,7 @@ class CountdownService: Service() {
     private fun cancelCountdown() {
         saveSession(onFinish = this::clearData)
         updateTimeUnits()
+        updateCompletionPercentage()
     }
 
     private fun startSession() {
@@ -189,6 +196,16 @@ class CountdownService: Service() {
         duration.toComponents { hours, minutes, seconds, _ ->
             time.value = Time.from(hours, minutes, seconds)
         }
+    }
+
+    private fun setTotalTime() {
+        duration.toComponents { hours, minutes, seconds, _ ->
+            totalTime.value = Time.from(hours, minutes, seconds)
+        }
+    }
+
+    private fun updateCompletionPercentage() {
+        completionPercentage.value = duration.inWholeMilliseconds.toFloat() / wholeDuration.toFloat()
     }
 
     private fun startForegroundService() {

@@ -37,6 +37,7 @@ fun TimerPicker(
 
         NumberPicker(
             value = hours,
+            max = 23,
             onValueChange = { hours = it }
         )
 
@@ -67,6 +68,8 @@ private fun TimerSeparator() {
 private fun NumberPicker(
     modifier: Modifier = Modifier,
     value: Int,
+    min: Int = 0,
+    max: Int = 59,
     onValueChange: (value: Int) -> Unit
 ) {
     AndroidView(
@@ -74,8 +77,8 @@ private fun NumberPicker(
         factory = { context ->
             val view = LayoutInflater.from(context).inflate(R.layout.number_picker, null)
             val numberPicker = view.findViewById<NumberPicker>(R.id.numberPicker)
-            numberPicker.minValue = 0
-            numberPicker.maxValue = 59
+            numberPicker.minValue = min
+            numberPicker.maxValue = max
             numberPicker.value = value
             numberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
                 onValueChange(newVal)

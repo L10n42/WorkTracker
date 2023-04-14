@@ -15,4 +15,6 @@
     <string name="unfilled_field_error">To create a new activity, you need to enter a name!</string>
     <string name="wrong_time_error">You must set at least 1 sec!</string>
 
+    <string name="total">Total</string>
+
 </resources>
