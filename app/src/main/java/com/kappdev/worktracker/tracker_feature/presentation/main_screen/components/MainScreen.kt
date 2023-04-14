@@ -1,6 +1,9 @@
 package com.kappdev.worktracker.tracker_feature.presentation.main_screen.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -8,13 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.kappdev.worktracker.tracker_feature.data.service.StopwatchService
-import com.kappdev.worktracker.tracker_feature.data.service.StopwatchState
+import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
+import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
+import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.VerticalSpace
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
-import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -22,16 +28,31 @@ import com.kappdev.worktracker.ui.spacing
 fun MainScreen(
     navController: NavHostController,
     stopwatchService: StopwatchService,
+    countdownService: CountdownService,
     viewModel: MainScreenViewModel = hiltViewModel()
 ) {
     val stopwatchState by stopwatchService.currentState
+    val countdownState by countdownService.currentState
     val stopwatchActivityId by stopwatchService.activityId
+    val countdownActivityId by countdownService.activityId
 
-    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { state ->
+            if (state == ModalBottomSheetValue.Hidden) viewModel.clearSheet()
+            true
+        }
+    )
     val scaffoldState = rememberScaffoldState()
 
     val navigate = viewModel.navigate.value
     val activities = viewModel.activities.value
+    val bottomSheet = viewModel.bottomSheet.value
+
+    LaunchedEffect(key1 = bottomSheet) {
+        if (bottomSheet != null) sheetState.show()
+        if (bottomSheet == null && sheetState.isVisible) sheetState.hide()
+    }
 
     LaunchedEffect(key1 = navigate) {
         if (navigate != null) {
@@ -42,10 +63,13 @@ fun MainScreen(
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
-        sheetShape = MaterialTheme.customShape.small,
+        sheetBackgroundColor = Color.Transparent,
         sheetContent = {
-            // TODO (add the bottom sheet controller here for managing different sheets)
-            Spacer(Modifier.size(1.dp))
+            if (bottomSheet != null) {
+                MainScreenBottomSheetController(bottomSheet, viewModel, countdownState)
+            } else {
+                VerticalSpace(1.dp)
+            }
         }
     ) {
         Scaffold(
@@ -55,7 +79,9 @@ fun MainScreen(
             }
         ) { scaffoldPadding ->
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(scaffoldPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(scaffoldPadding),
                 contentPadding = PaddingValues(vertical = MaterialTheme.spacing.extraSmall),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraSmall)
             ) {
@@ -63,20 +89,26 @@ fun MainScreen(
                     val isCurrentActivity = (stopwatchActivityId == activity.id)
                     ActivityCard(
                         activity = activity,
-                        isActive = isCurrentActivity && stopwatchState == StopwatchState.Started
-                    ) {
-                        when {
-                            (stopwatchState == StopwatchState.Idle) -> {
-                                viewModel.stopwatchController.start(activity.id, activity.name)
+                        isActive = isCurrentActivity && stopwatchState == ServiceState.Started,
+                        onStart = {
+                            when {
+                                (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) -> {
+                                    viewModel.stopwatchController.start(activity.id, activity.name)
+                                }
+                                (isCurrentActivity && stopwatchState == ServiceState.Started) -> {
+                                    viewModel.stopwatchController.stop()
+                                }
+                                (isCurrentActivity && stopwatchState == ServiceState.Stopped) -> {
+                                    viewModel.stopwatchController.resume()
+                                }
                             }
-                            (isCurrentActivity && stopwatchState == StopwatchState.Started) -> {
-                                viewModel.stopwatchController.stop()
-                            }
-                            (isCurrentActivity && stopwatchState == StopwatchState.Stopped) -> {
-                                viewModel.stopwatchController.resume()
-                            }
+                        },
+                        onStartTimer = {
+                            viewModel.openSheet(
+                                MainScreenBottomSheet.TimePicker(activity.id, activity.name)
+                            )
                         }
-                    }
+                    )
                 }
             }
         }

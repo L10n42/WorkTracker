@@ -8,7 +8,9 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.kappdev.worktracker.tracker_feature.data.service.StopwatchService
+import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
+import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
+import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.components.AddEditActivityScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.MainScreen
@@ -19,7 +21,9 @@ import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.comp
 fun SetupNavGraph(
     navController: NavHostController,
     stopwatchService: StopwatchService,
-    stopwatchController: StopwatchController
+    countdownService: CountdownService,
+    stopwatchController: StopwatchController,
+    countdownController: CountdownController
 ) {
     AnimatedNavHost(
         navController = navController,
@@ -34,7 +38,7 @@ fun SetupNavGraph(
                 fadeOut(animationSpec = tween(durationMillis = 300))
             }
         ) {
-            MainScreen(navController, stopwatchService)
+            MainScreen(navController, stopwatchService, countdownService)
         }
 
         composable(

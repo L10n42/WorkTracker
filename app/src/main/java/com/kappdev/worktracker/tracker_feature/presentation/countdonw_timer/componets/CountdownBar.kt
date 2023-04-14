@@ -1,14 +1,13 @@
-package com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components
+package com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Stop
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -20,34 +19,34 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kappdev.worktracker.core.navigation.Screen
-import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
+import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
-import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
+import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer_bar.FinishButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer_bar.StopResumeButton
+import com.kappdev.worktracker.tracker_feature.presentation.common.util.TimerAnimationDirection
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.elevation
 import com.kappdev.worktracker.ui.spacing
-import com.kappdev.worktracker.ui.theme.StopRed
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BoxScope.StopwatchBar(
+fun BoxScope.CountdownBar(
     navController: NavHostController,
-    stopwatchService: StopwatchService,
-    stopwatchController: StopwatchController
+    countdownService: CountdownService,
+    countdownController: CountdownController
 ) {
     val textStyle = TextStyle(fontSize = 18.sp, color = MaterialTheme.colors.onSurface)
-    val time by stopwatchService.time
-    val activityName by stopwatchService.activityName
-    val stopwatchState by stopwatchService.currentState
+    val time by countdownService.time
+    val activityName by countdownService.activityName
+    val countdownState by countdownService.currentState
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     AnimatedVisibility(
-        visible = stopwatchService.currentState.value != ServiceState.Idle && currentRoute != Screen.StopwatchTimer.route,
+        visible = countdownService.currentState.value != ServiceState.Idle && currentRoute != Screen.StopwatchTimer.route,
         modifier = Modifier.align(Alignment.BottomCenter),
         enter = slideInVertically { it },
         exit = slideOutVertically { it }
@@ -62,7 +61,7 @@ fun BoxScope.StopwatchBar(
                 .height(56.dp)
                 .align(Alignment.BottomCenter),
             onClick = {
-                navController.navigate(Screen.StopwatchTimer.route)
+                //navController.navigate(Screen.StopwatchTimer.route)
             }
         ) {
             Row(
@@ -82,44 +81,18 @@ fun BoxScope.StopwatchBar(
                 AnimatedTimer(
                     time = time,
                     style = textStyle,
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier.wrapContentWidth(),
+                    direction = TimerAnimationDirection.Bottom
                 )
 
-                FinishButton(onClick = stopwatchController::finish)
+                FinishButton(onClick = countdownController::finish)
 
                 StopResumeButton(
-                    state = stopwatchState,
-                    onStop = stopwatchController::stop,
-                    onResume = stopwatchController::resume
+                    state = countdownState,
+                    onStop = countdownController::stop,
+                    onResume = countdownController::resume
                 )
             }
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

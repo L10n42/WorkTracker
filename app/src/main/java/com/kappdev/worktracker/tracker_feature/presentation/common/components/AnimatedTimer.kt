@@ -10,12 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import com.kappdev.worktracker.tracker_feature.domain.model.Time
+import com.kappdev.worktracker.tracker_feature.presentation.common.util.TimerAnimationDirection
 
 @Composable
 fun AnimatedTimer(
     time: Time,
     modifier: Modifier = Modifier,
-    style: TextStyle = MaterialTheme.typography.body1
+    style: TextStyle = MaterialTheme.typography.body1,
+    direction: TimerAnimationDirection = TimerAnimationDirection.Top
 ) {
     val hours = time.hours
     val minutes = time.minutes
@@ -25,15 +27,15 @@ fun AnimatedTimer(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        AnimatedDigit(hours, style)
+        AnimatedDigit(hours, style, direction)
 
         Separator(style)
 
-        AnimatedDigit(minutes, style)
+        AnimatedDigit(minutes, style, direction)
 
         Separator(style)
 
-        AnimatedDigit(seconds, style)
+        AnimatedDigit(seconds, style, direction)
     }
 }
 
@@ -46,7 +48,8 @@ private fun Separator(style: TextStyle) {
 @Composable
 private fun AnimatedDigit(
     digit: String,
-    style: TextStyle
+    style: TextStyle,
+    direction: TimerAnimationDirection
 ) {
     var oldDigit by remember { mutableStateOf(digit) }
     SideEffect { oldDigit = digit }
@@ -63,7 +66,17 @@ private fun AnimatedDigit(
             AnimatedContent(
                 targetState = char,
                 transitionSpec = {
-                    slideInVertically { it } with slideOutVertically { -it }
+                    slideInVertically {
+                        when (direction) {
+                            TimerAnimationDirection.Top -> it
+                            TimerAnimationDirection.Bottom -> -it
+                        }
+                    } with slideOutVertically {
+                        when (direction) {
+                            TimerAnimationDirection.Top -> -it
+                            TimerAnimationDirection.Bottom -> it
+                        }
+                    }
                 }
             ) { animChar ->
                 Text(

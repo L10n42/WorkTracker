@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.core.navigation.Screen
-import com.kappdev.worktracker.tracker_feature.data.service.StopwatchService
-import com.kappdev.worktracker.tracker_feature.data.service.StopwatchState
+import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
+import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
 import com.kappdev.worktracker.ui.spacing
@@ -95,12 +95,12 @@ fun StopwatchTimerScreen(
 
 
             TimerButton(
-                icon = if (stopwatchState == StopwatchState.Started) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                icon = if (stopwatchState == ServiceState.Started) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                 color = MaterialTheme.colors.primary
             ) {
                 when {
-                    (stopwatchState == StopwatchState.Started) -> stopwatchController.stop()
-                    (stopwatchState == StopwatchState.Stopped) -> stopwatchController.resume()
+                    (stopwatchState == ServiceState.Started) -> stopwatchController.stop()
+                    (stopwatchState == ServiceState.Stopped) -> stopwatchController.resume()
                 }
             }
         }

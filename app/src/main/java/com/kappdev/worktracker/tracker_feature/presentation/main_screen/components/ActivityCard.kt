@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +27,8 @@ import com.kappdev.worktracker.ui.spacing
 fun ActivityCard(
     activity: Activity,
     isActive: Boolean,
-    onStart: () -> Unit
+    onStart: () -> Unit,
+    onStartTimer: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -56,6 +58,16 @@ fun ActivityCard(
             Icon(
                 imageVector = if (isActive) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                 contentDescription = "arrow to start tracking the time",
+                tint = MaterialTheme.colors.primary
+            )
+        }
+
+        IconButton(
+            onClick = onStartTimer,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Timer,
+                contentDescription = "button to start timer for current activity",
                 tint = MaterialTheme.colors.primary
             )
         }

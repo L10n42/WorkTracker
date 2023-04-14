@@ -50,9 +50,6 @@ android {
 
 dependencies {
 
-    // compose number picker lib
-    implementation "com.chargemap.compose:numberpicker:1.0.3"
-
     // json convertor
     implementation "com.google.code.gson:gson:2.10.1"
 

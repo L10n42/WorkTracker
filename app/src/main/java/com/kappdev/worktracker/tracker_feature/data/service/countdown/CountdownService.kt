@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.data.service
+package com.kappdev.worktracker.tracker_feature.data.service.countdown
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,35 +6,30 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
+import android.os.CountDownTimer
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.data.util.NotificationButton
+import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants
+import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
 import com.kappdev.worktracker.tracker_feature.domain.model.Time
 import com.kappdev.worktracker.tracker_feature.domain.model.format
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTION_SERVICE_CANCEL
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTION_SERVICE_START
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTION_SERVICE_STOP
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTIVITY_ID
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.ACTIVITY_NAME
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.NOTIFICATION_CHANNEL_ID
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.NOTIFICATION_CHANNEL_NAME
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.NOTIFICATION_ID
-import com.kappdev.worktracker.tracker_feature.data.util.StopwatchConstants.STOPWATCH_STATE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @AndroidEntryPoint
-class StopwatchService: Service() {
+class CountdownService: Service() {
 
     @Inject
     lateinit var notificationManager: NotificationManager
@@ -43,65 +38,66 @@ class StopwatchService: Service() {
     @Named("serviceSessionRepository")
     lateinit var sessionRepository: SessionRepository
 
-    private val binder = StopwatchBinder()
+    private val binder = CountdownBinder()
     private var duration: Duration = Duration.ZERO
+    private var wholeDuration: Long = 0
     private var sessionId: Long = 0
 
-    private lateinit var timer: Timer
+    private lateinit var timer: CountDownTimer
     private lateinit var builder: NotificationCompat.Builder
 
     var time = mutableStateOf(Time())
         private set
-    var currentState = mutableStateOf(StopwatchState.Idle)
+    var currentState = mutableStateOf(ServiceState.Idle)
         private set
     var activityId = mutableStateOf<Long>(0)
         private set
     var activityName = mutableStateOf("")
         private set
 
+    override fun onBind(intent: Intent?) = binder
+
     override fun onCreate() {
         super.onCreate()
         builder = defaultNotificationBuilder()
     }
 
-    override fun onBind(intent: Intent?) = binder
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.getStringExtra(STOPWATCH_STATE)) {
-            StopwatchState.Started.name -> {
-                setButton(Button.Stop)
+        when (intent?.getStringExtra(ServiceConstants.SERVICE_STATE)) {
+            ServiceState.Started.name -> {
+                setButton(NotificationButton.Stop)
                 startForegroundService()
-                startStopwatch()
+                startCountdown()
             }
-            StopwatchState.Stopped.name -> {
-                stopStopwatch()
-                setButton(Button.Resume)
+            ServiceState.Stopped.name -> {
+                stopCountdown()
+                setButton(NotificationButton.Resume)
             }
-            StopwatchState.Canceled.name -> {
-                stopStopwatch()
-                cancelStopwatch()
+            ServiceState.Canceled.name -> {
+                stopCountdown()
+                cancelCountdown()
                 stopForegroundService()
             }
         }
 
         intent?.action.let {
             when (it) {
-                ACTION_SERVICE_START -> {
+                ServiceConstants.ACTION_SERVICE_START -> {
                     if (activityId.value <= 0) {
-                        catchAndUpdateDataFrom(intent)
+                        updateDataFrom(intent)
                         startSession()
                     }
-                    setButton(Button.Stop)
+                    setButton(NotificationButton.Stop)
                     startForegroundService()
-                    startStopwatch()
+                    startCountdown()
                 }
-                ACTION_SERVICE_STOP -> {
-                    stopStopwatch()
-                    setButton(Button.Resume)
+                ServiceConstants.ACTION_SERVICE_STOP -> {
+                    stopCountdown()
+                    setButton(NotificationButton.Resume)
                 }
-                ACTION_SERVICE_CANCEL -> {
-                    stopStopwatch()
-                    cancelStopwatch()
+                ServiceConstants.ACTION_SERVICE_CANCEL -> {
+                    stopCountdown()
+                    cancelCountdown()
                     stopForegroundService()
                 }
             }
@@ -110,30 +106,44 @@ class StopwatchService: Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun catchAndUpdateDataFrom(intent: Intent?) {
-        val id = intent?.getLongExtra(ACTIVITY_ID, 0)
-        val name = intent?.getStringExtra(ACTIVITY_NAME)
+    private fun updateDataFrom(intent: Intent?) {
+        val id = intent?.getLongExtra(ServiceConstants.ACTIVITY_ID, 0)
+        val name = intent?.getStringExtra(ServiceConstants.ACTIVITY_NAME)
+        val timerDuration = intent?.getLongExtra(ServiceConstants.DURATION, 0)
 
         if (id != null && id > 0) activityId.value = id
         if (name != null && name.isNotEmpty()) activityName.value = name
-    }
-
-    private fun startStopwatch() {
-        currentState.value = StopwatchState.Started
-        timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
-            duration = duration.plus(1.seconds)
-            updateTimeUnits()
-            updateNotification()
+        if (timerDuration != null) {
+            duration = timerDuration.toDuration(DurationUnit.MILLISECONDS)
+            wholeDuration = timerDuration
         }
     }
 
-    private fun stopStopwatch() {
+    private fun startCountdown() {
+        currentState.value = ServiceState.Started
+        timer = object : CountDownTimer(duration.inWholeMilliseconds, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                duration = duration.minus(1.seconds)
+                updateTimeUnits()
+                updateNotification()
+            }
+
+            override fun onFinish() {
+                stopCountdown()
+                cancelCountdown()
+                stopForegroundService()
+            }
+        }
+        timer.start()
+    }
+
+    private fun stopCountdown() {
         if (this::timer.isInitialized) timer.cancel()
-        currentState.value = StopwatchState.Stopped
+        currentState.value = ServiceState.Stopped
         saveSession()
     }
 
-    private fun cancelStopwatch() {
+    private fun cancelCountdown() {
         saveSession(onFinish = this::clearData)
         updateTimeUnits()
     }
@@ -146,7 +156,7 @@ class StopwatchService: Service() {
                     activityId = activityId.value,
                     startTimestamp = System.currentTimeMillis(),
                     endTimestamp = 0,
-                    timeInSec = duration.inWholeSeconds
+                    timeInSec = getDuration()
                 )
             )
         }
@@ -154,29 +164,30 @@ class StopwatchService: Service() {
 
     private fun saveSession(onFinish: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
-             sessionRepository.insertSession(
-                 sessionRepository.getSessionById(sessionId).copy(
-                     endTimestamp = System.currentTimeMillis(),
-                     timeInSec = duration.inWholeSeconds
-                 )
+            sessionRepository.insertSession(
+                sessionRepository.getSessionById(sessionId).copy(
+                    endTimestamp = System.currentTimeMillis(),
+                    timeInSec = getDuration()
+                )
             )
             onFinish()
         }
     }
 
+    private fun getDuration() = (wholeDuration - duration.inWholeMilliseconds) / 1_000
+
     private fun clearData() {
         sessionId = 0
         duration = Duration.ZERO
-        currentState.value = StopwatchState.Idle
+        wholeDuration = 0
+        currentState.value = ServiceState.Idle
         activityId.value = 0
         activityName.value = ""
     }
 
     private fun updateTimeUnits() {
         duration.toComponents { hours, minutes, seconds, _ ->
-            time.value = Time(
-                hours.toInt().pad(), minutes.pad(), seconds.pad()
-            )
+            time.value = Time.from(hours, minutes, seconds)
         }
     }
 
@@ -207,15 +218,15 @@ class StopwatchService: Service() {
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
-    private fun setButton(button: Button) {
+    private fun setButton(button: NotificationButton) {
         builder = defaultNotificationBuilder()
         when (button) {
-            Button.Stop -> builder.addAction(0, "Stop", StopwatchHelper.stopPendingIntent(this))
-            Button.Resume -> builder.addAction(0, "Resume",
-                StopwatchHelper.resumePendingIntent(this)
+            NotificationButton.Stop -> builder.addAction(0, "Stop", CountdownHelper.stopPendingIntent(this))
+            NotificationButton.Resume -> builder.addAction(0, "Resume",
+                CountdownHelper.resumePendingIntent(this)
             )
         }
-        builder.addAction(0, "Finish", StopwatchHelper.cancelPendingIntent(this))
+        builder.addAction(0, "Finish", CountdownHelper.cancelPendingIntent(this))
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
@@ -225,23 +236,16 @@ class StopwatchService: Service() {
             .setContentText(time.value.format())
             .setSmallIcon(R.drawable.ic_baseline_timer_24)
             .setOngoing(true)
-            .setContentIntent(StopwatchHelper.clickPendingIntent(this))
+            .setContentIntent(CountdownHelper.clickPendingIntent(this))
     }
 
-    private enum class Button { Stop, Resume }
-
-    inner class StopwatchBinder: Binder() {
-        fun getService(): StopwatchService = this@StopwatchService
+    companion object {
+        const val NOTIFICATION_CHANNEL_ID = "COUNTDOWN_NOTIFICATION_ID"
+        const val NOTIFICATION_CHANNEL_NAME = "COUNTDOWN_NOTIFICATION"
+        const val NOTIFICATION_ID = 32
     }
-}
 
-private fun Int.pad(): String {
-    return this.toString().padStart(2,'0')
-}
-
-enum class StopwatchState {
-    Idle,
-    Started,
-    Stopped,
-    Canceled
+    inner class CountdownBinder: Binder() {
+        fun getService(): CountdownService = this@CountdownService
+    }
 }

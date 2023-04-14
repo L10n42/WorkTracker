@@ -47,20 +47,21 @@ fun AddEditActivityScreen(
         topBar = {
             AddEditActivityTopBar(viewModel)
         }
-    ) {
-        ScreenContent(viewModel)
+    ) { scaffoldPadding ->
+        ScreenContent(viewModel, Modifier.padding(scaffoldPadding))
     }
 }
 
 @Composable
 private fun ScreenContent(
-    viewModel: AddEditActivityViewModel
+    viewModel: AddEditActivityViewModel,
+    modifier: Modifier = Modifier
 ) {
     val name = viewModel.name.value
     val error = viewModel.error.value
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         TextField(
             value = name,
@@ -84,9 +85,7 @@ private fun ScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = MaterialTheme.spacing.medium),
-                    onDismiss = {
-                        viewModel.hideError()
-                    }
+                    onDismiss = viewModel::hideError
                 )
             }
         }

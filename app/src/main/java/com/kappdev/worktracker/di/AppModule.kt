@@ -5,9 +5,11 @@ import android.content.Context
 import androidx.room.Room
 import com.kappdev.worktracker.tracker_feature.data.data_source.WorkDatabase
 import com.kappdev.worktracker.tracker_feature.data.repository.ActivityRepositoryImpl
+import com.kappdev.worktracker.tracker_feature.data.repository.CountdownControllerImpl
 import com.kappdev.worktracker.tracker_feature.data.repository.SessionRepositoryImpl
 import com.kappdev.worktracker.tracker_feature.data.repository.StopwatchControllerImpl
 import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
+import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import dagger.Module
@@ -51,6 +53,12 @@ object AppModule {
     @Singleton
     fun provideStopwatchRepository(@ApplicationContext context: Context): StopwatchController {
         return StopwatchControllerImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCountdownRepository(@ApplicationContext context: Context): CountdownController {
+        return CountdownControllerImpl(context)
     }
 
 }

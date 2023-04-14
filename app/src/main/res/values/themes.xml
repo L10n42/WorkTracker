@@ -4,4 +4,12 @@
     <style name="Theme.WorkTracker" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/purple_700</item>
     </style>
+
+    <style name="NumberPickerTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@android:color/white</item>
+        <item name="colorControlNormal">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="background">@android:color/transparent</item>
+        <item name="android:textSize">48sp</item>
+    </style>
 </resources>

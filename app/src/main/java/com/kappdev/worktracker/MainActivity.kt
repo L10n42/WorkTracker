@@ -22,9 +22,12 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kappdev.worktracker.core.navigation.SetupNavGraph
-import com.kappdev.worktracker.tracker_feature.data.service.StopwatchService
+import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
+import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
+import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
-import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.StopwatchBar
+import com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets.CountdownBar
+import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchBar
 import com.kappdev.worktracker.ui.theme.WorkTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,11 +36,15 @@ import javax.inject.Inject
 class MainActivity: ComponentActivity() {
     @Inject
     lateinit var stopwatchController: StopwatchController
+    @Inject
+    lateinit var countdownController: CountdownController
 
     private lateinit var navController: NavHostController
     private lateinit var systemUiController: SystemUiController
     private lateinit var stopwatchService: StopwatchService
-    private var isBound by mutableStateOf(false)
+    private lateinit var countdownService: CountdownService
+    private var isStopwatchBound by mutableStateOf(false)
+    private var isCountdownBound by mutableStateOf(false)
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,38 +63,62 @@ class MainActivity: ComponentActivity() {
                     systemUiController.setNavigationBarColor(backgroundColor)
                 }
 
-                if (isBound) {
+                if (isStopwatchBound && isCountdownBound) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        SetupNavGraph(navController, stopwatchService, stopwatchController)
+                        SetupNavGraph(
+                            navController = navController,
+                            stopwatchService = stopwatchService,
+                            countdownService = countdownService,
+                            stopwatchController = stopwatchController,
+                            countdownController = countdownController
+                        )
                         StopwatchBar(navController, stopwatchService, stopwatchController)
+                        CountdownBar(navController, countdownService, countdownController)
                     }
                 }
             }
         }
     }
 
-    private val connection = object : ServiceConnection {
+    private val countdownConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as StopwatchService.StopwatchBinder
-            stopwatchService = binder.getService()
-            isBound = true
+            val countdownBinder = service as CountdownService.CountdownBinder
+            countdownService = countdownBinder.getService()
+            isCountdownBound = true
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
+            isCountdownBound = false
+        }
+    }
+
+    private val stopwatchConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val stopwatchBinder = service as StopwatchService.StopwatchBinder
+            stopwatchService = stopwatchBinder.getService()
+            isStopwatchBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isStopwatchBound = false
         }
     }
 
     override fun onStart() {
         super.onStart()
         Intent(this, StopwatchService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            bindService(intent, stopwatchConnection, Context.BIND_AUTO_CREATE)
+        }
+        Intent(this, CountdownService::class.java).also { intent ->
+            bindService(intent, countdownConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
     override fun onStop() {
         super.onStop()
-        unbindService(connection)
-        isBound = false
+        unbindService(stopwatchConnection)
+        unbindService(countdownConnection)
+        isStopwatchBound = false
+        isCountdownBound = false
     }
 }
