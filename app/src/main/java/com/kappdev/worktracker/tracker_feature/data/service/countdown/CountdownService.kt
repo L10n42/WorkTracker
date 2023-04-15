@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.R
@@ -16,7 +17,9 @@ import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
 import com.kappdev.worktracker.tracker_feature.domain.model.Time
 import com.kappdev.worktracker.tracker_feature.domain.model.format
+import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
+import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +36,9 @@ class CountdownService: Service() {
 
     @Inject
     lateinit var notificationManager: NotificationManager
+
+    @Inject
+    lateinit var doneNotification: DoneNotification
 
     @Inject
     @Named("serviceSessionRepository")
@@ -136,11 +142,19 @@ class CountdownService: Service() {
 
             override fun onFinish() {
                 stopCountdown()
+                makeFinishNotification()
                 cancelCountdown()
                 stopForegroundService()
             }
         }
         timer.start()
+    }
+
+    private fun makeFinishNotification() {
+        doneNotification.makeNotification(
+            title = "You have finished ${activityName.value}!",
+            shortMessage = "Total time: ${totalTime.value.stringFormat()}"
+        )
     }
 
     private fun stopCountdown() {

@@ -9,6 +9,7 @@ import com.kappdev.worktracker.tracker_feature.data.repository.ActivityRepositor
 import com.kappdev.worktracker.tracker_feature.data.repository.SessionRepositoryImpl
 import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
+import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,4 +55,12 @@ object NotificationModule {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
+    @Provides
+    @ServiceScoped
+    fun provideDoneNotification(
+        context: Application,
+        notificationManager: NotificationManager
+    ): DoneNotification {
+        return DoneNotification(context, notificationManager)
+    }
 }
