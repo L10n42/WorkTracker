@@ -4,14 +4,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,7 +22,6 @@ import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownS
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.FinishButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.StopResumeButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.util.TimerAnimationDirection
@@ -42,6 +40,7 @@ fun BoxScope.CountdownBar(
     val time by countdownService.time
     val activityName by countdownService.activityName
     val countdownState by countdownService.currentState
+    val completionPercentage by countdownService.completionPercentage
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -64,33 +63,51 @@ fun BoxScope.CountdownBar(
                 navController.navigate(Screen.CountdownTimer.route)
             }
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.fillMaxSize()
             ) {
-                HorizontalSpace(MaterialTheme.spacing.medium)
-                Text(
-                    text = activityName,
-                    style = textStyle,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = activityName,
+                        style = textStyle,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = MaterialTheme.spacing.small),
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                HorizontalSpace(MaterialTheme.spacing.small)
-                AnimatedTimer(
-                    time = time,
-                    style = textStyle,
-                    modifier = Modifier.wrapContentWidth(),
-                    direction = TimerAnimationDirection.Bottom
-                )
+                    AnimatedTimer(
+                        time = time,
+                        style = textStyle,
+                        modifier = Modifier.wrapContentWidth(),
+                        direction = TimerAnimationDirection.Bottom
+                    )
 
-                FinishButton(onClick = countdownController::finish)
+                    FinishButton(onClick = countdownController::finish)
 
-                StopResumeButton(
-                    state = countdownState,
-                    onStop = countdownController::stop,
-                    onResume = countdownController::resume
+                    StopResumeButton(
+                        state = countdownState,
+                        onStop = countdownController::stop,
+                        onResume = countdownController::resume
+                    )
+                }
+
+                LinearProgressIndicator(
+                    progress = completionPercentage,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .padding(horizontal = MaterialTheme.spacing.small)
+                        .align(Alignment.BottomCenter)
+                        .clip(CircleShape),
+                    color = MaterialTheme.colors.primary,
+                    backgroundColor = MaterialTheme.colors.primary.copy(0.24f)
                 )
             }
         }
