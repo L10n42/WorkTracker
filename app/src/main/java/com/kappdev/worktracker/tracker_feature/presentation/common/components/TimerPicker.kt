@@ -13,12 +13,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.domain.model.Time
+import com.kappdev.worktracker.tracker_feature.domain.model.getHours
+import com.kappdev.worktracker.tracker_feature.domain.model.getMinutes
+import com.kappdev.worktracker.tracker_feature.domain.model.getSeconds
 import com.kappdev.worktracker.ui.spacing
 
 @Composable
 fun TimerPicker(
     modifier: Modifier,
-    onValueChange: (timeInMillis: Long) -> Unit
+    defaultValue: Time = Time(),
+    onValueChange: (time: Time) -> Unit
 ) {
     Row(
         modifier = modifier,
@@ -29,14 +34,20 @@ fun TimerPicker(
         var minutes by remember { mutableStateOf(0) }
         var seconds by remember { mutableStateOf(0) }
 
+        LaunchedEffect(key1 = defaultValue) {
+            hours = defaultValue.getHours()
+            minutes = defaultValue.getMinutes()
+            seconds = defaultValue.getSeconds()
+        }
+
         LaunchedEffect(key1 = hours, key2 = minutes, key3 = seconds) {
             onValueChange(
-                ((hours * 3600) + (minutes * 60) + seconds) * 1000L
+                Time.from(hours, minutes, seconds)
             )
         }
 
         NumberPicker(
-            value = hours,
+            timerValue = hours,
             max = 23,
             onValueChange = { hours = it }
         )
@@ -44,14 +55,14 @@ fun TimerPicker(
         TimerSeparator()
 
         NumberPicker(
-            value = minutes,
+            timerValue = minutes,
             onValueChange = { minutes = it }
         )
 
         TimerSeparator()
 
         NumberPicker(
-            value = seconds,
+            timerValue = seconds,
             onValueChange = { seconds = it }
         )
     }
@@ -67,13 +78,19 @@ private fun TimerSeparator() {
 @Composable
 private fun NumberPicker(
     modifier: Modifier = Modifier,
-    value: Int,
+    timerValue: Int,
     min: Int = 0,
     max: Int = 59,
     onValueChange: (value: Int) -> Unit
 ) {
+    var value by remember { mutableStateOf(timerValue) }
+    LaunchedEffect(key1 = timerValue) {
+        value = timerValue
+    }
+
     AndroidView(
         modifier = modifier,
+        update = { it.value = value },
         factory = { context ->
             val view = LayoutInflater.from(context).inflate(R.layout.number_picker, null)
             val numberPicker = view.findViewById<NumberPicker>(R.id.numberPicker)

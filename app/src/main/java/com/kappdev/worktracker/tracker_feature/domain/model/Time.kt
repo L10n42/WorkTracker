@@ -16,6 +16,14 @@ data class Time(
     }
 }
 
+fun Time.inMillis() = ((this.getHours() * 3600) + (this.getMinutes() * 60) + this.getSeconds()) * 1000L
+
+fun Time.getHours() = this.hours.toInt()
+
+fun Time.getMinutes() = this.minutes.toInt()
+
+fun Time.getSeconds() = this.seconds.toInt()
+
 fun Time.stringFormat(): String {
     return buildString {
         val hour = this@stringFormat.hours.toInt()

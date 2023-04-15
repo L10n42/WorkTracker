@@ -4,10 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.common.makeToast
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
+import com.kappdev.worktracker.tracker_feature.domain.model.Time
+import com.kappdev.worktracker.tracker_feature.domain.model.inMillis
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.TimerPicker
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.VerticalSpace
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
@@ -33,7 +34,8 @@ fun SetTimerBottomSheet(
     countdownState: ServiceState,
     sheet: MainScreenBottomSheet.TimePicker
 ) {
-    var currentTimeInMillis by remember { mutableStateOf(0L) }
+    var currentTime by remember { mutableStateOf(Time()) }
+    var isCommonTimeVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
@@ -45,21 +47,26 @@ fun SetTimerBottomSheet(
             )
             .padding(all = 16.dp)
     ) {
-        Text(
-            text = stringResource(R.string.set_time_title),
-            color = MaterialTheme.colors.onSurface,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.spacing.medium)
+        SheetHat(
+            isSectionVisible = isCommonTimeVisible,
+            modifier = Modifier.fillMaxWidth(),
+            showSection = { isCommonTimeVisible = !isCommonTimeVisible }
         )
 
         TimerPicker(
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { timeInMillis ->
-                currentTimeInMillis = timeInMillis
+            defaultValue = currentTime,
+            onValueChange = { newTime ->
+                currentTime = newTime
+            }
+        )
+
+        VerticalSpace(MaterialTheme.spacing.medium)
+        CommonTimePicker(
+            isVisible = isCommonTimeVisible,
+            modifier = Modifier.fillMaxWidth(),
+            onTimePicked = { pickedTime ->
+                currentTime = pickedTime
             }
         )
 
@@ -67,12 +74,12 @@ fun SetTimerBottomSheet(
         Buttons(
             onCancelClick = viewModel::closeSheet,
             onOkClick = {
-                if (currentTimeInMillis > 0) {
+                if (currentTime.inMillis() > 0) {
                     if (countdownState == ServiceState.Idle) {
                         viewModel.countdownController.start(
                             activityId = sheet.activityId,
                             activityName = sheet.activityName,
-                            durationInMillis = currentTimeInMillis
+                            durationInMillis = currentTime.inMillis()
                         )
                     }
                     viewModel.closeSheet()
@@ -81,6 +88,35 @@ fun SetTimerBottomSheet(
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun SheetHat(
+    modifier: Modifier = Modifier,
+    isSectionVisible: Boolean,
+    showSection: () -> Unit
+) {
+    Box(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.set_time_title),
+            color = MaterialTheme.colors.onSurface,
+            fontSize = 20.sp,
+            modifier = Modifier.align(Alignment.Center),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
+
+        IconButton(
+            onClick = showSection,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Menu,
+                contentDescription = "show common time section",
+                tint = if (isSectionVisible) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
+            )
+        }
     }
 }
 
