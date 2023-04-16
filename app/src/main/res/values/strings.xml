@@ -9,6 +9,9 @@
     <string name="btn_dismiss">Dismiss</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_ok">OK</string>
+    <string name="btn_pause">Pause</string>
+    <string name="btn_resume">Resume</string>
+    <string name="btn_finish">Finish</string>
 
     <string name="set_time_title">Set time</string>
 
@@ -16,5 +19,7 @@
     <string name="wrong_time_error">set at least 1 sec</string>
 
     <string name="total">Total</string>
+    <string name="total_time">Total time: %1$s</string>
+    <string name="activity_work_finished">You have finished %1$s!</string>
 
 </resources>

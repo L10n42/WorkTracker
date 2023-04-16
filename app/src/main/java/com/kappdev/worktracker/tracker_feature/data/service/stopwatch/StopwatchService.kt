@@ -207,12 +207,14 @@ class StopwatchService: Service() {
     private fun setButton(button: NotificationButton) {
         builder = defaultNotificationBuilder()
         when (button) {
-            NotificationButton.Stop -> builder.addAction(0, "Stop", StopwatchHelper.stopPendingIntent(this))
-            NotificationButton.Resume -> builder.addAction(0, "Resume",
+            NotificationButton.Stop -> builder.addAction(0, this.getString(R.string.btn_pause),
+                StopwatchHelper.stopPendingIntent(this)
+            )
+            NotificationButton.Resume -> builder.addAction(0, this.getString(R.string.btn_resume),
                 StopwatchHelper.resumePendingIntent(this)
             )
         }
-        builder.addAction(0, "Finish", StopwatchHelper.cancelPendingIntent(this))
+        builder.addAction(0, this.getString(R.string.btn_finish), StopwatchHelper.cancelPendingIntent(this))
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 

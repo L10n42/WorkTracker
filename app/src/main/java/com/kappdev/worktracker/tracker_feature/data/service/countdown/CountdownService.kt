@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.CountDownTimer
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.R
@@ -152,8 +151,8 @@ class CountdownService: Service() {
 
     private fun makeFinishNotification() {
         doneNotification.makeNotification(
-            title = "You have finished ${activityName.value}!",
-            shortMessage = "Total time: ${totalTime.value.stringFormat()}"
+            title = this.getString(R.string.activity_work_finished, activityName.value),
+            shortMessage = this.getString(R.string.total_time, totalTime.value.stringFormat())
         )
     }
 
@@ -252,12 +251,14 @@ class CountdownService: Service() {
     private fun setButton(button: NotificationButton) {
         builder = defaultNotificationBuilder()
         when (button) {
-            NotificationButton.Stop -> builder.addAction(0, "Stop", CountdownHelper.stopPendingIntent(this))
-            NotificationButton.Resume -> builder.addAction(0, "Resume",
+            NotificationButton.Stop -> builder.addAction(0, this.getString(R.string.btn_pause),
+                CountdownHelper.stopPendingIntent(this)
+            )
+            NotificationButton.Resume -> builder.addAction(0, this.getString(R.string.btn_resume),
                 CountdownHelper.resumePendingIntent(this)
             )
         }
-        builder.addAction(0, "Finish", CountdownHelper.cancelPendingIntent(this))
+        builder.addAction(0, this.getString(R.string.btn_finish), CountdownHelper.cancelPendingIntent(this))
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
