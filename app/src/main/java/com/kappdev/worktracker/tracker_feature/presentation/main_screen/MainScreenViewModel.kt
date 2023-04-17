@@ -31,6 +31,9 @@ class MainScreenViewModel @Inject constructor(
     private val _screenState = mutableStateOf(MainScreenState.NORMAL_MODE)
     val screenState: State<MainScreenState> = _screenState
 
+    private val _dataState = mutableStateOf(DataState.IDLE)
+    val dataState: State<DataState> = _dataState
+
     private val _dialog = mutableStateOf<MainScreenDialog?>(null)
     val dialog: State<MainScreenDialog?> = _dialog
 
@@ -59,7 +62,9 @@ class MainScreenViewModel @Inject constructor(
     private fun getAllActivities() {
         activityJob?.cancel()
         activityJob = getActivities().onEach { activities ->
+            setDataState(DataState.LOADING)
             _activities.value = activities
+            if (activities.isEmpty()) setDataState(DataState.NO_DATA) else setDataState(DataState.READY)
         }.launchIn(viewModelScope)
     }
 
@@ -76,6 +81,8 @@ class MainScreenViewModel @Inject constructor(
     }
 
     fun allSelected() = selectedActivities.containsAll(activities.value)
+
+    private fun setDataState(state: DataState) { _dataState.value = state }
 
     fun setScreenState(state: MainScreenState) { _screenState.value = state }
     fun switchSelectionModeOn() { _screenState.value = MainScreenState.SELECTION_MODE }

@@ -18,7 +18,11 @@ import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.EmptyScreen
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.NoDataScreen
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.LoadingScreen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.VerticalSpace
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.DataState
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenState
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
@@ -50,6 +54,7 @@ fun MainScreen(
     val activities = viewModel.activities.value
     val bottomSheet = viewModel.bottomSheet.value
     val screenState = viewModel.screenState.value
+    val dataState = viewModel.dataState.value
     val dialog = viewModel.dialog.value
     val selectedActivities = viewModel.selectedActivities
 
@@ -83,46 +88,53 @@ fun MainScreen(
                 TopBarController(screenState, viewModel)
             }
         ) { scaffoldPadding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(scaffoldPadding),
-                contentPadding = PaddingValues(vertical = MaterialTheme.spacing.extraSmall),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraSmall)
-            ) {
-                items(activities, key = { it.id }) { activity ->
-                    val isCurrentActivity = (stopwatchActivityId == activity.id) || (countdownActivityId == activity.id)
-                    ActivityCard(
-                        activity = activity,
-                        isSelected = activity in selectedActivities,
-                        isSelectionMode = screenState == MainScreenState.SELECTION_MODE,
-                        isStopwatchActive = isCurrentActivity && stopwatchState == ServiceState.Started,
-                        isCountdownActive = isCurrentActivity && countdownState != ServiceState.Idle,
-                        select = viewModel::select,
-                        deselect = viewModel::deselect,
-                        openActivity = viewModel::openActivity,
-                        switchSelectionModeOn = viewModel::switchSelectionModeOn,
-                        onStart = {
-                            when {
-                                (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) -> {
-                                    viewModel.stopwatchController.start(activity.id, activity.name)
+            when (dataState) {
+                DataState.NO_DATA -> NoDataScreen()
+                DataState.LOADING -> LoadingScreen()
+                DataState.IDLE -> EmptyScreen()
+                DataState.READY -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(scaffoldPadding),
+                        contentPadding = PaddingValues(vertical = MaterialTheme.spacing.extraSmall),
+                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraSmall)
+                    ) {
+                        items(activities, key = { it.id }) { activity ->
+                            val isCurrentActivity = (stopwatchActivityId == activity.id) || (countdownActivityId == activity.id)
+                            ActivityCard(
+                                activity = activity,
+                                isSelected = activity in selectedActivities,
+                                isSelectionMode = screenState == MainScreenState.SELECTION_MODE,
+                                isStopwatchActive = isCurrentActivity && stopwatchState == ServiceState.Started,
+                                isCountdownActive = isCurrentActivity && countdownState != ServiceState.Idle,
+                                select = viewModel::select,
+                                deselect = viewModel::deselect,
+                                openActivity = viewModel::openActivity,
+                                switchSelectionModeOn = viewModel::switchSelectionModeOn,
+                                onStart = {
+                                    when {
+                                        (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) -> {
+                                            viewModel.stopwatchController.start(activity.id, activity.name)
+                                        }
+                                        (isCurrentActivity && stopwatchState == ServiceState.Started) -> {
+                                            viewModel.stopwatchController.stop()
+                                        }
+                                        (isCurrentActivity && stopwatchState == ServiceState.Stopped) -> {
+                                            viewModel.stopwatchController.resume()
+                                        }
+                                    }
+                                },
+                                onStartTimer = {
+                                    if (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) {
+                                        viewModel.openSheet(
+                                            MainScreenBottomSheet.TimePicker(activity.id, activity.name)
+                                        )
+                                    }
                                 }
-                                (isCurrentActivity && stopwatchState == ServiceState.Started) -> {
-                                    viewModel.stopwatchController.stop()
-                                }
-                                (isCurrentActivity && stopwatchState == ServiceState.Stopped) -> {
-                                    viewModel.stopwatchController.resume()
-                                }
-                            }
-                        },
-                        onStartTimer = {
-                            if (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) {
-                                viewModel.openSheet(
-                                    MainScreenBottomSheet.TimePicker(activity.id, activity.name)
-                                )
-                            }
+                            )
                         }
-                    )
+                    }
                 }
             }
         }
