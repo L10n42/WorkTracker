@@ -11,7 +11,11 @@
     <string name="btn_ok">OK</string>
     <string name="btn_pause">Pause</string>
     <string name="btn_resume">Resume</string>
+    <string name="btn_remove">Remove</string>
     <string name="btn_finish">Finish</string>
+
+    <string name="remove_title">Remove</string>
+    <string name="remove_activities_msg">Are you sure you want to remove all this activities and all that progress permanently?</string>
 
     <string name="set_time_title">Set time</string>
 

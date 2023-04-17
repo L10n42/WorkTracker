@@ -50,9 +50,7 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WorkTrackerTheme(
-                darkTheme = true
-            ) {
+            WorkTrackerTheme(darkTheme = true) {
                 navController = rememberAnimatedNavController()
                 systemUiController = rememberSystemUiController()
 

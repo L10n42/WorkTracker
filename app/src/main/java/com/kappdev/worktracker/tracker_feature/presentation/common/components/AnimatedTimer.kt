@@ -27,15 +27,15 @@ fun AnimatedTimer(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        AnimatedDigit(hours, style, direction)
+        AnimatedTime(hours, style, direction)
 
         Separator(style)
 
-        AnimatedDigit(minutes, style, direction)
+        AnimatedTime(minutes, style, direction)
 
         Separator(style)
 
-        AnimatedDigit(seconds, style, direction)
+        AnimatedTime(seconds, style, direction)
     }
 }
 
@@ -46,7 +46,7 @@ private fun Separator(style: TextStyle) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun AnimatedDigit(
+private fun AnimatedTime(
     digit: String,
     style: TextStyle,
     direction: TimerAnimationDirection
