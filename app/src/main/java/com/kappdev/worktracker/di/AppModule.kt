@@ -4,14 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.kappdev.worktracker.tracker_feature.data.data_source.WorkDatabase
-import com.kappdev.worktracker.tracker_feature.data.repository.ActivityRepositoryImpl
-import com.kappdev.worktracker.tracker_feature.data.repository.CountdownControllerImpl
-import com.kappdev.worktracker.tracker_feature.data.repository.SessionRepositoryImpl
-import com.kappdev.worktracker.tracker_feature.data.repository.StopwatchControllerImpl
-import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
-import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
-import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
-import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
+import com.kappdev.worktracker.tracker_feature.data.repository.*
+import com.kappdev.worktracker.tracker_feature.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,6 +53,12 @@ object AppModule {
     @Singleton
     fun provideCountdownRepository(@ApplicationContext context: Context): CountdownController {
         return CountdownControllerImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(@ApplicationContext context: Context): SettingsRepository {
+        return SettingsRepositoryImpl(context)
     }
 
 }

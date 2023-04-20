@@ -1,6 +1,8 @@
 package com.kappdev.worktracker.core.navigation
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -30,15 +32,7 @@ fun SetupNavGraph(
         navController = navController,
         startDestination = Screen.Main.route
     ) {
-        composable(
-            Screen.Main.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 300))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 300))
-            }
-        ) {
+        composable(Screen.Main.route) {
             MainScreen(navController, stopwatchService, countdownService)
         }
 
@@ -47,14 +41,20 @@ fun SetupNavGraph(
             enterTransition = {
                 slideInVertically(
                     initialOffsetY = { it },
-                    animationSpec = tween(durationMillis = 300)
-                ) + fadeIn(animationSpec = tween(durationMillis = 300))
+                    animationSpec = spring(stiffness = Spring.StiffnessLow)
+                ) + fadeIn(
+                    animationSpec = spring(stiffness = Spring.StiffnessLow),
+                    initialAlpha = 0.5f
+                )
             },
             exitTransition = {
                 slideOutVertically(
                     targetOffsetY = { it },
-                    animationSpec = tween(durationMillis = 300)
-                ) + fadeOut(animationSpec = tween(durationMillis = 300))
+                    animationSpec = spring(stiffness = Spring.StiffnessLow)
+                ) + fadeOut(
+                    animationSpec = spring(stiffness = Spring.StiffnessLow),
+                    targetAlpha = 0.5f
+                )
             }
         ) {
             StopwatchTimerScreen(navController, stopwatchService, stopwatchController)
@@ -65,14 +65,20 @@ fun SetupNavGraph(
             enterTransition = {
                 slideInVertically(
                     initialOffsetY = { it },
-                    animationSpec = tween(durationMillis = 300)
-                ) + fadeIn(animationSpec = tween(durationMillis = 300))
+                    animationSpec = spring(stiffness = Spring.StiffnessLow)
+                ) + fadeIn(
+                    animationSpec = spring(stiffness = Spring.StiffnessLow),
+                    initialAlpha = 0.5f
+                )
             },
             exitTransition = {
                 slideOutVertically(
                     targetOffsetY = { it },
-                    animationSpec = tween(durationMillis = 300)
-                ) + fadeOut(animationSpec = tween(durationMillis = 300))
+                    animationSpec = spring(stiffness = Spring.StiffnessLow)
+                ) + fadeOut(
+                    animationSpec = spring(stiffness = Spring.StiffnessLow),
+                    targetAlpha = 0.5f
+                )
             }
         ) {
             CountdownTimerScreen(navController, countdownService, countdownController)

@@ -37,7 +37,7 @@ class AddEditActivityViewModel @Inject constructor(
 
     private fun packActivity() = Activity(
         id = activity.id,
-        name = name.value,
+        name = name.value.trim(),
         creationTimestamp = getTimestamp()
     )
 

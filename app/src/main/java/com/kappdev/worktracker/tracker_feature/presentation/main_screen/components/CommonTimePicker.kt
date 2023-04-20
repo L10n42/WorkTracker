@@ -1,10 +1,11 @@
 package com.kappdev.worktracker.tracker_feature.presentation.main_screen.components
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -14,10 +15,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.tracker_feature.domain.model.Time
 import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.CommonDurations
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 
@@ -28,36 +29,44 @@ fun CommonTimePicker(
     modifier: Modifier = Modifier,
     onTimePicked: (time: Time) -> Unit
 ) {
-    val commonTime = listOf(
-        Time(minutes = "05"),
-        Time(minutes = "10"),
-        Time(minutes = "15"),
-        Time(minutes = "30"),
-        Time(minutes = "45"),
-        Time(hours = "01"),
-    )
-
     AnimatedVisibility(
         visible = isVisible,
         enter = scaleIn(
-            animationSpec = spring(stiffness = Spring.StiffnessLow),
-            initialScale = 0.5f
-        ) + fadeIn(),
+            animationSpec = tween(
+                durationMillis = 400,
+                easing = LinearEasing
+            )
+        ) + fadeIn(
+            animationSpec = tween(
+                durationMillis = 200,
+                delayMillis = 300,
+                easing = LinearEasing
+            )
+        ),
         exit = scaleOut(
-            animationSpec = spring(stiffness = Spring.StiffnessLow),
-            targetScale = 0.5f
-        ) + fadeOut()
+            animationSpec = tween(
+                durationMillis = 400,
+                delayMillis = 100,
+                easing = LinearEasing
+            )
+        ) + fadeOut(
+            animationSpec = tween(
+                durationMillis = 200,
+                easing = LinearEasing
+            )
+        )
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(100.dp),
             modifier = modifier,
-            userScrollEnabled = false
+            userScrollEnabled = false,
+            columns = GridCells.Fixed(3)
         ) {
-            items(commonTime) { time ->
+            items(CommonDurations.list) { time ->
                 CommonTimeButton(
                     title = time.stringFormat(),
                     modifier = Modifier
-                        .wrapContentSize()
+                        .wrapContentHeight()
+                        .fillMaxWidth(0.70f)
                         .padding(MaterialTheme.spacing.small),
                     onClick = { onTimePicked(time) }
                 )
@@ -74,7 +83,7 @@ private fun CommonTimeButton(
 ) {
     Button(
         onClick = onClick,
-        shape = MaterialTheme.customShape.large,
+        shape = MaterialTheme.customShape.medium,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.colors.surface.copy(0.64f)
