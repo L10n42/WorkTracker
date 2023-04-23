@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.Title
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 import com.kappdev.worktracker.ui.elevation
 
@@ -39,7 +40,9 @@ fun MainScreenTopBar(
             }
 
             IconButton(
-                onClick = { /*TODO*/ }
+                onClick = {
+                    viewModel.openSheet(MainScreenBottomSheet.Sort)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Sort,

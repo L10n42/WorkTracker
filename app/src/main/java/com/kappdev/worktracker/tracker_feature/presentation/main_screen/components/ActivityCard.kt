@@ -26,21 +26,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenState
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 import com.kappdev.worktracker.ui.elevation
 import com.kappdev.worktracker.ui.spacing
+import kotlinx.coroutines.selects.select
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ActivityCard(
     activity: Activity,
+    viewModel: MainScreenViewModel,
     isSelectionMode: Boolean,
     isSelected: Boolean,
     isStopwatchActive: Boolean,
     isCountdownActive: Boolean,
-    openActivity: (activity: Activity) -> Unit,
-    switchSelectionModeOn: () -> Unit,
-    select: (activity: Activity) -> Unit,
-    deselect: (activity: Activity) -> Unit,
     onStart: () -> Unit,
     onStartTimer: () -> Unit
 ) {
@@ -64,15 +64,15 @@ fun ActivityCard(
             .combinedClickable(
                 onClick = {
                     if (isSelectionMode) {
-                        if (isSelected) deselect(activity) else select(activity)
+                        if (isSelected) viewModel.deselect(activity) else viewModel.select(activity)
                     } else {
-                        openActivity(activity)
+                        viewModel.openActivity(activity)
                     }
                 },
                 onLongClick = {
                     if (!isSelectionMode) {
-                        switchSelectionModeOn()
-                        select(activity)
+                        viewModel.switchSelectionModeOn()
+                        viewModel.select(activity)
                     }
                 }
             )

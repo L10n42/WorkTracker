@@ -15,5 +15,4 @@ interface SessionRepository {
     fun deleteSessionById(id: Long)
 
     suspend fun deleteSession(session: Session): Int
-
 }

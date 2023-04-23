@@ -15,5 +15,8 @@ fun MainScreenBottomSheetController(
         is MainScreenBottomSheet.TimePicker -> {
             SetTimerBottomSheet(viewModel, countdownState, sheet)
         }
+        is MainScreenBottomSheet.Sort -> {
+            ActivitiesOrderSheet(viewModel)
+        }
     }
 }

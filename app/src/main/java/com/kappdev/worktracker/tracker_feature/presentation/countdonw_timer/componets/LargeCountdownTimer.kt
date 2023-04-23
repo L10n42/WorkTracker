@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
@@ -24,6 +26,9 @@ import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
 import com.kappdev.worktracker.tracker_feature.presentation.common.util.TimerAnimationDirection
 import com.kappdev.worktracker.ui.spacing
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun LargeCountdownTimer(
@@ -31,6 +36,7 @@ fun LargeCountdownTimer(
     countdownService: CountdownService,
     inactiveBarColor: Color = MaterialTheme.colors.onBackground,
     activeBarColor: Color = MaterialTheme.colors.primary,
+    thumbColor: Color = MaterialTheme.colors.primary
 ) {
     val time by countdownService.time
     val totalTime by countdownService.totalTime
@@ -57,6 +63,19 @@ fun LargeCountdownTimer(
                 useCenter = false,
                 size = size,
                 style = Stroke(width = 5.dp.toPx(), cap = StrokeCap.Square)
+            )
+
+            val corner = (-360f * completionPercentage - 90f) * (PI / 180f).toFloat()
+            val radius = this.size.width / 2
+            val thumbX = radius * cos(corner)
+            val thumbY = radius * sin(corner)
+
+            drawPoints(
+                points = listOf(Offset(center.x + thumbX, center.y + thumbY)),
+                color = thumbColor,
+                strokeWidth = 8.dp.toPx(),
+                pointMode = PointMode.Points,
+                cap = StrokeCap.Round
             )
         }
 

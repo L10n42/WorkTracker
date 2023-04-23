@@ -1,6 +1,7 @@
 package com.kappdev.worktracker.tracker_feature.data.data_source
 
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
 import kotlinx.coroutines.flow.Flow
@@ -25,4 +26,7 @@ interface SessionDao {
 
     @Delete
     suspend fun deleteSession(session: Session): Int
+
+    @RawQuery
+    fun getSessionsFor(query: SupportSQLiteQuery): List<Session>
 }

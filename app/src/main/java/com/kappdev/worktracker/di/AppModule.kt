@@ -61,4 +61,10 @@ object AppModule {
         return SettingsRepositoryImpl(context)
     }
 
+    @Provides
+    @Singleton
+    fun provideStatisticRepository(@Named("appDatabase") db: WorkDatabase): StatisticRepository {
+        return StatisticRepositoryImpl(db.sessionDao)
+    }
+
 }

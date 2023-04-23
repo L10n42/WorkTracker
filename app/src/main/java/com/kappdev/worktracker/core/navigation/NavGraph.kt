@@ -14,6 +14,7 @@ import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownS
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
+import com.kappdev.worktracker.tracker_feature.presentation.activity_review.components.ActivityReviewScreen
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.components.AddEditActivityScreen
 import com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets.CountdownTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.MainScreen
@@ -82,6 +83,33 @@ fun SetupNavGraph(
             }
         ) {
             CountdownTimerScreen(navController, countdownService, countdownController)
+        }
+
+        composable(
+            route = Screen.ActivityReview.route + "?activityId={activityId}",
+            arguments = listOf(
+                navArgument("activityId") {
+                    type = NavType.LongType
+                    defaultValue = 0
+                }
+            ),
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = spring(stiffness = Spring.StiffnessLow)
+                )
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { it },
+                    animationSpec = spring(stiffness = Spring.StiffnessLow)
+                )
+            }
+        ) {
+            val activityId = it.arguments?.getLong("activityId")
+            activityId?.let {
+                ActivityReviewScreen(navController, activityId)
+            } ?: navController.popBackStack()
         }
 
         composable(

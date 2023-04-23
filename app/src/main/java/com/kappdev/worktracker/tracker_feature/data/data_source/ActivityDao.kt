@@ -1,6 +1,7 @@
 package com.kappdev.worktracker.tracker_feature.data.data_source
 
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +13,9 @@ interface ActivityDao {
 
     @Query("SELECT * FROM activities")
     fun getActivities(): Flow<List<Activity>>
+
+    @RawQuery
+    fun getWithOrder(query: SupportSQLiteQuery): List<Activity>
 
     @Query("SELECT * FROM activities WHERE id=:id")
     fun getActivityById(id: Long): Activity

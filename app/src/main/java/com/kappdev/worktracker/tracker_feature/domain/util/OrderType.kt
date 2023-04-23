@@ -5,8 +5,8 @@ sealed class OrderType(val id: String) {
     object Descending: OrderType(DESCENDING_ID)
 
     companion object {
-        private const val ASCENDING_ID = "ascending"
-        private const val DESCENDING_ID = "descending"
+        private const val ASCENDING_ID = "ASC"
+        private const val DESCENDING_ID = "DESC"
 
         fun getById(id: String): OrderType? {
             return when (id) {

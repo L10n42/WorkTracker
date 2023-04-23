@@ -5,22 +5,22 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
-import com.kappdev.worktracker.tracker_feature.domain.use_case.GetActivitiesUseCase
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetSortedActivities
 import com.kappdev.worktracker.tracker_feature.domain.use_case.RemoveActivitiesUseCase
+import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
+import com.kappdev.worktracker.tracker_feature.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val getActivities: GetActivitiesUseCase,
+    private val getSortedActivities: GetSortedActivities,
     private val removeActivities: RemoveActivitiesUseCase,
     val stopwatchController: StopwatchController,
     val countdownController: CountdownController
@@ -46,9 +46,10 @@ class MainScreenViewModel @Inject constructor(
     private val _bottomSheet = mutableStateOf<MainScreenBottomSheet?>(null)
     val bottomSheet: State<MainScreenBottomSheet?> = _bottomSheet
 
-    private var activityJob: Job? = null
+    private val _order = mutableStateOf<ActivityOrder>(ActivityOrder.Name(OrderType.Ascending))
+    val order: State<ActivityOrder> = _order
 
-    init {
+    fun launch() {
         getAllActivities()
     }
 
@@ -59,13 +60,14 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
+    fun refreshData() = getAllActivities()
     private fun getAllActivities() {
-        activityJob?.cancel()
-        activityJob = getActivities().onEach { activities ->
+        viewModelScope.launch(Dispatchers.IO) {
             setDataState(DataState.LOADING)
+            val activities = getSortedActivities(order.value)
             _activities.value = activities
             if (activities.isEmpty()) setDataState(DataState.NO_DATA) else setDataState(DataState.READY)
-        }.launchIn(viewModelScope)
+        }
     }
 
     fun select(activity: Activity) { selectedActivities.add(activity) }
@@ -79,6 +81,8 @@ class MainScreenViewModel @Inject constructor(
         selectedActivities.clear()
         selectedActivities.addAll(activities.value)
     }
+
+    fun setOrder(order: ActivityOrder) { _order.value = order }
 
     fun allSelected() = selectedActivities.containsAll(activities.value)
 
@@ -95,7 +99,9 @@ class MainScreenViewModel @Inject constructor(
     fun openDialog(dialog: MainScreenDialog) { _dialog.value = dialog }
     fun closeDialog() { _dialog.value = null }
 
-    fun openActivity(activity: Activity) { /* TODO(make navigation to activity review screen) */ }
+    fun openActivity(activity: Activity) {
+        navigate(Screen.ActivityReview.route + "?activityId=${activity.id}")
+    }
     fun navigate(route: String) { _navigate.value = route }
     fun clearNavigationRoute() { _navigate.value = null }
 }
