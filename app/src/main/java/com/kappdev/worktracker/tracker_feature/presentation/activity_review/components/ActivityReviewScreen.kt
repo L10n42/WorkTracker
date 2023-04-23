@@ -1,6 +1,7 @@
 package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.CustomDailyGraph
+import com.kappdev.worktracker.ui.spacing
 
 @Composable
 fun ActivityReviewScreen(
@@ -42,10 +44,11 @@ fun ActivityReviewScreen(
         ) {
             CustomDailyGraph(
                 value = viewModel.dailyGraphData,
+                totalTime = viewModel.totalDailyWorkingTime,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = 16.dp)
-                    .height(250.dp)
+                    .padding(MaterialTheme.spacing.medium)
+                    .height(270.dp)
             )
         }
     }

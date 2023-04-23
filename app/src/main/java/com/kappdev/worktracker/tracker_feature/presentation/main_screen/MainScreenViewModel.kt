@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
+import com.kappdev.worktracker.tracker_feature.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetSortedActivities
 import com.kappdev.worktracker.tracker_feature.domain.use_case.RemoveActivitiesUseCase
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class MainScreenViewModel @Inject constructor(
     private val getSortedActivities: GetSortedActivities,
     private val removeActivities: RemoveActivitiesUseCase,
+    private val settings: SettingsRepository,
     val stopwatchController: StopwatchController,
     val countdownController: CountdownController
 ) : ViewModel() {
@@ -43,10 +45,7 @@ class MainScreenViewModel @Inject constructor(
     private val _navigate = mutableStateOf<String?>(null)
     val navigate: State<String?> = _navigate
 
-    private val _bottomSheet = mutableStateOf<MainScreenBottomSheet?>(null)
-    val bottomSheet: State<MainScreenBottomSheet?> = _bottomSheet
-
-    private val _order = mutableStateOf<ActivityOrder>(ActivityOrder.Name(OrderType.Ascending))
+    private val _order = mutableStateOf<ActivityOrder>(settings.getActivityOrder())
     val order: State<ActivityOrder> = _order
 
     fun launch() {
@@ -82,7 +81,10 @@ class MainScreenViewModel @Inject constructor(
         selectedActivities.addAll(activities.value)
     }
 
-    fun setOrder(order: ActivityOrder) { _order.value = order }
+    fun setOrder(order: ActivityOrder) {
+        settings.setActivityOrder(order)
+        _order.value = order
+    }
 
     fun allSelected() = selectedActivities.containsAll(activities.value)
 
@@ -91,10 +93,6 @@ class MainScreenViewModel @Inject constructor(
     fun setScreenState(state: MainScreenState) { _screenState.value = state }
     fun switchSelectionModeOn() { _screenState.value = MainScreenState.SELECTION_MODE }
     fun switchSelectionModeOff() { _screenState.value = MainScreenState.NORMAL_MODE }
-
-    fun clearSheet() = closeSheet()
-    fun closeSheet() { _bottomSheet.value = null }
-    fun openSheet(sheet: MainScreenBottomSheet) { _bottomSheet.value = sheet }
 
     fun openDialog(dialog: MainScreenDialog) { _dialog.value = dialog }
     fun closeDialog() { _dialog.value = null }

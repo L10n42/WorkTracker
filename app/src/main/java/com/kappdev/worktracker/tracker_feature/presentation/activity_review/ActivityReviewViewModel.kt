@@ -23,6 +23,8 @@ class ActivityReviewViewModel @Inject constructor(
 ) : ViewModel() {
     private var dailySessions = emptyList<Session>()
 
+    var totalDailyWorkingTime = ""
+    private set
     var dailyGraphData = emptyMap<Int, Long>()
     private set
 
@@ -42,8 +44,32 @@ class ActivityReviewViewModel @Inject constructor(
 
             dailySessions = statisticRepository.getDailySessionsFor(id)
             dailyGraphData = MakeDailyGraphData().invoke(dailySessions)
+            countTotalDailyWork()
 
             if (currentActivity.value == null) setDataState(DataState.NO_DATA) else setDataState(DataState.READY)
+        }
+    }
+
+    private fun countTotalDailyWork() {
+        var totalTimeInSec = 0L
+        dailySessions.forEach { session ->
+            totalTimeInSec += session.timeInSec
+        }
+
+        totalDailyWorkingTime = if (totalTimeInSec > 0L) separateTime(totalTimeInSec) else "0 sec"
+    }
+
+    private fun separateTime(timeInSeconds: Long): String {
+        val hours = timeInSeconds / 3600
+        val remainingSeconds = timeInSeconds % 3600
+
+        val minutes = remainingSeconds / 60
+        val seconds = remainingSeconds % 60
+        return buildString {
+            if (hours == 1L) append("$hours hour")
+            if (hours > 1) append("$hours hours")
+            if (minutes > 0) append(" $minutes min")
+            if (seconds > 0) append(" $seconds sec")
         }
     }
 

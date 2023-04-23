@@ -2,6 +2,7 @@ package com.kappdev.worktracker.tracker_feature.presentation.main_screen.compone
 
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
+import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenState
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 
@@ -9,7 +10,8 @@ import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScre
 @Composable
 fun TopBarController(
     screenState: MainScreenState,
-    viewModel: MainScreenViewModel
+    viewModel: MainScreenViewModel,
+    openSheet: (sheet: MainScreenBottomSheet) -> Unit,
 ) {
     AnimatedContent(
         targetState = screenState,
@@ -22,7 +24,10 @@ fun TopBarController(
                 SelectionTopBar(viewModel)
             }
             MainScreenState.NORMAL_MODE -> {
-                MainScreenTopBar(viewModel)
+                MainScreenTopBar(
+                    openSheet = openSheet,
+                    navigate = viewModel::navigate
+                )
             }
         }
     }

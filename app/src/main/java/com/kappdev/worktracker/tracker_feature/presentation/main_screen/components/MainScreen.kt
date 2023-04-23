@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScre
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenState
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 import com.kappdev.worktracker.ui.spacing
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -37,33 +37,30 @@ fun MainScreen(
     countdownService: CountdownService,
     viewModel: MainScreenViewModel = hiltViewModel()
 ) {
+    val scope = rememberCoroutineScope()
     val stopwatchState by stopwatchService.currentState
     val countdownState by countdownService.currentState
     val stopwatchActivityId by stopwatchService.activityId
     val countdownActivityId by countdownService.activityId
 
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { state ->
-            if (state == ModalBottomSheetValue.Hidden) viewModel.clearSheet()
-            true
-        }
-    )
-
     val navigate = viewModel.navigate.value
     val activities = viewModel.activities.value
-    val bottomSheet = viewModel.bottomSheet.value
     val screenState = viewModel.screenState.value
     val dataState = viewModel.dataState.value
     val dialog = viewModel.dialog.value
     val selectedActivities = viewModel.selectedActivities
 
-    LaunchedEffect(key1 = true, block = { viewModel.launch() })
+    var currentSheet by rememberSaveable { mutableStateOf<MainScreenBottomSheet?>(null) }
+    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
-    LaunchedEffect(key1 = bottomSheet) {
-        if (bottomSheet != null) sheetState.show()
-        if (bottomSheet == null && sheetState.isVisible) sheetState.hide()
+    fun closeSheet() = scope.launch { sheetState.hide() }
+
+    fun openSheet(sheet: MainScreenBottomSheet) = scope.launch {
+        currentSheet = sheet
+        sheetState.show()
     }
+
+    LaunchedEffect(key1 = true) { viewModel.launch() }
 
     LaunchedEffect(key1 = navigate) {
         if (navigate != null) {
@@ -72,22 +69,21 @@ fun MainScreen(
         }
     }
 
-    if (!sheetState.isVisible && bottomSheet is MainScreenBottomSheet.Sort) viewModel.clearSheet()
+    if (!sheetState.isVisible) currentSheet = null
     MainScreenDialogController(dialog, viewModel)
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetBackgroundColor = Color.Transparent,
         sheetContent = {
-            if (bottomSheet != null) {
-                MainScreenBottomSheetController(bottomSheet, viewModel, countdownState)
-            } else {
-                VerticalSpace(1.dp)
+            if (currentSheet == null) VerticalSpace(1.dp)
+            currentSheet?.let { sheet ->
+                MainScreenBottomSheetController(sheet, viewModel, countdownState, ::closeSheet)
             }
         }
     ) {
         Scaffold(
             topBar = {
-                TopBarController(screenState, viewModel)
+                TopBarController(screenState, viewModel, openSheet = ::openSheet)
             }
         ) { scaffoldPadding ->
 
@@ -133,7 +129,7 @@ fun MainScreen(
                                     },
                                     onStartTimer = {
                                         if (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) {
-                                            viewModel.openSheet(
+                                            openSheet(
                                                 MainScreenBottomSheet.TimePicker(activity.id, activity.name)
                                             )
                                         }

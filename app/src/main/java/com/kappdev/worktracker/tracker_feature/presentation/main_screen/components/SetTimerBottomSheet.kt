@@ -30,9 +30,8 @@ import com.kappdev.worktracker.ui.spacing
 
 @Composable
 fun SetTimerBottomSheet(
-    viewModel: MainScreenViewModel,
-    countdownState: ServiceState,
-    sheet: MainScreenBottomSheet.TimePicker
+    closeSheet: () -> Unit,
+    startCountDownTimer: (time: Time) -> Unit
 ) {
     var currentTime by remember { mutableStateOf(Time()) }
     var isCommonTimeVisible by remember { mutableStateOf(false) }
@@ -72,17 +71,11 @@ fun SetTimerBottomSheet(
 
         VerticalSpace(MaterialTheme.spacing.large)
         Buttons(
-            onCancelClick = viewModel::closeSheet,
+            onCancelClick = closeSheet,
             onOkClick = {
                 if (currentTime.inMillis() > 0) {
-                    if (countdownState == ServiceState.Idle) {
-                        viewModel.countdownController.start(
-                            activityId = sheet.activityId,
-                            activityName = sheet.activityName,
-                            durationInMillis = currentTime.inMillis()
-                        )
-                    }
-                    viewModel.closeSheet()
+                    startCountDownTimer(currentTime)
+                    closeSheet()
                 } else {
                     context.makeToast(R.string.wrong_time_error)
                 }

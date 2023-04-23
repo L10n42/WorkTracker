@@ -29,6 +29,7 @@
 
     <string name="total">Total</string>
     <string name="total_time">Total time: %1$s</string>
+    <string name="total_work_time">Total Time:</string>
     <string name="activity_work_finished">You have finished %1$s!</string>
 
 </resources>

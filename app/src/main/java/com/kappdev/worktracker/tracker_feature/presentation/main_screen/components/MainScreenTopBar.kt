@@ -18,7 +18,8 @@ import com.kappdev.worktracker.ui.elevation
 
 @Composable
 fun MainScreenTopBar(
-    viewModel: MainScreenViewModel
+    navigate: (route: String) -> Unit,
+    openSheet: (sheet: MainScreenBottomSheet) -> Unit
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface,
@@ -29,7 +30,7 @@ fun MainScreenTopBar(
         actions = {
             IconButton(
                 onClick = {
-                    viewModel.navigate(Screen.AddEditActivity.route)
+                    navigate(Screen.AddEditActivity.route)
                 }
             ) {
                 Icon(
@@ -41,7 +42,7 @@ fun MainScreenTopBar(
 
             IconButton(
                 onClick = {
-                    viewModel.openSheet(MainScreenBottomSheet.Sort)
+                    openSheet(MainScreenBottomSheet.Sort)
                 }
             ) {
                 Icon(
