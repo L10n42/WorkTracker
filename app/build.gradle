@@ -51,6 +51,9 @@ android {
 
 dependencies {
 
+    // date and time picker for compose
+    implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc"
+
     // for using Local Date and Time
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 

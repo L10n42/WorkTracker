@@ -1,19 +1,20 @@
 package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.CustomDailyGraph
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.DaySwitcher
+import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphDataState
 import com.kappdev.worktracker.ui.spacing
-import java.time.LocalDate
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ActivityReviewScreen(
     navController: NavHostController,
@@ -21,9 +22,15 @@ fun ActivityReviewScreen(
     viewModel: ActivityReviewViewModel = hiltViewModel()
 ) {
     val navigate = viewModel.navigate.value
-    var date by remember {
-        mutableStateOf(LocalDate.now())
-    }
+    val graphDate = viewModel.graphDate.value
+    val dailyGraphData = viewModel.dailyGraphData.value
+    val totalDailyWorkingTime = viewModel.totalDailyWorkingTime.value
+    val graphDataState = viewModel.graphDataState.value
+
+    val graphModifier = Modifier
+        .fillMaxWidth()
+        .padding(MaterialTheme.spacing.medium)
+        .height(270.dp)
 
     LaunchedEffect(key1 = navigate) {
         if (navigate != null) {
@@ -46,23 +53,33 @@ fun ActivityReviewScreen(
                 .fillMaxSize()
                 .padding(scaffoldPadding)
         ) {
-            CustomDailyGraph(
-                value = viewModel.dailyGraphData,
-                totalTime = viewModel.totalDailyWorkingTime,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .height(270.dp)
-            )
+            AnimatedContent(
+                targetState = graphDataState,
+                transitionSpec = {
+                    fadeIn() with fadeOut()
+                }
+            ) { state ->
+
+                when (state) {
+                    GraphDataState.LOADING -> {
+                        LoadingGraph(modifier = graphModifier)
+                    }
+                    else -> {
+                        CustomDailyGraph(
+                            value = dailyGraphData,
+                            totalTime = totalDailyWorkingTime,
+                            modifier = graphModifier
+                        )
+                    }
+                }
+            }
 
             DaySwitcher(
-                date = date,
+                date = graphDate,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                changeDate = { newDate ->
-                    date = newDate
-                }
+                changeDate = viewModel::setDateAndUpdate
             )
         }
     }

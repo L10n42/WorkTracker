@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.presentation.common.components
+package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.toSize
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
-import java.time.LocalDate
 
 @Composable
 fun CustomDailyGraph(
