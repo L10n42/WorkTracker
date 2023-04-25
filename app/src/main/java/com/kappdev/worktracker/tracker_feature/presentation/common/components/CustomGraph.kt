@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.toSize
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
+import java.time.LocalDate
 
 @Composable
 fun CustomDailyGraph(

@@ -3,15 +3,16 @@ package com.kappdev.worktracker.tracker_feature.presentation.activity_review.com
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.CustomDailyGraph
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.DaySwitcher
 import com.kappdev.worktracker.ui.spacing
+import java.time.LocalDate
 
 @Composable
 fun ActivityReviewScreen(
@@ -20,6 +21,9 @@ fun ActivityReviewScreen(
     viewModel: ActivityReviewViewModel = hiltViewModel()
 ) {
     val navigate = viewModel.navigate.value
+    var date by remember {
+        mutableStateOf(LocalDate.now())
+    }
 
     LaunchedEffect(key1 = navigate) {
         if (navigate != null) {
@@ -37,7 +41,7 @@ fun ActivityReviewScreen(
             ActivityReviewTopBar(viewModel)
         }
     ) { scaffoldPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(scaffoldPadding)
@@ -47,8 +51,18 @@ fun ActivityReviewScreen(
                 totalTime = viewModel.totalDailyWorkingTime,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(MaterialTheme.spacing.medium)
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                     .height(270.dp)
+            )
+
+            DaySwitcher(
+                date = date,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                changeDate = { newDate ->
+                    date = newDate
+                }
             )
         }
     }
