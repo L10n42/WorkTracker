@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.presentation.common.components
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,16 +17,19 @@ import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.domain.util.DateUtil
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 import java.time.LocalDate
 import java.util.*
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Calendar(
     date: LocalDate,
@@ -33,10 +37,7 @@ fun Calendar(
     modifier: Modifier = Modifier,
     changeDate: (date: LocalDate) -> Unit
 ) {
-    val dayOfWeeks = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    val start = date.withDayOfMonth(1)
-    val startWeekDay = start.dayOfWeek.value
-    val days = DateUtil.getMonthDays(date)
+    val dayOfWeeks = stringArrayResource(R.array.week_days)
 
     Column(
         modifier = modifier.border(
@@ -67,19 +68,43 @@ fun Calendar(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+        }
 
-            items(startWeekDay - 1) {
-                Spacer(modifier = Modifier.aspectRatio(1f))
+        AnimatedContent(
+            targetState = date,
+            transitionSpec = {
+                if (this.targetState > this.initialState) {
+                    slideInHorizontally { it } + fadeIn() with slideOutHorizontally { -it } + fadeOut()
+                } else {
+                    slideInHorizontally { -it } + fadeIn() with slideOutHorizontally { it } + fadeOut()
+                }
             }
+        ) { state ->
 
-            items(days) { day ->
-                DateCard(
-                    day = day,
-                    time = data[day] ?: 0L,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .aspectRatio(1f)
-                )
+            val start = state.withDayOfMonth(1)
+            val startWeekDay = start.dayOfWeek.value
+            val days = DateUtil.getMonthDays(state)
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(7),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = MaterialTheme.spacing.medium),
+                userScrollEnabled = false
+            ) {
+                items(startWeekDay - 1) {
+                    Spacer(modifier = Modifier.aspectRatio(1f))
+                }
+
+                items(days) { day ->
+                    DateCard(
+                        day = day,
+                        time = data[day] ?: 0L,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .aspectRatio(1f)
+                    )
+                }
             }
         }
     }
