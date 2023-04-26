@@ -20,25 +20,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kappdev.worktracker.tracker_feature.domain.util.DateUtil
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 import java.time.LocalDate
-import java.time.YearMonth
 import java.util.*
-
-data class CalendarDay(val date: LocalDate, val isCurrentMonth: Boolean)
-
-data class CalendarMonth(val month: YearMonth, val days: List<CalendarDay>)
 
 @Composable
 fun Calendar(
-    modifier: Modifier = Modifier
+    date: LocalDate,
+    data: Map<Int, Long>,
+    modifier: Modifier = Modifier,
+    changeDate: (date: LocalDate) -> Unit
 ) {
     val dayOfWeeks = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    var currantDate by remember { mutableStateOf(LocalDate.now()) }
-    val start = currantDate.withDayOfMonth(1)
+    val start = date.withDayOfMonth(1)
     val startWeekDay = start.dayOfWeek.value
-    val days = monthDays(currantDate)
+    val days = DateUtil.getMonthDays(date)
 
     Column(
         modifier = modifier.border(
@@ -48,11 +46,9 @@ fun Calendar(
         )
     ) {
         StatePanel(
-            date = currantDate,
+            date = date,
             modifier = Modifier.fillMaxWidth(),
-            changeDate = {
-                currantDate = it
-            }
+            changeDate = changeDate
         )
 
         LazyVerticalGrid(
@@ -79,6 +75,7 @@ fun Calendar(
             items(days) { day ->
                 DateCard(
                     day = day,
+                    time = data[day] ?: 0L,
                     modifier = Modifier
                         .padding(4.dp)
                         .aspectRatio(1f)
@@ -86,12 +83,6 @@ fun Calendar(
             }
         }
     }
-}
-
-private fun monthDays(date: LocalDate): List<Int> {
-    val start = date.withDayOfMonth(1)
-    val daysInMonth = date.month.length(date.isLeapYear)
-    return (0 until daysInMonth).map { start.plusDays(it.toLong()).dayOfMonth }
 }
 
 @Composable
@@ -143,12 +134,17 @@ private fun StatePanel(
 @Composable
 private fun DateCard(
     day: Int,
+    time: Long,
     modifier: Modifier = Modifier
 ) {
+    val color = when {
+        time > 60L -> MaterialTheme.colors.primary
+        else -> MaterialTheme.colors.surface
+    }
     Box(
         modifier = modifier
             .background(
-                color = MaterialTheme.colors.surface,
+                color = color,
                 shape = MaterialTheme.customShape.small
             ),
         contentAlignment = Alignment.Center,

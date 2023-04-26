@@ -4,10 +4,8 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import com.kappdev.worktracker.tracker_feature.data.data_source.SessionDao
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
 import com.kappdev.worktracker.tracker_feature.domain.repository.StatisticRepository
-import com.kappdev.worktracker.tracker_feature.domain.util.DateTimeHelper
-import java.time.Instant
+import com.kappdev.worktracker.tracker_feature.domain.util.DateUtil
 import java.time.LocalDate
-import java.time.ZoneId
 
 class StatisticRepositoryImpl(
     private val sessionDao: SessionDao
@@ -20,10 +18,21 @@ class StatisticRepositoryImpl(
         val sessionsList = sessionDao.getSessionsFor(simpleSqliteQuery)
 
         return sessionsList.mapNotNull { session ->
-            val instant = Instant.ofEpochMilli(session.startTimestamp)
-            val startDate = instant.atZone(ZoneId.systemDefault()).toLocalDate()
-
+            val startDate = DateUtil.getDateOf(session.startTimestamp)
             if (startDate == date && session.endTimestamp != 0L) session else null
         }
+    }
+
+    override fun getMonthSessionsFor(activityId: Long, date: LocalDate): List<Session> {
+        val sessions = sessionDao.getSessionsByActivity(activityId)
+
+        return sessions.mapNotNull { session ->
+            val startDate = DateUtil.getDateOf(session.startTimestamp)
+            if (isSameMonth(startDate, date) && session.endTimestamp != 0L) session else null
+        }
+    }
+
+    private fun isSameMonth(first: LocalDate, second: LocalDate): Boolean {
+        return first.year == second.year && first.month == second.month
     }
 }

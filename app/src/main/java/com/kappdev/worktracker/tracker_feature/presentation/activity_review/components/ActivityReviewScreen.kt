@@ -25,10 +25,14 @@ fun ActivityReviewScreen(
     viewModel: ActivityReviewViewModel = hiltViewModel()
 ) {
     val navigate = viewModel.navigate.value
+
     val graphDate = viewModel.graphDate.value
     val dailyGraphData = viewModel.dailyGraphData.value
     val totalDailyWorkingTime = viewModel.totalDailyWorkingTime.value
     val graphDataState = viewModel.graphDataState.value
+
+    val calendarData = viewModel.calendarData.value
+    val calendarDate = viewModel.calendarDate.value
 
     val graphModifier = Modifier
         .fillMaxWidth()
@@ -87,10 +91,13 @@ fun ActivityReviewScreen(
             )
 
             Calendar(
+                date = calendarDate,
+                data = calendarData,
                 modifier = Modifier
                     .padding(MaterialTheme.spacing.medium)
                     .fillMaxWidth()
-                    .height(350.dp)
+                    .height(350.dp),
+                changeDate = viewModel::updateCalendarWith
             )
         }
     }

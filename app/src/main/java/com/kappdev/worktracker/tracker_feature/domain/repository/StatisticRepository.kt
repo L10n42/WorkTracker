@@ -7,4 +7,6 @@ interface StatisticRepository {
 
     fun getDailySessionsFor(activityId: Long, date: LocalDate = LocalDate.now()): List<Session>
 
+    fun getMonthSessionsFor(activityId: Long, date: LocalDate): List<Session>
+
 }
