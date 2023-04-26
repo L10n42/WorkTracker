@@ -2,6 +2,8 @@ package com.kappdev.worktracker.tracker_feature.presentation.activity_review.com
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -12,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphDataState
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.Calendar
 import com.kappdev.worktracker.ui.spacing
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -52,6 +55,7 @@ fun ActivityReviewScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(scaffoldPadding)
+                .verticalScroll(rememberScrollState())
         ) {
             AnimatedContent(
                 targetState = graphDataState,
@@ -80,6 +84,13 @@ fun ActivityReviewScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 changeDate = viewModel::setDateAndUpdate
+            )
+
+            Calendar(
+                modifier = Modifier
+                    .padding(MaterialTheme.spacing.medium)
+                    .fillMaxWidth()
+                    .height(350.dp)
             )
         }
     }
