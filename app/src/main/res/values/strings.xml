@@ -2,9 +2,13 @@
     <string name="app_name">Work Tracker</string>
 
     <string name="main_screen_title">Activities</string>
-    <string name="add_edit_screen_title">Create Activity</string>
+    <string name="create_activity_title">Create Activity</string>
+    <string name="edit_activity_title">Edit Activity</string>
 
-    <string name="hint_name">Name</string>
+    <string name="label_name">Name</string>
+    <string name="label_target">Target</string>
+    <string name="name_placeholder">e.g. Reading.</string>
+    <string name="target_placeholder">Everyday time target.</string>
 
     <string name="btn_dismiss">Dismiss</string>
     <string name="btn_cancel">Cancel</string>
@@ -24,10 +28,14 @@
     <string name="remove_title">Remove</string>
     <string name="remove_activities_msg">Are you sure you want to remove all this activities and all that progress permanently?</string>
 
-    <string name="set_time_title">Set time</string>
+    <string name="set_time_title">Set Time</string>
+    <string name="set_target_title">Set Target</string>
 
-    <string name="unfilled_field_error">To create a new activity, you need to enter a name!</string>
+    <string name="unfilled_field_error">Enter a name!</string>
     <string name="wrong_time_error">set at least 1 sec</string>
+
+    <string name="title_less">Less</string>
+    <string name="title_more">More</string>
 
     <string name="total">Total</string>
     <string name="total_time">Total time: %1$s</string>

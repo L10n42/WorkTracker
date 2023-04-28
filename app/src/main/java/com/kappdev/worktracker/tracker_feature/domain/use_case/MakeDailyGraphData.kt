@@ -23,10 +23,20 @@ class MakeDailyGraphData {
             if (startHour == endHour) {
                 addTimeAt(startHour, session.timeInSec)
             } else {
-                val hours = getHoursBetween(startHour, endHour)
-                val averageTime = session.timeInSec / hours.size
+                var time = session.timeInSec
+                val hours = mutableListOf<Int>()
 
-                hours.forEach { hour -> addTimeAt(hour, averageTime) }
+                session.minutePoints.timestamps.forEach { timestamp ->
+                    val hour = DateTimeHelper.getHourOfDay(timestamp)
+                    if (!hours.contains(hour)) hours.add(hour)
+                    addTimeAt(hour, 60L)
+                    time -= 60L
+                }
+
+                if (time > 60) {
+                    val averageTime = session.timeInSec / hours.size
+                    hours.forEach { hour -> addTimeAt(hour, averageTime) }
+                }
             }
         }
 

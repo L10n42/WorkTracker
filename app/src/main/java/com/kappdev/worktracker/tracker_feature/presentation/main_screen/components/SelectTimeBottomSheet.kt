@@ -19,23 +19,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.common.makeToast
-import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.model.Time
 import com.kappdev.worktracker.tracker_feature.domain.model.inMillis
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.TimerPicker
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.VerticalSpace
-import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
-import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 import com.kappdev.worktracker.ui.spacing
 
 @Composable
-fun SetTimerBottomSheet(
+fun SelectTimeBottomSheet(
+    initValue: Time = Time(),
+    title: String = stringResource(R.string.set_time_title),
     closeSheet: () -> Unit,
-    startCountDownTimer: (time: Time) -> Unit
+    onTimeSelected: (time: Time) -> Unit
 ) {
-    var currentTime by remember { mutableStateOf(Time()) }
+    var currentTime by remember { mutableStateOf(initValue) }
     var isCommonTimeVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = initValue) {
+        currentTime = initValue
+    }
 
     Column(
         modifier = Modifier
@@ -44,9 +47,10 @@ fun SetTimerBottomSheet(
                 color = MaterialTheme.colors.background,
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
             )
-            .padding(all = 16.dp)
+            .padding(MaterialTheme.spacing.medium)
     ) {
         SheetHat(
+            title = title,
             isSectionVisible = isCommonTimeVisible,
             modifier = Modifier.fillMaxWidth(),
             showSection = { isCommonTimeVisible = !isCommonTimeVisible }
@@ -74,7 +78,7 @@ fun SetTimerBottomSheet(
             onCancelClick = closeSheet,
             onOkClick = {
                 if (currentTime.inMillis() > 0) {
-                    startCountDownTimer(currentTime)
+                    onTimeSelected(currentTime)
                     closeSheet()
                 } else {
                     context.makeToast(R.string.wrong_time_error)
@@ -86,13 +90,14 @@ fun SetTimerBottomSheet(
 
 @Composable
 private fun SheetHat(
+    title: String,
     modifier: Modifier = Modifier,
     isSectionVisible: Boolean,
     showSection: () -> Unit
 ) {
     Box(modifier = modifier) {
         Text(
-            text = stringResource(R.string.set_time_title),
+            text = title,
             color = MaterialTheme.colors.onSurface,
             fontSize = 20.sp,
             modifier = Modifier.align(Alignment.Center),

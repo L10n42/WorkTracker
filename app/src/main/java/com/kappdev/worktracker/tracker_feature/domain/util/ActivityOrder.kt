@@ -13,7 +13,7 @@ sealed class ActivityOrder(val orderType: OrderType, val id: String) {
 
     companion object {
         private const val NAME_ID = "name"
-        private const val TIME_ID = "creationTimestamp"
+        private const val TIME_ID = "creation_timestamp"
 
         fun getById(id: String, orderType: OrderType?): ActivityOrder? {
             val type = orderType ?: OrderType.Ascending

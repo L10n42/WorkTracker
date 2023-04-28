@@ -13,18 +13,17 @@ import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.data.util.NotificationButton
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
-import com.kappdev.worktracker.tracker_feature.domain.model.Session
-import com.kappdev.worktracker.tracker_feature.domain.model.Time
-import com.kappdev.worktracker.tracker_feature.domain.model.format
-import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
+import com.kappdev.worktracker.tracker_feature.domain.model.*
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
@@ -44,11 +43,13 @@ class CountdownService: Service() {
     lateinit var sessionRepository: SessionRepository
 
     private val binder = CountdownBinder()
+    private val points = mutableListOf<Long>()
     private var duration: Duration = Duration.ZERO
     private var wholeDuration: Long = 0
     private var sessionId: Long = 0
 
     private lateinit var timer: CountDownTimer
+    private lateinit var saveTimer: Timer
     private lateinit var builder: NotificationCompat.Builder
 
     var time = mutableStateOf(Time())
@@ -147,7 +148,16 @@ class CountdownService: Service() {
             }
         }
         timer.start()
+        startSaveTimer()
     }
+
+    private fun startSaveTimer() {
+        saveTimer = fixedRateTimer(initialDelay = 60_000L, period = 60_000L) {
+            points.add(System.currentTimeMillis())
+            saveSession()
+        }
+    }
+
 
     private fun makeFinishNotification() {
         doneNotification.makeNotification(
@@ -158,6 +168,7 @@ class CountdownService: Service() {
 
     private fun stopCountdown() {
         if (this::timer.isInitialized) timer.cancel()
+        if (this::saveTimer.isInitialized) saveTimer.cancel()
         currentState.value = ServiceState.Stopped
         saveSession()
     }
@@ -168,27 +179,16 @@ class CountdownService: Service() {
         updateCompletionPercentage()
     }
 
-    private fun startSession() {
-        CoroutineScope(Dispatchers.IO).launch {
-            sessionId = sessionRepository.insertSession(
-                Session(
-                    id = 0,
-                    activityId = activityId.value,
-                    startTimestamp = System.currentTimeMillis(),
-                    endTimestamp = 0,
-                    timeInSec = getDuration()
-                )
-            )
-        }
+    private fun startSession() = CoroutineScope(Dispatchers.IO).launch {
+        sessionId = sessionRepository.startSessionFor(activityId.value)
     }
 
     private fun saveSession(onFinish: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
-            sessionRepository.insertSession(
-                sessionRepository.getSessionById(sessionId).copy(
-                    endTimestamp = System.currentTimeMillis(),
-                    timeInSec = getDuration()
-                )
+            sessionRepository.saveSession(
+                id = sessionId,
+                timeInSec = getDuration(),
+                minutePoints = MinutePoints(points)
             )
             onFinish()
         }
@@ -203,6 +203,7 @@ class CountdownService: Service() {
         currentState.value = ServiceState.Idle
         activityId.value = 0
         activityName.value = ""
+        points.clear()
     }
 
     private fun updateTimeUnits() {

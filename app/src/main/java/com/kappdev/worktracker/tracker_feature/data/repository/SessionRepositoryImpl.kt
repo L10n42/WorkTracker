@@ -1,6 +1,7 @@
 package com.kappdev.worktracker.tracker_feature.data.repository
 
 import com.kappdev.worktracker.tracker_feature.data.data_source.SessionDao
+import com.kappdev.worktracker.tracker_feature.domain.model.MinutePoints
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 
@@ -10,6 +11,28 @@ class SessionRepositoryImpl(
 
     override suspend fun insertSession(session: Session): Long {
         return sessionDao.insertSession(session)
+    }
+
+    override suspend fun saveSession(id: Long, timeInSec: Long, minutePoints: MinutePoints) {
+        val session = sessionDao.getSessionById(id).copy(
+            endTimestamp = System.currentTimeMillis(),
+            timeInSec = timeInSec,
+            minutePoints = minutePoints
+        )
+        sessionDao.insertSession(session)
+    }
+
+    override suspend fun startSessionFor(activityId: Long): Long {
+        return sessionDao.insertSession(
+            Session(
+                id = 0,
+                activityId = activityId,
+                startTimestamp = System.currentTimeMillis(),
+                endTimestamp = 0,
+                timeInSec = 0,
+                minutePoints = MinutePoints.Empty
+            )
+        )
     }
 
     override fun getSessionById(id: Long): Session {

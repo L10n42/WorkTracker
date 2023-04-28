@@ -11,6 +11,19 @@ val Teal700 = Color(0xFF0097A7)
 val PrimaryBlue = Color(0xFF2283e2)
 val ActionGreen = Color(0xFF1ed760)
 
+val Completed100 = Color(0xFF62bb3d)
+val Completed75 = Color(0xFFeeca40)
+val Completed50 = Color(0xFFec762c)
+val Completed30 = Color(0xFFea0404)
+val Completed10 = Color(0xFF880000)
+
+val HeatScaleColors = listOf(Completed10, Completed30, Completed50, Completed75, Completed100)
+
+val Green75 = Color(0xBF1ED760)
+val Green50 = Color(0x801ED760)
+val Green30 = Color(0x4D1ED760)
+val Green10 = Color(0x1A1ED760)
+
 val DarkGray = Color(0xFF191919)
 val LightGray = Color(0xFF252525)
 val SuperLightGray = Color(0xFFf1f1ef)

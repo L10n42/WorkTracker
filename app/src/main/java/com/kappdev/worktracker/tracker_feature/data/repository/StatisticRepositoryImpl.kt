@@ -12,7 +12,7 @@ class StatisticRepositoryImpl(
 ): StatisticRepository {
 
     override fun getDailySessionsFor(activityId: Long, date: LocalDate): List<Session> {
-        val query = "SELECT * FROM sessions WHERE activityId = ?"
+        val query = "SELECT * FROM sessions WHERE activity_id = ?"
         val params = arrayOf(activityId)
         val simpleSqliteQuery = SimpleSQLiteQuery(query, params)
         val sessionsList = sessionDao.getSessionsFor(simpleSqliteQuery)

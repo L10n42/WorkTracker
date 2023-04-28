@@ -13,7 +13,6 @@ import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchContro
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetSortedActivities
 import com.kappdev.worktracker.tracker_feature.domain.use_case.RemoveActivitiesUseCase
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
-import com.kappdev.worktracker.tracker_feature.domain.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,7 +44,7 @@ class MainScreenViewModel @Inject constructor(
     private val _navigate = mutableStateOf<String?>(null)
     val navigate: State<String?> = _navigate
 
-    private val _order = mutableStateOf<ActivityOrder>(settings.getActivityOrder())
+    private val _order = mutableStateOf(settings.getActivityOrder())
     val order: State<ActivityOrder> = _order
 
     fun launch() {
@@ -55,6 +54,7 @@ class MainScreenViewModel @Inject constructor(
     fun removeSelected(then: () -> Unit = {}) {
         viewModelScope.launch(Dispatchers.IO) {
             removeActivities(selectedActivities)
+            refreshData()
             then()
         }
     }

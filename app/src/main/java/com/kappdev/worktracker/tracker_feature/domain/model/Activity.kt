@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.domain.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -7,10 +8,19 @@ import androidx.room.PrimaryKey
 data class Activity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
+
+    @ColumnInfo(name = "name")
     val name: String,
-    val creationTimestamp: Long
-) {
-    companion object {
-        val Empty = Activity(id = 0, name = "", creationTimestamp = 0)
-    }
+
+    @ColumnInfo(name = "creation_timestamp")
+    val creationTimestamp: Long,
+
+    @ColumnInfo(name = "target_in_seconds")
+    val targetInSec: Long
+){
+    companion object { /* Empty Initialization */ }
 }
+
+val Activity.Companion.Empty: Activity
+    get() = Activity(id = 0, name = "", creationTimestamp = 0, targetInSec = 0)
+

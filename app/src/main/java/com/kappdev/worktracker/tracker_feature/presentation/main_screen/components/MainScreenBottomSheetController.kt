@@ -15,7 +15,7 @@ fun MainScreenBottomSheetController(
 ) {
     when (sheet) {
         is MainScreenBottomSheet.TimePicker -> {
-            SetTimerBottomSheet(closeSheet = closeSheet) { time ->
+            SelectTimeBottomSheet(closeSheet = closeSheet) { time ->
                 if (countdownState == ServiceState.Idle) {
                     viewModel.countdownController.start(
                         activityId = sheet.activityId,

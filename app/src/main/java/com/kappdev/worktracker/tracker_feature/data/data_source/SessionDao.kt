@@ -15,10 +15,10 @@ interface SessionDao {
     @Query("SELECT * FROM sessions WHERE id=:id")
     fun getSessionById(id: Long): Session
 
-    @Query("SELECT * FROM sessions WHERE activityId=:id")
+    @Query("SELECT * FROM sessions WHERE activity_id=:id")
     fun getSessionsByActivity(id: Long): List<Session>
 
-    @Query("DELETE FROM sessions WHERE activityId=:id")
+    @Query("DELETE FROM sessions WHERE activity_id=:id")
     fun deleteSessionsByActivity(id: Long)
 
     @Query("DELETE FROM sessions WHERE id=:id")

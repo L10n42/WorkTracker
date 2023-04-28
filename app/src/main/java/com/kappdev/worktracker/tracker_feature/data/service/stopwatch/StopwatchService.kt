@@ -10,14 +10,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.data.util.NotificationButton
-import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.ACTION_SERVICE_CANCEL
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.ACTION_SERVICE_START
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.ACTION_SERVICE_STOP
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.ACTIVITY_ID
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.ACTIVITY_NAME
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.SERVICE_STATE
-import com.kappdev.worktracker.tracker_feature.domain.model.Session
+import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
+import com.kappdev.worktracker.tracker_feature.domain.model.MinutePoints
 import com.kappdev.worktracker.tracker_feature.domain.model.Time
 import com.kappdev.worktracker.tracker_feature.domain.model.format
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
@@ -43,10 +43,12 @@ class StopwatchService: Service() {
     lateinit var sessionRepository: SessionRepository
 
     private val binder = StopwatchBinder()
+    private val points = mutableListOf<Long>()
     private var duration: Duration = Duration.ZERO
     private var sessionId: Long = 0
 
     private lateinit var timer: Timer
+    private lateinit var saveTimer: Timer
     private lateinit var builder: NotificationCompat.Builder
 
     var time = mutableStateOf(Time())
@@ -124,10 +126,19 @@ class StopwatchService: Service() {
             updateTimeUnits()
             updateNotification()
         }
+        startSaveTimer()
+    }
+
+    private fun startSaveTimer() {
+        saveTimer = fixedRateTimer(initialDelay = 60_000L, period = 60_000L) {
+            points.add(System.currentTimeMillis())
+            saveSession()
+        }
     }
 
     private fun stopStopwatch() {
         if (this::timer.isInitialized) timer.cancel()
+        if (this::saveTimer.isInitialized) saveTimer.cancel()
         currentState.value = ServiceState.Stopped
         saveSession()
     }
@@ -137,27 +148,16 @@ class StopwatchService: Service() {
         updateTimeUnits()
     }
 
-    private fun startSession() {
-        CoroutineScope(Dispatchers.IO).launch {
-            sessionId = sessionRepository.insertSession(
-                Session(
-                    id = 0,
-                    activityId = activityId.value,
-                    startTimestamp = System.currentTimeMillis(),
-                    endTimestamp = 0,
-                    timeInSec = duration.inWholeSeconds
-                )
-            )
-        }
+    private fun startSession() = CoroutineScope(Dispatchers.IO).launch {
+        sessionId = sessionRepository.startSessionFor(activityId.value)
     }
 
     private fun saveSession(onFinish: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
-             sessionRepository.insertSession(
-                 sessionRepository.getSessionById(sessionId).copy(
-                     endTimestamp = System.currentTimeMillis(),
-                     timeInSec = duration.inWholeSeconds
-                 )
+            sessionRepository.saveSession(
+                id = sessionId,
+                timeInSec = duration.inWholeSeconds,
+                minutePoints = MinutePoints(points)
             )
             onFinish()
         }
@@ -169,6 +169,7 @@ class StopwatchService: Service() {
         currentState.value = ServiceState.Idle
         activityId.value = 0
         activityName.value = ""
+        points.clear()
     }
 
     private fun updateTimeUnits() {

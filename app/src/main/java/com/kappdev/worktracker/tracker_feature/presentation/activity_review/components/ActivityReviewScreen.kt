@@ -14,7 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphDataState
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.Calendar
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.CalendarView
 import com.kappdev.worktracker.ui.spacing
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -27,6 +27,7 @@ fun ActivityReviewScreen(
     val navigate = viewModel.navigate.value
 
     val graphDate = viewModel.graphDate.value
+    val activity = viewModel.currentActivity.value
     val dailyGraphData = viewModel.dailyGraphData.value
     val totalDailyWorkingTime = viewModel.totalDailyWorkingTime.value
     val graphDataState = viewModel.graphDataState.value
@@ -67,7 +68,6 @@ fun ActivityReviewScreen(
                     fadeIn() with fadeOut()
                 }
             ) { state ->
-
                 when (state) {
                     GraphDataState.LOADING -> {
                         LoadingGraph(modifier = graphModifier)
@@ -90,13 +90,13 @@ fun ActivityReviewScreen(
                 changeDate = viewModel::setDateAndUpdate
             )
 
-            Calendar(
+            CalendarView(
                 date = calendarDate,
                 data = calendarData,
+                target = activity?.targetInSec ?: 0,
                 modifier = Modifier
                     .padding(MaterialTheme.spacing.medium)
-                    .fillMaxWidth()
-                    .height(350.dp),
+                    .fillMaxWidth(),
                 changeDate = viewModel::updateCalendarWith
             )
         }
