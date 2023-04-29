@@ -42,6 +42,11 @@
     <string name="total_work_time">Total Time:</string>
     <string name="activity_work_finished">You have finished %1$s!</string>
 
+    <string name="gv_day">Day</string>
+    <string name="gv_week">Week</string>
+    <string name="gv_month">Month</string>
+    <string name="gv_year">Year</string>
+
     <string-array name="week_days">
         <item>Mon</item>
         <item>Tue</item>

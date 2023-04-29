@@ -36,6 +36,8 @@ fun CustomDailyGraph(
     modifier: Modifier = Modifier,
     maxValue: Long = value.maxByOrNull { it.value }?.value ?: 0L,
 ) {
+    var selectedView by remember { mutableStateOf(R.string.gv_day) }
+
     Column(
         modifier = modifier
             .border(
@@ -45,11 +47,22 @@ fun CustomDailyGraph(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        GraphViewSelector(
+            titlesResIds = listOf(
+                R.string.gv_day, R.string.gv_week, R.string.gv_month, R.string.gv_year
+            ),
+            modifier = Modifier.align(Alignment.End),
+            selectedId = selectedView,
+            onItemClick = {
+                selectedView = it
+            }
+        )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(MaterialTheme.spacing.medium)
-                .fillMaxHeight(0.8f)
+                .fillMaxHeight(0.85f)
         ) {
             LazyRow(
                 modifier = Modifier

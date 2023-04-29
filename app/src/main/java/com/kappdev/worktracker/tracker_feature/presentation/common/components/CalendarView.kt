@@ -65,8 +65,8 @@ fun CalendarView(
         modifier = modifier
             .height(animatedHeight)
             .border(
-                color = MaterialTheme.colors.onSurface,
                 width = 1.dp,
+                color = MaterialTheme.colors.onSurface,
                 shape = MaterialTheme.customShape.medium
             )
     ) {

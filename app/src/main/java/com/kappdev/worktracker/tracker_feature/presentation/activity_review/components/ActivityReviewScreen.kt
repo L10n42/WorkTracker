@@ -6,12 +6,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphDataState
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.CalendarView
@@ -25,20 +26,18 @@ fun ActivityReviewScreen(
     viewModel: ActivityReviewViewModel = hiltViewModel()
 ) {
     val navigate = viewModel.navigate.value
-
     val graphDate = viewModel.graphDate.value
     val activity = viewModel.currentActivity.value
     val dailyGraphData = viewModel.dailyGraphData.value
-    val totalDailyWorkingTime = viewModel.totalDailyWorkingTime.value
     val graphDataState = viewModel.graphDataState.value
-
+    val totalDailyWorkingTime = viewModel.totalDailyWorkingTime.value
     val calendarData = viewModel.calendarData.value
     val calendarDate = viewModel.calendarDate.value
 
     val graphModifier = Modifier
         .fillMaxWidth()
         .padding(MaterialTheme.spacing.medium)
-        .height(270.dp)
+        .height(300.dp)
 
     LaunchedEffect(key1 = navigate) {
         if (navigate != null) {
@@ -62,22 +61,26 @@ fun ActivityReviewScreen(
                 .padding(scaffoldPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            AnimatedContent(
-                targetState = graphDataState,
-                transitionSpec = {
-                    fadeIn() with fadeOut()
-                }
-            ) { state ->
-                when (state) {
-                    GraphDataState.LOADING -> {
-                        LoadingGraph(modifier = graphModifier)
+            Box(
+                modifier = Modifier.wrapContentSize()
+            ) {
+                AnimatedContent(
+                    targetState = graphDataState,
+                    transitionSpec = {
+                        fadeIn() with fadeOut()
                     }
-                    else -> {
-                        CustomDailyGraph(
-                            value = dailyGraphData,
-                            totalTime = totalDailyWorkingTime,
-                            modifier = graphModifier
-                        )
+                ) { state ->
+                    when (state) {
+                        GraphDataState.LOADING -> {
+                            LoadingGraph(modifier = graphModifier)
+                        }
+                        else -> {
+                            CustomDailyGraph(
+                                value = dailyGraphData,
+                                totalTime = totalDailyWorkingTime,
+                                modifier = graphModifier
+                            )
+                        }
                     }
                 }
             }

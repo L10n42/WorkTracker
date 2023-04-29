@@ -3,9 +3,12 @@ package com.kappdev.worktracker.tracker_feature.data.service.stopwatch
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
+import android.os.PowerManager
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.R
@@ -44,6 +47,7 @@ class StopwatchService: Service() {
 
     private val binder = StopwatchBinder()
     private val points = mutableListOf<Long>()
+    private var wakeLock: PowerManager.WakeLock? = null
     private var duration: Duration = Duration.ZERO
     private var sessionId: Long = 0
 
@@ -108,7 +112,7 @@ class StopwatchService: Service() {
             }
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     private fun catchAndUpdateDataFrom(intent: Intent?) {
@@ -179,14 +183,29 @@ class StopwatchService: Service() {
     }
 
     private fun startForegroundService() {
+        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "StopwatchService::lock").apply {
+                acquire()
+            }
+        }
+
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, builder.build())
     }
 
     private fun stopForegroundService() {
         notificationManager.cancel(NOTIFICATION_ID)
-        stopForeground(true)
-        stopSelf()
+        try {
+            wakeLock?.let {
+                if (it.isHeld) {
+                    it.release()
+                }
+            }
+            stopForeground(true)
+            stopSelf()
+        } catch (e: Exception) {
+            Log.e("StopwatchService","Service stopped without being started: ${e.message}")
+        }
     }
 
     private fun createNotificationChannel() {

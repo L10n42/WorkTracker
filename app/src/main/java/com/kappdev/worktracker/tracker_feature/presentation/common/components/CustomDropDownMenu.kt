@@ -21,12 +21,13 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.kappdev.worktracker.ui.customShape
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CustomDropDownMenu(
     expanded: Boolean,
     modifier: Modifier = Modifier,
     elevation: Dp = 16.dp,
+    enterAnim: EnterTransition = defaultEnterAnim(),
+    exitAnim: ExitTransition = defaultExitAnim(),
     offset: IntOffset = IntOffset(0, 0),
     border: BorderStroke? = null,
     alignment: Alignment = Alignment.TopEnd,
@@ -47,14 +48,8 @@ fun CustomDropDownMenu(
         ) {
             AnimatedVisibility(
                 visibleState = expandedState,
-                enter = scaleIn(
-                    initialScale = 0.5f,
-                    transformOrigin = TransformOrigin(1f, 0f)
-                ) + fadeIn(),
-                exit = scaleOut(
-                    targetScale = 0.5f,
-                    transformOrigin = TransformOrigin(1f, 0f)
-                ) + fadeOut()
+                enter = enterAnim,
+                exit = exitAnim
             ) {
                 Surface(
                     shape = shape,
@@ -70,3 +65,17 @@ fun CustomDropDownMenu(
         }
     }
 }
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun defaultEnterAnim() = scaleIn(
+    initialScale = 0.5f,
+    transformOrigin = TransformOrigin(1f, 0f)
+) + fadeIn()
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun defaultExitAnim() = scaleOut(
+    targetScale = 0.5f,
+    transformOrigin = TransformOrigin(1f, 0f)
+) + fadeOut()

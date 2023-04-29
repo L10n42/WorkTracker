@@ -4,6 +4,7 @@
     package="com.kappdev.worktracker">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".WorkTrackerApplication"

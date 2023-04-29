@@ -3,17 +3,23 @@ package com.kappdev.worktracker.tracker_feature.data.service.countdown
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.CountDownTimer
+import android.os.PowerManager
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.data.util.NotificationButton
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
-import com.kappdev.worktracker.tracker_feature.domain.model.*
+import com.kappdev.worktracker.tracker_feature.domain.model.MinutePoints
+import com.kappdev.worktracker.tracker_feature.domain.model.Time
+import com.kappdev.worktracker.tracker_feature.domain.model.format
+import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +50,7 @@ class CountdownService: Service() {
 
     private val binder = CountdownBinder()
     private val points = mutableListOf<Long>()
+    private var wakeLock: PowerManager.WakeLock? = null
     private var duration: Duration = Duration.ZERO
     private var wholeDuration: Long = 0
     private var sessionId: Long = 0
@@ -113,7 +120,7 @@ class CountdownService: Service() {
             }
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     private fun updateDataFrom(intent: Intent?) {
@@ -223,14 +230,29 @@ class CountdownService: Service() {
     }
 
     private fun startForegroundService() {
+        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "CountdownService::lock").apply {
+                acquire()
+            }
+        }
+
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, builder.build())
     }
 
     private fun stopForegroundService() {
         notificationManager.cancel(NOTIFICATION_ID)
-        stopForeground(true)
-        stopSelf()
+        try {
+            wakeLock?.let {
+                if (it.isHeld) {
+                    it.release()
+                }
+            }
+            stopForeground(true)
+            stopSelf()
+        } catch (e: Exception) {
+            Log.e("CountdownService","Service stopped without being started: ${e.message}")
+        }
     }
 
     private fun createNotificationChannel() {
