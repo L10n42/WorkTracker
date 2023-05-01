@@ -6,15 +6,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.domain.util.getWeek
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphDataState
+import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.CalendarView
 import com.kappdev.worktracker.ui.spacing
 
@@ -28,11 +29,12 @@ fun ActivityReviewScreen(
     val navigate = viewModel.navigate.value
     val graphDate = viewModel.graphDate.value
     val activity = viewModel.currentActivity.value
-    val dailyGraphData = viewModel.dailyGraphData.value
+    val dailyGraphData = viewModel.graphData.value
     val graphDataState = viewModel.graphDataState.value
     val totalDailyWorkingTime = viewModel.totalDailyWorkingTime.value
     val calendarData = viewModel.calendarData.value
     val calendarDate = viewModel.calendarDate.value
+    val graphViewState = viewModel.graphViewState.value
 
     val graphModifier = Modifier
         .fillMaxWidth()
@@ -61,37 +63,59 @@ fun ActivityReviewScreen(
                 .padding(scaffoldPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            Box(
-                modifier = Modifier.wrapContentSize()
-            ) {
-                AnimatedContent(
-                    targetState = graphDataState,
-                    transitionSpec = {
-                        fadeIn() with fadeOut()
+            AnimatedContent(
+                targetState = graphDataState,
+                transitionSpec = {
+                    fadeIn() with fadeOut()
+                }
+            ) { state ->
+                when (state) {
+                    GraphDataState.LOADING -> {
+                        LoadingGraph(modifier = graphModifier)
                     }
-                ) { state ->
-                    when (state) {
-                        GraphDataState.LOADING -> {
-                            LoadingGraph(modifier = graphModifier)
-                        }
-                        else -> {
-                            CustomDailyGraph(
-                                value = dailyGraphData,
-                                totalTime = totalDailyWorkingTime,
-                                modifier = graphModifier
-                            )
-                        }
+                    else -> {
+                        CustomDailyGraph(
+                            value = dailyGraphData,
+                            totalTime = totalDailyWorkingTime,
+                            modifier = graphModifier,
+                            viewModel = viewModel
+                        )
                     }
                 }
             }
 
-            DaySwitcher(
-                date = graphDate,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                changeDate = viewModel::setDateAndUpdate
-            )
+            val switcherModifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+
+            AnimatedContent(
+                targetState = graphViewState,
+                transitionSpec = {
+                    fadeIn() with fadeOut()
+                }
+            ) { view ->
+                when (view) {
+                    GraphViewState.DAY -> {
+                        DaySwitcher(
+                            date = graphDate,
+                            modifier = switcherModifier,
+                            changeDate = {
+                                viewModel.setGraphDate(it)
+                                viewModel.updateGraphData()
+                            }
+                        )
+                    }
+                    GraphViewState.WEEK -> {
+                        WeekSwitcher(
+                            week = graphDate.getWeek(),
+                            modifier = switcherModifier,
+                            changePeriod = {
+
+                            }
+                        )
+                    }
+                }
+            }
 
             CalendarView(
                 date = calendarDate,

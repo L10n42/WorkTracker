@@ -10,6 +10,7 @@ import com.kappdev.worktracker.tracker_feature.domain.model.Session
 import com.kappdev.worktracker.tracker_feature.domain.repository.StatisticRepository
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetActivityByIdUseCase
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetCalendarDataFor
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetWeekDataFor
 import com.kappdev.worktracker.tracker_feature.domain.use_case.MakeDailyGraphData
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.DataState
@@ -24,15 +25,19 @@ import javax.inject.Inject
 class ActivityReviewViewModel @Inject constructor(
     private val getActivityById: GetActivityByIdUseCase,
     private val statisticRepository: StatisticRepository,
-    private val getCalendarDataFor: GetCalendarDataFor
+    private val getCalendarDataFor: GetCalendarDataFor,
+    private val getWeekDataFor: GetWeekDataFor
 ) : ViewModel() {
     private var dailySessions = emptyList<Session>()
 
     private val _totalDailyWorkingTime = mutableStateOf("")
     val totalDailyWorkingTime: State<String> = _totalDailyWorkingTime
 
-    private val _dailyGraphData = mutableStateOf<Map<Int, Long>>(emptyMap())
-    val dailyGraphData: State<Map<Int, Long>> = _dailyGraphData
+    private val _graphViewState = mutableStateOf(GraphViewState.DAY)
+    val graphViewState: State<GraphViewState> = _graphViewState
+
+    private val _graphData = mutableStateOf<Map<String, Long>>(emptyMap())
+    val graphData: State<Map<String, Long>> = _graphData
 
     private val _dataState = mutableStateOf(DataState.IDLE)
     val dataState: State<DataState> = _dataState
@@ -55,7 +60,7 @@ class ActivityReviewViewModel @Inject constructor(
     private val _navigate = mutableStateOf<String?>(null)
     val navigate: State<String?> = _navigate
 
-    private var dailyGraphJob: Job? = null
+    private var graphDataJob: Job? = null
     private var calendarDataJob: Job? = null
 
     fun getDataFor(id: Long) {
@@ -63,10 +68,8 @@ class ActivityReviewViewModel @Inject constructor(
             setDataState(DataState.LOADING)
             _currentActivity.value = getActivityById(id)
 
-            dailySessions = statisticRepository.getDailySessionsFor(id)
-            _dailyGraphData.value = MakeDailyGraphData().invoke(dailySessions)
+            updateGraphData()
             countTotalDailyWork()
-
             updateCalendarData()
 
             if (currentActivity.value == null) setDataState(DataState.NO_DATA) else setDataState(DataState.READY)
@@ -86,19 +89,34 @@ class ActivityReviewViewModel @Inject constructor(
         }
     }
 
-    private fun getDailyGraphData() {
-        currentActivity.value?.let { activity ->
-
-            dailyGraphJob?.cancel()
-            dailyGraphJob = viewModelScope.launch(Dispatchers.IO) {
-                _graphDataState.value = GraphDataState.LOADING
-
-                dailySessions = statisticRepository.getDailySessionsFor(activity.id, graphDate.value)
-                _dailyGraphData.value = MakeDailyGraphData().invoke(dailySessions)
-                countTotalDailyWork()
-
-                _graphDataState.value = GraphDataState.READY
+    fun updateGraphData() {
+        currentActivity.value?.id?.let { activityId ->
+            when (graphViewState.value) {
+                GraphViewState.DAY -> getDailyGraphData(activityId)
+                GraphViewState.WEEK -> getWeekData(activityId, graphDate.value)
+                GraphViewState.MONTH -> {}
+                GraphViewState.YEAR -> {}
             }
+        }
+    }
+
+    private fun getWeekData(activityId: Long, date: LocalDate) {
+        graphDataJob?.cancel()
+        graphDataJob = viewModelScope.launch(Dispatchers.IO) {
+            _graphData.value = getWeekDataFor(activityId, date)
+        }
+    }
+
+    private fun getDailyGraphData(activityId: Long) {
+        graphDataJob?.cancel()
+        graphDataJob = viewModelScope.launch(Dispatchers.IO) {
+            _graphDataState.value = GraphDataState.LOADING
+
+            dailySessions = statisticRepository.getDailySessionsFor(activityId, graphDate.value)
+            _graphData.value = MakeDailyGraphData().invoke(dailySessions)
+            countTotalDailyWork()
+
+            _graphDataState.value = GraphDataState.READY
         }
     }
 
@@ -113,19 +131,17 @@ class ActivityReviewViewModel @Inject constructor(
 
     private fun setDataState(state: DataState) { _dataState.value = state }
 
+    fun setGraphDate(date: LocalDate) { _graphDate.value = date }
+
+    fun setGraphViewState(state: GraphViewState) { _graphViewState.value = state }
+
     fun updateCalendarWith(date: LocalDate) {
         _calendarDate.value = date
         updateCalendarData()
     }
 
-    fun setDateAndUpdate(date: LocalDate) {
-        _graphDate.value = date
-        getDailyGraphData()
-    }
-
     fun gotoEdit() {
-        val id = currentActivity.value?.id
-        id?.let {
+        currentActivity.value?.id?.let {
             navigate(Screen.AddEditActivity.route + "?activityId=$it")
         }
     }

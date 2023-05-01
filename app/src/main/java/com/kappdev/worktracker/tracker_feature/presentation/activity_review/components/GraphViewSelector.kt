@@ -24,18 +24,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.CustomDropDownMenu
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
-import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 
 @Composable
 fun GraphViewSelector(
-    titlesResIds: List<Int>,
-    selectedId: Int,
+    selected: GraphViewState,
     modifier: Modifier = Modifier,
-    onItemClick: (titleResId: Int) -> Unit
+    onViewChange: (viewState: GraphViewState) -> Unit
 ) {
+    val viewStates = listOf(GraphViewState.DAY, GraphViewState.WEEK, GraphViewState.MONTH, GraphViewState.YEAR)
     var expanded by remember { mutableStateOf(false) }
 
     val animatedButton by animateFloatAsState(
@@ -57,7 +57,7 @@ fun GraphViewSelector(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(selectedId),
+            text = getStateTitle(selected),
             fontSize = 16.sp,
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier
@@ -85,10 +85,10 @@ fun GraphViewSelector(
             offset = IntOffset(0, topPadding),
             dismiss = { expanded = false }
         ) {
-            titlesResIds.forEach { resId ->
-                Item(value = resId) {
+            viewStates.forEach { viewState ->
+                Item(viewState) {
                     expanded = false
-                    onItemClick(it)
+                    onViewChange(it)
                 }
             }
         }
@@ -117,20 +117,31 @@ private fun enterAnimation() = expandVertically(
 
 @Composable
 private fun Item(
-    value: Int,
-    onClick: (resId: Int) -> Unit
+    state: GraphViewState,
+    onClick: (state: GraphViewState) -> Unit
 ) {
     DropdownMenuItem(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-        onClick = { onClick(value) }
+        onClick = { onClick(state) }
     ) {
         Text(
-            text = stringResource(value),
+            text = getStateTitle(state),
             color = MaterialTheme.colors.onSurface,
             fontSize = 16.sp
         )
     }
 }
+
+@Composable
+private fun getStateTitle(state: GraphViewState): String {
+    return when (state) {
+        GraphViewState.DAY -> stringResource(R.string.gv_day)
+        GraphViewState.WEEK -> stringResource(R.string.gv_week)
+        GraphViewState.MONTH -> stringResource(R.string.gv_month)
+        GraphViewState.YEAR -> stringResource(R.string.gv_year)
+    }
+}
+
 
 
 

@@ -1,8 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -26,35 +24,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
+import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 
 @Composable
 fun CustomDailyGraph(
-    value: Map<Int, Long>,
+    value: Map<String, Long>,
     totalTime: String,
     modifier: Modifier = Modifier,
     maxValue: Long = value.maxByOrNull { it.value }?.value ?: 0L,
+    viewModel: ActivityReviewViewModel
 ) {
-    var selectedView by remember { mutableStateOf(R.string.gv_day) }
+    val selectedView = viewModel.graphViewState.value
 
     Column(
         modifier = modifier
             .border(
-                color = MaterialTheme.colors.onSurface,
                 width = 1.dp,
+                color = MaterialTheme.colors.onSurface,
                 shape = MaterialTheme.customShape.medium
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         GraphViewSelector(
-            titlesResIds = listOf(
-                R.string.gv_day, R.string.gv_week, R.string.gv_month, R.string.gv_year
-            ),
             modifier = Modifier.align(Alignment.End),
-            selectedId = selectedView,
-            onItemClick = {
-                selectedView = it
+            selected = selectedView,
+            onViewChange = {
+                viewModel.setGraphViewState(it)
+                viewModel.updateGraphData()
             }
         )
 
@@ -64,14 +63,19 @@ fun CustomDailyGraph(
                 .padding(MaterialTheme.spacing.medium)
                 .fillMaxHeight(0.85f)
         ) {
+            val columnSpace by animateDpAsState(
+                targetValue = if (selectedView == GraphViewState.WEEK) 12.dp else 4.dp,
+                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+            )
+
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(columnSpace)
             ) {
                 items(value.toList()) { item ->
-                    GraphColumn(item, maxValue)
+                    GraphColumn(item, maxValue, viewState = selectedView)
                 }
             }
 
@@ -119,9 +123,10 @@ private fun TotalSection(
 
 @Composable
 private fun GraphColumn(
-    value: Pair<Int, Long>,
+    value: Pair<String, Long>,
     maxValue: Long,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewState: GraphViewState
 ) {
     var timeValue by remember { mutableStateOf("") }
 
@@ -152,9 +157,14 @@ private fun GraphColumn(
         }
     }
 
+    val columnWidth by animateDpAsState(
+        targetValue = if (viewState == GraphViewState.WEEK) 36.dp else 16.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+    )
+
     Box(
         modifier = modifier
-            .width(16.dp)
+            .width(columnWidth)
             .fillMaxHeight()
     ) {
         Spacer(
@@ -182,7 +192,7 @@ private fun GraphColumn(
         )
 
         Text(
-            text = value.first.toString(),
+            text = value.first,
             fontSize = 12.sp,
             color = MaterialTheme.colors.onBackground,
             modifier = Modifier.align(Alignment.BottomCenter)

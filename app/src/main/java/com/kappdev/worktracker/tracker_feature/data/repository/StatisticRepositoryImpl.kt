@@ -32,6 +32,19 @@ class StatisticRepositoryImpl(
         }
     }
 
+    override fun getSessionsForPeriod(activityId: Long, period: Pair<LocalDate, LocalDate>): List<Session> {
+        val sessions = sessionDao.getSessionsByActivity(activityId)
+
+        return sessions.mapNotNull { session ->
+            val date = DateUtil.getDateOf(session.startTimestamp)
+            if (inPeriod(period, date) && session.endTimestamp != 0L) session else null
+        }
+    }
+
+    private fun inPeriod(period: Pair<LocalDate, LocalDate>, date: LocalDate): Boolean {
+        return date >= period.first && date <= period.second
+    }
+
     private fun isSameMonth(first: LocalDate, second: LocalDate): Boolean {
         return first.year == second.year && first.month == second.month
     }

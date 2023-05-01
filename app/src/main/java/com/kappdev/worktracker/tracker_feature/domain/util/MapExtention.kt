@@ -1,5 +1,11 @@
 package com.kappdev.worktracker.tracker_feature.domain.util
 
+fun Map<Int, Long>.padKeys(): Map<String, Long> {
+    return this.mapKeys { entry ->
+        entry.key.toString().padStart(2, '0')
+    }
+}
+
 fun Map<Int, Long>.trimZeros(leaveOne: Boolean = true): Map<Int, Long> {
     var startIndex = 0
     var endIndex = this.size - 1

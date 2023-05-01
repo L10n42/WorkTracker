@@ -9,4 +9,6 @@ interface StatisticRepository {
 
     fun getMonthSessionsFor(activityId: Long, date: LocalDate): List<Session>
 
+    fun getSessionsForPeriod(activityId: Long, period: Pair<LocalDate, LocalDate>): List<Session>
+
 }
