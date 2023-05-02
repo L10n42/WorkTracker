@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.kappdev.worktracker.tracker_feature.domain.util.getWeek
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphDataState
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
@@ -107,10 +106,11 @@ fun ActivityReviewScreen(
                     }
                     GraphViewState.WEEK -> {
                         WeekSwitcher(
-                            week = graphDate.getWeek(),
+                            date = graphDate,
                             modifier = switcherModifier,
-                            changePeriod = {
-
+                            changeDate = {
+                                viewModel.setGraphDate(it)
+                                viewModel.updateGraphData()
                             }
                         )
                     }

@@ -21,6 +21,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.domain.util.getWeek
+import com.kappdev.worktracker.tracker_feature.domain.util.getWeekToDisplay
 import com.kappdev.worktracker.ui.customShape
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
@@ -31,27 +33,33 @@ import java.time.LocalDate
 
 @Composable
 fun WeekSwitcher(
-    week: Pair<LocalDate, LocalDate>,
+    date: LocalDate,
     modifier: Modifier = Modifier,
-    changePeriod: (period: Pair<LocalDate, LocalDate>) -> Unit
+    changeDate: (date: LocalDate) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = week) {
-        text = "${week.first} - ${week.second}"
+    LaunchedEffect(key1 = date) {
+        text = date.getWeekToDisplay()
     }
 
     SwitcherBox(modifier) {
         VectorButton(
             icon = Icons.Rounded.KeyboardArrowLeft,
-            onClick = { /* TODO(previous week change) */ }
+            onClick = {
+                changeDate(date.minusWeeks(1))
+            }
         )
 
         SwitcherText(text)
 
+        val nextWeekEnable = date.plusWeeks(1) < LocalDate.now().getWeek().second
         VectorButton(
             icon = Icons.Rounded.KeyboardArrowRight,
-            onClick = { /* TODO(next week change) */ }
+            enable = nextWeekEnable,
+            onClick = {
+                changeDate(date.plusWeeks(1))
+            }
         )
     }
 }
@@ -106,14 +114,12 @@ fun DaySwitcher(
             VectorButton(
                 icon = Icons.Rounded.KeyboardArrowRight,
                 enable = nextDateEnable,
-                onClick = { changeDate(date.plusDays(1)) },
-                tint = if (nextDateEnable) MaterialTheme.colors.onSurface else MaterialTheme.colors.onBackground
+                onClick = { changeDate(date.plusDays(1)) }
             )
 
             PainterButton(
                 icon = painterResource(R.drawable.ic_round_double_arrow_right),
-                tint = if (nextDateEnable) MaterialTheme.colors.onSurface else MaterialTheme.colors.onBackground,
-                enable = nextDateEnable,
+                enable = nextDateEnable
             ) {
                 val newDate = date.plusDays(7)
                 if (newDate < LocalDate.now()) changeDate(newDate) else changeDate(LocalDate.now())
@@ -154,8 +160,8 @@ private fun SwitcherText(text: String) {
 @Composable
 private fun PainterButton(
     icon: Painter,
-    tint: Color = MaterialTheme.colors.onSurface,
     enable: Boolean = true,
+    tint: Color = if (enable) MaterialTheme.colors.onSurface else MaterialTheme.colors.onBackground,
     onClick: () -> Unit
 ) {
     IconButton(
@@ -174,8 +180,8 @@ private fun PainterButton(
 @Composable
 private fun VectorButton(
     icon: ImageVector,
-    tint: Color = MaterialTheme.colors.onSurface,
     enable: Boolean = true,
+    tint: Color = if (enable) MaterialTheme.colors.onSurface else MaterialTheme.colors.onBackground,
     onClick: () -> Unit
 ) {
     IconButton(
