@@ -21,8 +21,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.domain.util.getMonthPeriod
+import com.kappdev.worktracker.tracker_feature.domain.util.getMonthToDisplay
 import com.kappdev.worktracker.tracker_feature.domain.util.getWeek
 import com.kappdev.worktracker.tracker_feature.domain.util.getWeekToDisplay
+import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
 import com.kappdev.worktracker.ui.customShape
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
@@ -32,33 +35,57 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
 
 @Composable
-fun WeekSwitcher(
+fun PeriodSwitcher(
     date: LocalDate,
+    viewState: GraphViewState,
     modifier: Modifier = Modifier,
     changeDate: (date: LocalDate) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = date) {
-        text = date.getWeekToDisplay()
+        text = when (viewState) {
+            GraphViewState.YEAR -> date.year.toString()
+            GraphViewState.MONTH -> date.getMonthToDisplay()
+            GraphViewState.WEEK -> date.getWeekToDisplay()
+            else -> ""
+        }
     }
 
     SwitcherBox(modifier) {
         VectorButton(
             icon = Icons.Rounded.KeyboardArrowLeft,
             onClick = {
-                changeDate(date.minusWeeks(1))
+                val newDate = when (viewState) {
+                    GraphViewState.YEAR -> date.minusYears(1)
+                    GraphViewState.MONTH -> date.minusMonths(1)
+                    GraphViewState.WEEK -> date.minusWeeks(1)
+                    else -> date
+                }
+                changeDate(newDate)
             }
         )
 
         SwitcherText(text)
 
-        val nextWeekEnable = date.plusWeeks(1) < LocalDate.now().getWeek().second
+        val nextEnable = when(viewState) {
+            GraphViewState.YEAR -> date.plusYears(1).year <= LocalDate.now().year
+            GraphViewState.MONTH -> date.plusMonths(1) < LocalDate.now().getMonthPeriod().second
+            GraphViewState.WEEK -> date.plusWeeks(1) < LocalDate.now().getWeek().second
+            else -> true
+        }
+
         VectorButton(
             icon = Icons.Rounded.KeyboardArrowRight,
-            enable = nextWeekEnable,
+            enable = nextEnable,
             onClick = {
-                changeDate(date.plusWeeks(1))
+                val newDate = when (viewState) {
+                    GraphViewState.YEAR -> date.plusYears(1)
+                    GraphViewState.MONTH -> date.plusMonths(1)
+                    GraphViewState.WEEK -> date.plusWeeks(1)
+                    else -> date
+                }
+                changeDate(newDate)
             }
         )
     }

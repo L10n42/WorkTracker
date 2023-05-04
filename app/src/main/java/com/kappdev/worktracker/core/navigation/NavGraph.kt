@@ -3,7 +3,6 @@ package com.kappdev.worktracker.core.navigation
 import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -16,7 +15,7 @@ import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownContro
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.components.ActivityReviewScreen
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.components.AddEditActivityScreen
-import com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets.CountdownTimerScreen
+import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets.CountdownTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.MainScreen
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchTimerScreen
 

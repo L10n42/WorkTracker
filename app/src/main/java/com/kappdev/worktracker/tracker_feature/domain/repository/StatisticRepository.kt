@@ -5,10 +5,12 @@ import java.time.LocalDate
 
 interface StatisticRepository {
 
-    fun getDailySessionsFor(activityId: Long, date: LocalDate = LocalDate.now()): List<Session>
+    fun getForDay(activityId: Long, date: LocalDate = LocalDate.now()): List<Session>
 
-    fun getMonthSessionsFor(activityId: Long, date: LocalDate): List<Session>
+    fun getForMonth(activityId: Long, date: LocalDate): List<Session>
 
-    fun getSessionsForPeriod(activityId: Long, period: Pair<LocalDate, LocalDate>): List<Session>
+    fun getForPeriod(activityId: Long, period: Pair<LocalDate, LocalDate>): List<Session>
+
+    fun getForYear(activityId: Long, year: Int): List<Session>
 
 }

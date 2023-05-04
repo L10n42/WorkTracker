@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
 import com.kappdev.worktracker.ui.customShape
@@ -53,6 +55,7 @@ fun CustomDailyGraph(
             selected = selectedView,
             onViewChange = {
                 viewModel.setGraphViewState(it)
+                viewModel.resetGraphDate()
                 viewModel.updateGraphData()
             }
         )
@@ -141,24 +144,37 @@ private fun GraphColumn(
     )
 
     LaunchedEffect(key1 = value) {
-        val time = value.second / 60f
-        timeValue = when {
-            time > 0 && time < 1 -> "${value.second}s"
-            time > 1 -> "${time.toInt()}m"
-            else -> ""
-        }
+        timeValue = TimeUtil.splitTime(
+            seconds = value.second,
+            shortForm = true,
+            includeSec = viewState == GraphViewState.DAY && value.second < 60L,
+            includeDays = viewState == GraphViewState.YEAR,
+            includeHours = viewState != GraphViewState.DAY,
+            includeMin = viewState != GraphViewState.YEAR || (viewState == GraphViewState.YEAR && value.second < 3600L)
+        )
     }
 
     LaunchedEffect(key1 = value, key2 = maxValue) {
         targetFraction = if (maxValue > 0) {
-            (value.second / 60f) / (maxValue / 60f)
+            value.second.toFloat() / maxValue.toFloat()
         } else {
             0f
         }
     }
 
     val columnWidth by animateDpAsState(
-        targetValue = if (viewState == GraphViewState.WEEK) 36.dp else 16.dp,
+        targetValue = when (viewState) {
+            GraphViewState.WEEK, GraphViewState.YEAR -> 36.dp
+            else -> 20.dp
+        },
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+    )
+
+    val textRotate by animateFloatAsState(
+        targetValue = when (viewState) {
+            GraphViewState.WEEK, GraphViewState.YEAR -> -45f
+            else -> 0f
+        },
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
@@ -195,7 +211,7 @@ private fun GraphColumn(
             text = value.first,
             fontSize = 12.sp,
             color = MaterialTheme.colors.onBackground,
-            modifier = Modifier.align(Alignment.BottomCenter)
+            modifier = Modifier.align(Alignment.BottomCenter).rotate(textRotate)
         )
     }
 }

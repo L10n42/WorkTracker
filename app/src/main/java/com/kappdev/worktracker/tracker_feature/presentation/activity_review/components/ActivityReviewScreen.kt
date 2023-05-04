@@ -30,7 +30,7 @@ fun ActivityReviewScreen(
     val activity = viewModel.currentActivity.value
     val dailyGraphData = viewModel.graphData.value
     val graphDataState = viewModel.graphDataState.value
-    val totalDailyWorkingTime = viewModel.totalDailyWorkingTime.value
+    val totalDailyWorkingTime = viewModel.totalTime.value
     val calendarData = viewModel.calendarData.value
     val calendarDate = viewModel.calendarDate.value
     val graphViewState = viewModel.graphViewState.value
@@ -83,10 +83,7 @@ fun ActivityReviewScreen(
                 }
             }
 
-            val switcherModifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-
+            val switcherModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
             AnimatedContent(
                 targetState = graphViewState,
                 transitionSpec = {
@@ -98,20 +95,15 @@ fun ActivityReviewScreen(
                         DaySwitcher(
                             date = graphDate,
                             modifier = switcherModifier,
-                            changeDate = {
-                                viewModel.setGraphDate(it)
-                                viewModel.updateGraphData()
-                            }
+                            changeDate = viewModel::updateGraphWith
                         )
                     }
-                    GraphViewState.WEEK -> {
-                        WeekSwitcher(
+                    else -> {
+                        PeriodSwitcher(
                             date = graphDate,
+                            viewState = graphViewState,
                             modifier = switcherModifier,
-                            changeDate = {
-                                viewModel.setGraphDate(it)
-                                viewModel.updateGraphData()
-                            }
+                            changeDate = viewModel::updateGraphWith
                         )
                     }
                 }

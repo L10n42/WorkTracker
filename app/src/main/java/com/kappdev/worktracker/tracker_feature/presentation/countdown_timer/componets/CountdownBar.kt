@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets
+package com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -22,6 +22,7 @@ import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownS
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.FinishButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.StopResumeButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.util.TimerAnimationDirection
@@ -72,15 +73,15 @@ fun BoxScope.CountdownBar(
                         .align(Alignment.Center),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    HorizontalSpace(MaterialTheme.spacing.medium)
                     Text(
                         text = activityName,
                         style = textStyle,
                         maxLines = 1,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = MaterialTheme.spacing.small),
+                        modifier = Modifier.weight(1f),
                         overflow = TextOverflow.Ellipsis
                     )
+                    HorizontalSpace(MaterialTheme.spacing.small)
 
                     AnimatedTimer(
                         time = time,

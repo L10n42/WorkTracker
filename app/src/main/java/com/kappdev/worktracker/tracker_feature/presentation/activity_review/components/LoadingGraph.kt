@@ -40,7 +40,7 @@ fun LoadingGraph(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(MaterialTheme.spacing.medium)
-                    .fillMaxHeight(0.8f)
+                    .fillMaxHeight(0.85f)
             ) {
                 LazyRow(
                     modifier = Modifier

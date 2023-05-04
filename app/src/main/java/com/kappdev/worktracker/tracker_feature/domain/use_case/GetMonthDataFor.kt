@@ -3,38 +3,32 @@ package com.kappdev.worktracker.tracker_feature.domain.use_case
 import com.kappdev.worktracker.tracker_feature.domain.repository.StatisticRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.DateUtil
 import com.kappdev.worktracker.tracker_feature.domain.util.emptyPeriodMap
-import com.kappdev.worktracker.tracker_feature.domain.util.getWeek
+import com.kappdev.worktracker.tracker_feature.domain.util.getMonthPeriod
 import java.time.LocalDate
-import java.util.*
 import javax.inject.Inject
 
-class GetWeekDataFor @Inject constructor(
+class GetMonthDataFor @Inject constructor(
     private val repository: StatisticRepository
 ) {
 
     operator fun invoke(activityId: Long, date: LocalDate): Map<String, Long> {
-        val week = date.getWeek()
-        val map = week.emptyPeriodMap()
+        val month = date.getMonthPeriod()
+        val map = month.emptyPeriodMap()
 
-        val sessions = repository.getForPeriod(activityId, week)
-        if (sessions.isEmpty()) return map.toWeekMap()
+        val sessions = repository.getForPeriod(activityId, month)
+        if (sessions.isEmpty()) return map.toMonthMap()
 
         sessions.forEach { session ->
             val sessionDate = DateUtil.getDateOf(session.startTimestamp)
             map[sessionDate] = (map[sessionDate] ?: 0) + session.timeInSec
         }
 
-        return map.toWeekMap()
+        return map.toMonthMap()
     }
 
-    private fun MutableMap<LocalDate, Long>.toWeekMap(): Map<String, Long> {
+    private fun MutableMap<LocalDate, Long>.toMonthMap(): Map<String, Long> {
         return this.mapKeys { entry ->
-            entry.key.dayOfWeek.name
-                .substring(0, 3)
-                .lowercase()
-                .replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-                }
+            entry.key.dayOfMonth.toString().padStart(2, '0')
         }
     }
 }

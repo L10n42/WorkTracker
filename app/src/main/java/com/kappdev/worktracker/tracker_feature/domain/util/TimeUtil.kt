@@ -2,17 +2,29 @@ package com.kappdev.worktracker.tracker_feature.domain.util
 
 object TimeUtil {
 
-    fun toTimeFormat(timestamp: Long): String {
-        val hours = timestamp / 3600
-        val remainingSeconds = timestamp % 3600
+    fun splitTime(
+        seconds: Long,
+        includeDays: Boolean = true,
+        includeHours: Boolean = true,
+        includeMin: Boolean = true,
+        includeSec: Boolean = true,
+        shortForm: Boolean = false
+    ): String {
+        val days = seconds / (24 * 3600)
+        val hours = (seconds % (24 * 3600)) / 3600
+        val minutes = (seconds % 3600) / 60
+        val sec = seconds % 60
 
-        val minutes = remainingSeconds / 60
-        val seconds = remainingSeconds % 60
         return buildString {
-            if (hours == 1L) append("$hours hour")
-            if (hours > 1) append("$hours hours")
-            if (minutes > 0) append(" $minutes min")
-            if (seconds > 0) append(" $seconds sec")
+            if (days == 1L && includeDays) append("$days${if (shortForm) "d" else " day"}")
+            if (days > 1 && includeDays) append("$hours${if (shortForm) "d" else " days"}")
+
+            if (hours == 1L && includeHours) append(" $hours${if (shortForm) "h" else " hour"}")
+            if (hours > 1 && includeMin) append(" $hours${if (shortForm) "h" else " hours"}")
+
+            if (minutes > 0 && includeMin) append(" $minutes${if (shortForm) "m" else " min"}")
+
+            if (sec > 0 && includeSec) append(" $sec${if (shortForm) "s" else " sec"}")
         }
     }
 }

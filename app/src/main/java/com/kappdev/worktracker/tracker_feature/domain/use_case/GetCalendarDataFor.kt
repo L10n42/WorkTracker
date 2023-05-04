@@ -10,7 +10,7 @@ class GetCalendarDataFor @Inject constructor(
 ) {
 
     operator fun invoke(activityId: Long, date: LocalDate): Map<Int, Long> {
-        val sessions = repository.getMonthSessionsFor(activityId, date)
+        val sessions = repository.getForMonth(activityId, date)
 
         val map = mutableMapOf<Int, Long>()
         DateUtil.getMonthDays(date).forEach {

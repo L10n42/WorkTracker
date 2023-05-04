@@ -26,7 +26,7 @@ import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownS
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
-import com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets.CountdownBar
+import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets.CountdownBar
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchBar
 import com.kappdev.worktracker.ui.theme.WorkTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint

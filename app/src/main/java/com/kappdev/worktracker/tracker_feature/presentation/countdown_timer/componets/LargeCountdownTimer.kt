@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.presentation.countdonw_timer.componets
+package com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box

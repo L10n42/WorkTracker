@@ -8,6 +8,26 @@ import java.time.temporal.TemporalField
 import java.time.temporal.WeekFields
 import java.util.*
 
+fun Pair<LocalDate, LocalDate>.emptyPeriodMap(): MutableMap<LocalDate, Long> {
+    val map = mutableMapOf<LocalDate, Long>()
+    var currentDate = this.first
+
+    while (currentDate <= this.second) {
+        map[currentDate] = 0
+        currentDate = currentDate.plusDays(1)
+    }
+
+    return map
+}
+
+fun LocalDate.getMonthToDisplay(): String {
+    val currentYear = LocalDate.now().year
+    val month = this.month.getName()
+    val year = this.year
+
+    val needYear = (year != currentYear)
+    return "$month ${if (needYear) ", $year" else ""}"
+}
 
 fun LocalDate.getWeekToDisplay(): String {
     val week = this.getWeek()
@@ -27,6 +47,12 @@ fun LocalDate.getWeekToDisplay(): String {
     return "$firstDate - $secondDate"
 }
 
+fun LocalDate.getMonthPeriod(): Pair<LocalDate, LocalDate> {
+    val startOfMonth = this.with(TemporalAdjusters.firstDayOfMonth())
+    val endOfMonth = this.with(TemporalAdjusters.lastDayOfMonth())
+
+    return Pair(startOfMonth, endOfMonth)
+}
 
 fun LocalDate.getWeek(): Pair<LocalDate, LocalDate> {
     val weekFields: TemporalField = WeekFields.of(DayOfWeek.MONDAY, 7).dayOfWeek()
