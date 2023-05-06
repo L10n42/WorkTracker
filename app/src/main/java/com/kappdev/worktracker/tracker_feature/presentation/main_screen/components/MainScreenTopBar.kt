@@ -5,10 +5,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DataUsage
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.kappdev.worktracker.R
@@ -33,7 +31,7 @@ fun MainScreenTopBar(
                 navigate(Screen.AddEditActivity.route)
             }
 
-            ActionButton(icon = Icons.Default.DataUsage) {
+            ActionButton(icon = Icons.Outlined.Analytics) {
                 navigate(Screen.WorkStatistic.route)
             }
 

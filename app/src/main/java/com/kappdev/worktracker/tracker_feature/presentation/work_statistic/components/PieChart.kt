@@ -8,6 +8,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,25 +18,25 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.tracker_feature.domain.model.PieChartData
+import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 
 @Composable
 fun PieChart(
     modifier: Modifier = Modifier,
     data: List<PieChartData>,
+    totalTime: Long,
     pieSize: Dp = 200.dp,
     chartBarWidth: Dp = 32.dp,
     animDuration: Int,
 ) {
-    val totalSum = data.sumOf { pieChart ->
-        pieChart.timeValue
-    }
+    var animationPlayed by remember { mutableStateOf(false) }
+    var totalTimeString by remember { mutableStateOf("") }
+    var lastValue = remember { 0f }
 
-    var lastValue = remember {
-        0f
-    }
-    var animationPlayed by remember {
-        mutableStateOf(false)
+    LaunchedEffect(key1 = totalTime) {
+        totalTimeString = TimeUtil.splitTime(totalTime, shortForm = true)
     }
 
     LaunchedEffect(key1 = true) {
@@ -73,7 +75,7 @@ fun PieChart(
                     .rotate(animRotation)
             ) {
                 data.forEach { pieChart ->
-                    val value = 360 * pieChart.timeValue.toFloat() / totalSum
+                    val value = 360 * pieChart.percent
                     drawArc(
                         color = pieChart.color,
                         startAngle = lastValue,
@@ -84,6 +86,12 @@ fun PieChart(
                     lastValue += value
                 }
             }
+
+            Text(
+                text = totalTimeString,
+                fontSize = 16.sp,
+                color = MaterialTheme.colors.onSurface
+            )
         }
     }
 }
