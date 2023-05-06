@@ -6,14 +6,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DataUsage
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.Title
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
-import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 import com.kappdev.worktracker.ui.elevation
 
 @Composable
@@ -28,39 +29,35 @@ fun MainScreenTopBar(
             Title(R.string.main_screen_title)
         },
         actions = {
-            IconButton(
-                onClick = {
-                    navigate(Screen.AddEditActivity.route)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "button for adding new activities",
-                    tint = MaterialTheme.colors.onSurface
-                )
+            ActionButton(icon = Icons.Default.Add) {
+                navigate(Screen.AddEditActivity.route)
             }
 
-            IconButton(
-                onClick = {
-                    openSheet(MainScreenBottomSheet.Sort)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Sort,
-                    contentDescription = "button for sorting activities",
-                    tint = MaterialTheme.colors.onSurface
-                )
+            ActionButton(icon = Icons.Default.DataUsage) {
+                navigate(Screen.WorkStatistic.route)
             }
 
-            IconButton(
-                onClick = { /*TODO*/ }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "button for opening settings",
-                    tint = MaterialTheme.colors.onSurface
-                )
+            ActionButton(icon = Icons.Default.Sort) {
+                openSheet(MainScreenBottomSheet.Sort)
+            }
+
+            ActionButton(icon = Icons.Default.Settings) {
+                /* TODO (make - go to settings screen) */
             }
         }
     )
+}
+
+@Composable
+private fun ActionButton(
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "action button ${icon.name}",
+            tint = MaterialTheme.colors.onSurface
+        )
+    }
 }

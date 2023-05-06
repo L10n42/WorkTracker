@@ -18,6 +18,7 @@ import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.co
 import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets.CountdownTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.MainScreen
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchTimerScreen
+import com.kappdev.worktracker.tracker_feature.presentation.work_statistic.components.WorkStatisticScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -34,6 +35,10 @@ fun SetupNavGraph(
     ) {
         composable(Screen.Main.route) {
             MainScreen(navController, stopwatchService, countdownService)
+        }
+
+        composable(Screen.WorkStatistic.route) {
+            WorkStatisticScreen(navController)
         }
 
         composable(
