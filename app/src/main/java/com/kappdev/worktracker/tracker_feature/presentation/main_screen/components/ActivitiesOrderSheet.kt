@@ -32,14 +32,15 @@ fun ActivitiesOrderSheet(
             .background(
                 color = MaterialTheme.colors.surface,
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-            ).padding(vertical = 16.dp)
+            )
+            .padding(vertical = 16.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             DefaultRadioButton(
                 text = stringResource(R.string.asc_title),
+                modifier = Modifier.fillMaxWidth(0.5f),
                 selected = order.orderType is OrderType.Ascending,
                 onSelect = {
                     onOrderChange(order.copy(orderType = OrderType.Ascending))
@@ -62,11 +63,11 @@ fun ActivitiesOrderSheet(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             DefaultRadioButton(
                 text = stringResource(R.string.by_name_title),
+                modifier = Modifier.fillMaxWidth(0.5f),
                 selected = order is ActivityOrder.Name,
                 onSelect = {
                     onOrderChange(ActivityOrder.Name(order.orderType))

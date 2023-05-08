@@ -95,8 +95,7 @@ fun MainScreen(
             ) { animDataState ->
                 when (animDataState) {
                     DataState.NO_DATA -> NoDataScreen()
-                    DataState.LOADING -> LoadingScreen()
-                    DataState.IDLE -> EmptyScreen()
+                    DataState.LOADING, DataState.IDLE -> LoadingActivitiesAnimation()
                     DataState.READY -> {
                         LazyColumn(
                             modifier = Modifier

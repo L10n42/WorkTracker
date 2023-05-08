@@ -15,6 +15,7 @@ import com.kappdev.worktracker.tracker_feature.domain.use_case.RemoveActivitiesU
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named

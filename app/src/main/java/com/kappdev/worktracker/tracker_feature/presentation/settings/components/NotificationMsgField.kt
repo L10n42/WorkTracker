@@ -1,15 +1,14 @@
 package com.kappdev.worktracker.tracker_feature.presentation.settings.components
 
-import android.util.Log
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -22,10 +21,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.domain.use_case.HighlightKeywordsTransformation
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.InfoButton
 import com.kappdev.worktracker.ui.customShape
 
 @Composable
@@ -47,8 +46,6 @@ fun NotificationMsgField(
         targetValue = if (!isFocused && value.isEmpty()) 16.sp.value else 14.sp.value,
         animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)
     )
-    Log.e("NotificationMsgField", "hello from here")
-    Log.e("NotificationMsgField", "text = $value")
 
     OutlinedTextField(
         value = value,
@@ -83,17 +80,9 @@ fun NotificationMsgField(
             )
         ),
         trailingIcon = {
-            IconButton(
-                onClick = {
-
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "info",
-                    modifier = Modifier.size(22.dp)
-                )
-            }
+            InfoButton(
+                text = "Use @name to mention the activity, and use @time to mention the time."
+            )
         },
         placeholder = {
             Text(text = hint)

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun AnimatedShimmer(
     colors: List<Color>? = null,
+    duration: Int = 1_000,
     content: @Composable (Brush) -> Unit
 ) {
     val finalColors = when {
@@ -30,7 +31,7 @@ fun AnimatedShimmer(
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 1000,
+                durationMillis = duration,
                 easing = LinearEasing
             ),
             repeatMode = RepeatMode.Reverse
