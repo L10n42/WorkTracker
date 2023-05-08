@@ -57,6 +57,7 @@ object AppModule {
 
     @Provides
     @Singleton
+    @Named("AppSettingsRep")
     fun provideSettingsRepository(@ApplicationContext context: Context): SettingsRepository {
         return SettingsRepositoryImpl(context)
     }

@@ -1,9 +1,7 @@
-package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
+package com.kappdev.worktracker.tracker_feature.presentation.common.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -26,7 +24,6 @@ import com.kappdev.worktracker.tracker_feature.domain.util.getMonthToDisplay
 import com.kappdev.worktracker.tracker_feature.domain.util.getWeek
 import com.kappdev.worktracker.tracker_feature.domain.util.getWeekToDisplay
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
-import com.kappdev.worktracker.ui.customShape
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
@@ -52,7 +49,11 @@ fun PeriodSwitcher(
         }
     }
 
-    SwitcherBox(modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         VectorButton(
             icon = Icons.Rounded.KeyboardArrowLeft,
             onClick = {
@@ -117,7 +118,11 @@ fun DaySwitcher(
         }
     )
 
-    SwitcherBox(modifier = modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             PainterButton(
                 icon = painterResource(R.drawable.ic_round_double_arrow_left),
@@ -153,26 +158,6 @@ fun DaySwitcher(
             }
         }
     }
-}
-
-@Composable
-private fun SwitcherBox(
-    modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
-    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-    content: @Composable RowScope.() -> Unit
-) {
-    Row(
-        content = content,
-        verticalAlignment = verticalAlignment,
-        horizontalArrangement = horizontalArrangement,
-        modifier = modifier
-            .border(
-                color = MaterialTheme.colors.onSurface,
-                width = 1.dp,
-                shape = MaterialTheme.customShape.medium
-            )
-    )
 }
 
 @Composable

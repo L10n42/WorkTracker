@@ -17,12 +17,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
+    @Named("AppSettingsRep") private val settings: SettingsRepository,
     private val getSortedActivities: GetSortedActivities,
     private val removeActivities: RemoveActivitiesUseCase,
-    private val settings: SettingsRepository,
     val stopwatchController: StopwatchController,
     val countdownController: CountdownController
 ) : ViewModel() {

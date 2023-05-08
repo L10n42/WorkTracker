@@ -2,12 +2,15 @@
     <string name="app_name">Work Tracker</string>
 
     <string name="main_screen_title">Activities</string>
+    <string name="settings_screen_title">Settings</string>
     <string name="create_activity_title">Create Activity</string>
     <string name="edit_activity_title">Edit Activity</string>
 
     <string name="label_name">Name</string>
+    <string name="label_notification_msg">Notification msg</string>
     <string name="label_target">Target</string>
     <string name="name_placeholder">e.g. Reading.</string>
+    <string name="notification_msg_placeholder">Enter message here.</string>
     <string name="target_placeholder">Everyday time target.</string>
 
     <string name="btn_dismiss">Dismiss</string>
@@ -41,6 +44,9 @@
     <string name="total_time">Total time: %1$s</string>
     <string name="total_work_time">Total Time:</string>
     <string name="activity_work_finished">You have finished %1$s!</string>
+
+    <string name="voice_notification_title">Voice notification</string>
+    <string name="default_notification_msg">Congratulation! You have finished @.</string>
 
     <string name="gv_day">Day</string>
     <string name="gv_week">Week</string>

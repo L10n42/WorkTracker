@@ -2,6 +2,7 @@ package com.kappdev.worktracker.tracker_feature.domain.repository
 
 import com.kappdev.worktracker.tracker_feature.domain.model.MinutePoints
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
+import java.time.LocalDate
 
 interface SessionRepository {
 
@@ -12,6 +13,8 @@ interface SessionRepository {
     suspend fun startSessionFor(activityId: Long): Long
 
     fun getSessionById(id: Long): Session
+
+    fun getSessionForDate(date: LocalDate): List<Session>
 
     fun getSessionsByActivity(id: Long): List<Session>
 

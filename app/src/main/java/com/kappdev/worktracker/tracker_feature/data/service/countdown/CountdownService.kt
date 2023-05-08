@@ -9,6 +9,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.CountDownTimer
 import android.os.PowerManager
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
@@ -16,11 +17,9 @@ import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.data.util.NotificationButton
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
-import com.kappdev.worktracker.tracker_feature.domain.model.MinutePoints
-import com.kappdev.worktracker.tracker_feature.domain.model.Time
-import com.kappdev.worktracker.tracker_feature.domain.model.format
-import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
+import com.kappdev.worktracker.tracker_feature.domain.model.*
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
+import com.kappdev.worktracker.tracker_feature.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +35,7 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 @AndroidEntryPoint
-class CountdownService: Service() {
+class CountdownService: Service(), TextToSpeech.OnInitListener {
 
     @Inject
     lateinit var notificationManager: NotificationManager
@@ -48,6 +47,11 @@ class CountdownService: Service() {
     @Named("serviceSessionRepository")
     lateinit var sessionRepository: SessionRepository
 
+    @Inject
+    @Named("ServiceSettingsRep")
+    lateinit var settings: SettingsRepository
+
+    private var tts: TextToSpeech? = null
     private val binder = CountdownBinder()
     private val points = mutableListOf<Long>()
     private var wakeLock: PowerManager.WakeLock? = null
@@ -77,6 +81,7 @@ class CountdownService: Service() {
     override fun onCreate() {
         super.onCreate()
         builder = defaultNotificationBuilder()
+        tts = TextToSpeech(this, this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -150,6 +155,7 @@ class CountdownService: Service() {
             override fun onFinish() {
                 stopCountdown()
                 makeFinishNotification()
+                makeVoiceNotificationIfNeed()
                 cancelCountdown()
                 stopForegroundService()
             }
@@ -165,6 +171,12 @@ class CountdownService: Service() {
         }
     }
 
+    private fun makeVoiceNotificationIfNeed() {
+        val voiceNotificationEnable = settings.getVoiceNotification()
+        if (voiceNotificationEnable) {
+            notifyByVoice()
+        }
+    }
 
     private fun makeFinishNotification() {
         doneNotification.makeNotification(
@@ -294,13 +306,35 @@ class CountdownService: Service() {
             .setContentIntent(CountdownHelper.clickPendingIntent(this))
     }
 
+    private fun notifyByVoice() {
+        val finalMsg = settings.getNotificationMsg()
+            .replace(NAME_KEYWORD, activityName.value)
+            .replace(TIME_KEYWORD, totalTime.value.fullStringFormat())
+
+        tts?.speak(finalMsg, TextToSpeech.QUEUE_FLUSH, null,"")
+    }
+
     companion object {
-        const val NOTIFICATION_CHANNEL_ID = "COUNTDOWN_NOTIFICATION_ID"
-        const val NOTIFICATION_CHANNEL_NAME = "COUNTDOWN_NOTIFICATION"
-        const val NOTIFICATION_ID = 32
+        private const val NAME_KEYWORD = "@name"
+        private const val TIME_KEYWORD = "@time"
+        val CountdownKeywords = listOf(NAME_KEYWORD, TIME_KEYWORD)
+
+        private const val NOTIFICATION_CHANNEL_ID = "COUNTDOWN_NOTIFICATION_ID"
+        private const val NOTIFICATION_CHANNEL_NAME = "COUNTDOWN_NOTIFICATION"
+        private const val NOTIFICATION_ID = 32
     }
 
     inner class CountdownBinder: Binder() {
         fun getService(): CountdownService = this@CountdownService
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val result = tts?.setLanguage(Locale.US)
+
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS","The Language not supported!")
+            }
+        }
     }
 }

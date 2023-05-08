@@ -1,6 +1,7 @@
 package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +17,9 @@ import com.kappdev.worktracker.tracker_feature.presentation.activity_review.Acti
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphDataState
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.CalendarView
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.DaySwitcher
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.PeriodSwitcher
+import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -83,7 +87,14 @@ fun ActivityReviewScreen(
                 }
             }
 
-            val switcherModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            val switcherModifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.onSurface,
+                    shape = MaterialTheme.customShape.medium
+                )
             AnimatedContent(
                 targetState = graphViewState,
                 transitionSpec = {

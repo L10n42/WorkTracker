@@ -41,8 +41,12 @@ fun BoxScope.StopwatchBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val serviceIsStarted = stopwatchService.currentState.value != ServiceState.Idle
+    val isNotStatisticScreen = currentRoute != Screen.WorkStatistic.route
+    val isNotStopwatchTimerScreen = currentRoute != Screen.StopwatchTimer.route
+
     AnimatedVisibility(
-        visible = stopwatchService.currentState.value != ServiceState.Idle && currentRoute != Screen.StopwatchTimer.route,
+        visible = serviceIsStarted && isNotStopwatchTimerScreen && isNotStatisticScreen,
         modifier = Modifier.align(Alignment.BottomCenter),
         enter = slideInVertically { it },
         exit = slideOutVertically { it }

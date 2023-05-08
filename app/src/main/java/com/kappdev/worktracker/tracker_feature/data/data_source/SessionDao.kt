@@ -18,6 +18,11 @@ interface SessionDao {
     @Query("SELECT * FROM sessions WHERE activity_id=:id")
     fun getSessionsByActivity(id: Long): List<Session>
 
+    @Query(
+        "SELECT * FROM sessions WHERE start_timestamp >= :startTimestamp AND start_timestamp < :endTimestamp AND end_timestamp > 0"
+    )
+    fun getForPeriod(startTimestamp: Long, endTimestamp: Long): List<Session>
+
     @Query("DELETE FROM sessions WHERE activity_id=:id")
     fun deleteSessionsByActivity(id: Long)
 

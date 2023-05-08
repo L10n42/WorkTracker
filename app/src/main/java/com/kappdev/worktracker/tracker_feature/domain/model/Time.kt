@@ -35,6 +35,24 @@ fun Time.getMinutes() = this.minutes.toInt()
 
 fun Time.getSeconds() = this.seconds.toInt()
 
+fun Time.fullStringFormat(): String {
+    var finalString = this@fullStringFormat.stringFormat()
+
+    finalString = if (this@fullStringFormat.getMinutes() == 1) {
+        finalString.replace("min", "minute")
+    } else {
+        finalString.replace("min", "minutes")
+    }
+
+    finalString = if (this@fullStringFormat.getSeconds() == 1) {
+        finalString.replace("sec", "second")
+    } else {
+        finalString.replace("sec", "seconds")
+    }
+
+    return finalString
+}
+
 fun Time.stringFormat(): String {
     return buildString {
         val hour = this@stringFormat.hours.toInt()

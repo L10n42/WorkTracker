@@ -40,7 +40,7 @@ fun MainScreenTopBar(
             }
 
             ActionButton(icon = Icons.Default.Settings) {
-                /* TODO (make - go to settings screen) */
+                navigate(Screen.Settings.route)
             }
         }
     )

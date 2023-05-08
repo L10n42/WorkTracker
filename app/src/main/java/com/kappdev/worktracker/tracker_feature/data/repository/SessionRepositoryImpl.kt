@@ -4,6 +4,8 @@ import com.kappdev.worktracker.tracker_feature.data.data_source.SessionDao
 import com.kappdev.worktracker.tracker_feature.domain.model.MinutePoints
 import com.kappdev.worktracker.tracker_feature.domain.model.Session
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
+import java.time.LocalDate
+import java.time.ZoneId
 
 class SessionRepositoryImpl(
     private val sessionDao: SessionDao
@@ -37,6 +39,14 @@ class SessionRepositoryImpl(
 
     override fun getSessionById(id: Long): Session {
         return sessionDao.getSessionById(id)
+    }
+
+    override fun getSessionForDate(date: LocalDate): List<Session> {
+        val startOfDay = date.atStartOfDay(ZoneId.systemDefault())
+        val endOfDay = date.plusDays(1).atStartOfDay(ZoneId.systemDefault())
+        val startTimestamp = startOfDay.toInstant().toEpochMilli()
+        val endTimestamp = endOfDay.toInstant().toEpochMilli()
+        return sessionDao.getForPeriod(startTimestamp, endTimestamp)
     }
 
     override fun getSessionsByActivity(id: Long): List<Session> {

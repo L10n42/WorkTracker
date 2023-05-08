@@ -18,9 +18,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.core.navigation.SetupNavGraph
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
@@ -54,11 +56,23 @@ class MainActivity: ComponentActivity() {
                 navController = rememberAnimatedNavController()
                 systemUiController = rememberSystemUiController()
 
-                val backgroundColor = MaterialTheme.colors.background
-                val surfaceColor = MaterialTheme.colors.surface
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
+                val statusBarColor = when (currentRoute) {
+                    Screen.StopwatchTimer.route,
+                    Screen.CountdownTimer.route,
+                    Screen.WorkStatistic.route -> MaterialTheme.colors.background
+                    else -> MaterialTheme.colors.surface
+                }
+                val navigationBarColor = when (currentRoute) {
+                    Screen.WorkStatistic.route -> MaterialTheme.colors.surface
+                    else -> MaterialTheme.colors.background
+                }
+
                 SideEffect {
-                    systemUiController.setStatusBarColor(surfaceColor)
-                    systemUiController.setNavigationBarColor(backgroundColor)
+                    systemUiController.setStatusBarColor(statusBarColor)
+                    systemUiController.setNavigationBarColor(navigationBarColor)
                 }
 
                 if (isStopwatchBound && isCountdownBound) {

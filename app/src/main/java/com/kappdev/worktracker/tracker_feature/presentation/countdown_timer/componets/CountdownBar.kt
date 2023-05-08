@@ -45,8 +45,12 @@ fun BoxScope.CountdownBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val serviceIsStarted = countdownService.currentState.value != ServiceState.Idle
+    val isNotStatisticScreen = currentRoute != Screen.WorkStatistic.route
+    val isNotCountdownTimerScreen = currentRoute != Screen.CountdownTimer.route
+
     AnimatedVisibility(
-        visible = countdownService.currentState.value != ServiceState.Idle && currentRoute != Screen.CountdownTimer.route,
+        visible = serviceIsStarted && isNotCountdownTimerScreen && isNotStatisticScreen,
         modifier = Modifier.align(Alignment.BottomCenter),
         enter = slideInVertically { it },
         exit = slideOutVertically { it }

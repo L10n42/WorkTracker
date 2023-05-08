@@ -7,4 +7,12 @@ interface SettingsRepository {
     fun setActivityOrder(order: ActivityOrder)
 
     fun getActivityOrder(): ActivityOrder
+
+    fun setVoiceNotification(enable: Boolean)
+
+    fun getVoiceNotification(): Boolean
+
+    fun setNotificationMsg(msg: String)
+
+    fun getNotificationMsg(): String
 }

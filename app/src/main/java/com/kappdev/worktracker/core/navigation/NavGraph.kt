@@ -17,6 +17,7 @@ import com.kappdev.worktracker.tracker_feature.presentation.activity_review.comp
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.components.AddEditActivityScreen
 import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets.CountdownTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.MainScreen
+import com.kappdev.worktracker.tracker_feature.presentation.settings.components.SettingsScreen
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.work_statistic.components.WorkStatisticScreen
 
@@ -39,6 +40,10 @@ fun SetupNavGraph(
 
         composable(Screen.WorkStatistic.route) {
             WorkStatisticScreen(navController)
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(navController)
         }
 
         composable(
