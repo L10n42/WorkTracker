@@ -16,15 +16,18 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.sp
+import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.domain.use_case.HighlightKeywordsTransformation
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.InfoButton
+import com.kappdev.worktracker.ui.customOutlinedTextFieldColors
 import com.kappdev.worktracker.ui.customShape
 
 @Composable
@@ -60,18 +63,7 @@ fun NotificationMsgField(
                 focusManager.clearFocus()
             }
         ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colors.onSurface,
-            unfocusedLabelColor = MaterialTheme.colors.onSurface,
-            focusedLabelColor = MaterialTheme.colors.primary,
-            backgroundColor = MaterialTheme.colors.background,
-            cursorColor = MaterialTheme.colors.primary,
-            unfocusedBorderColor = MaterialTheme.colors.onBackground,
-            focusedBorderColor = MaterialTheme.colors.primary,
-            placeholderColor = MaterialTheme.colors.onBackground,
-            trailingIconColor = MaterialTheme.colors.onSurface,
-            disabledTrailingIconColor = MaterialTheme.colors.onBackground
-        ),
+        colors = TextFieldDefaults.customOutlinedTextFieldColors(),
         visualTransformation = HighlightKeywordsTransformation(
             keywords = CountdownService.CountdownKeywords,
             style = SpanStyle(
@@ -80,17 +72,15 @@ fun NotificationMsgField(
             )
         ),
         trailingIcon = {
-            InfoButton(
-                text = "Use @name to mention the activity, and use @time to mention the time."
-            )
+            InfoButton(stringResource(R.string.use_keywords_msg))
         },
         placeholder = {
-            Text(text = hint)
+            Text(hint)
         },
         label = {
-            label?.let {
+            label?.let { labelText ->
                 Text(
-                    text = it,
+                    text = labelText,
                     fontSize = animFontSize.sp
                 )
             }

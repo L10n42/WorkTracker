@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kappdev.worktracker.ui.customOutlinedTextFieldColors
 import com.kappdev.worktracker.ui.customShape
 
 @Composable
@@ -47,17 +48,7 @@ fun OutlineTextField(
         onValueChange = onValueChanged,
         textStyle = TextStyle(fontSize = 18.sp),
         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colors.onSurface,
-            unfocusedLabelColor = MaterialTheme.colors.onSurface,
-            focusedLabelColor = MaterialTheme.colors.primary,
-            backgroundColor = MaterialTheme.colors.background,
-            cursorColor = MaterialTheme.colors.primary,
-            unfocusedBorderColor = MaterialTheme.colors.onBackground,
-            focusedBorderColor = MaterialTheme.colors.primary,
-            placeholderColor = MaterialTheme.colors.onBackground,
-            trailingIconColor = MaterialTheme.colors.onBackground
-        ),
+        colors = TextFieldDefaults.customOutlinedTextFieldColors(),
         trailingIcon = {
             if (isFocused) {
                 IconButton(
@@ -78,12 +69,12 @@ fun OutlineTextField(
             }
         },
         placeholder = {
-            Text(text = hint)
+            Text(hint)
         },
         label = {
-            label?.let {
+            label?.let { labelText ->
                 Text(
-                    text = it,
+                    text = labelText,
                     fontSize = animFontSize.sp
                 )
             }

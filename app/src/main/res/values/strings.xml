@@ -52,6 +52,7 @@
     <string name="gv_week">Week</string>
     <string name="gv_month">Month</string>
     <string name="gv_year">Year</string>
+    <string name="use_keywords_msg">Use @name to mention the activity, and use @time to mention the time.</string>
 
     <string-array name="week_days">
         <item>Mon</item>
