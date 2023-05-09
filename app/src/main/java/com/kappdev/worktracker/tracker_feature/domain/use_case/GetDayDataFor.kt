@@ -39,7 +39,7 @@ class GetDayDataFor @Inject constructor(
                     time -= 60L
                 }
 
-                if (time > 60) {
+                if (time > 60 && hours.isNotEmpty()) {
                     val averageTime = time / hours.size
                     hours.forEach { hour -> addTimeAt(hour, averageTime) }
                 }

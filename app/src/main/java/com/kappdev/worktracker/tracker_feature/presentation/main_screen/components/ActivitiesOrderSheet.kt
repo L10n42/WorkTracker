@@ -75,9 +75,9 @@ fun ActivitiesOrderSheet(
             )
             DefaultRadioButton(
                 text = stringResource(R.string.by_time_title),
-                selected = order is ActivityOrder.Time,
+                selected = order is ActivityOrder.Date,
                 onSelect = {
-                    onOrderChange(ActivityOrder.Time(order.orderType))
+                    onOrderChange(ActivityOrder.Date(order.orderType))
                 }
             )
         }

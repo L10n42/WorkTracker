@@ -15,16 +15,16 @@
 
     <string name="btn_dismiss">Dismiss</string>
     <string name="btn_cancel">Cancel</string>
-    <string name="btn_ok">OK</string>
-    <string name="btn_pause">Pause</string>
     <string name="btn_resume">Resume</string>
     <string name="btn_remove">Remove</string>
     <string name="btn_finish">Finish</string>
+    <string name="btn_pause">Pause</string>
+    <string name="btn_ok">OK</string>
 
     <string name="asc_title">Ascending</string>
     <string name="desc_title">Descending</string>
     <string name="by_name_title">By Name</string>
-    <string name="by_time_title">By Time</string>
+    <string name="by_time_title">By Date</string>
 
     <string name="select_date_title">Select Date</string>
 
