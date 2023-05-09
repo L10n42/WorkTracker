@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -132,6 +133,7 @@ private fun GraphColumn(
     viewState: GraphViewState
 ) {
     var timeValue by remember { mutableStateOf("") }
+    var targetTextRotation by remember { mutableStateOf(0f) }
 
     var targetFraction by remember { mutableStateOf(0f) }
     var columnSize by remember { mutableStateOf(Size.Zero) }
@@ -150,7 +152,7 @@ private fun GraphColumn(
             includeSec = viewState == GraphViewState.DAY && value.second < 60L,
             includeDays = viewState == GraphViewState.YEAR,
             includeHours = viewState != GraphViewState.DAY,
-            includeMin = viewState != GraphViewState.YEAR || (viewState == GraphViewState.YEAR && value.second < 3600L)
+            includeMin = !(viewState == GraphViewState.YEAR && value.second >= 3600L)
         )
     }
 
@@ -162,19 +164,24 @@ private fun GraphColumn(
         }
     }
 
+    LaunchedEffect(key1 = viewState) {
+        targetTextRotation = when (viewState) {
+            GraphViewState.WEEK, GraphViewState.YEAR -> -45f
+            else -> 0f
+        }
+    }
+
     val columnWidth by animateDpAsState(
-        targetValue = when (viewState) {
-            GraphViewState.WEEK, GraphViewState.YEAR -> 36.dp
+        targetValue = when {
+            viewState == GraphViewState.WEEK || viewState == GraphViewState.YEAR -> 36.dp
+            viewState == GraphViewState.MONTH && value.second >= 3600L -> 36.dp
             else -> 20.dp
         },
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
     val textRotate by animateFloatAsState(
-        targetValue = when (viewState) {
-            GraphViewState.WEEK, GraphViewState.YEAR -> -45f
-            else -> 0f
-        },
+        targetValue = targetTextRotation,
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
@@ -211,7 +218,9 @@ private fun GraphColumn(
             text = value.first,
             fontSize = 12.sp,
             color = MaterialTheme.colors.onBackground,
-            modifier = Modifier.align(Alignment.BottomCenter).rotate(textRotate)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .rotate(textRotate)
         )
     }
 }

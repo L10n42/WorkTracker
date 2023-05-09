@@ -20,7 +20,7 @@ object TimeUtil {
             if (days > 1 && includeDays) append("$hours${if (shortForm) "d" else " days"}")
 
             if (hours == 1L && includeHours) append(" $hours${if (shortForm) "h" else " hour"}")
-            if (hours > 1 && includeMin) append(" $hours${if (shortForm) "h" else " hours"}")
+            if (hours > 1 && includeHours) append(" $hours${if (shortForm) "h" else " hours"}")
 
             if (minutes > 0 && includeMin) append(" $minutes${if (shortForm) "m" else " min"}")
 
