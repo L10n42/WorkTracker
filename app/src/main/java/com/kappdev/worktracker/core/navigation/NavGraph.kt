@@ -25,6 +25,7 @@ import com.kappdev.worktracker.tracker_feature.presentation.work_statistic.compo
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
+    startDestination: String,
     stopwatchService: StopwatchService,
     countdownService: CountdownService,
     stopwatchController: StopwatchController,
@@ -32,7 +33,7 @@ fun SetupNavGraph(
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = Screen.Main.route
+        startDestination = startDestination
     ) {
         composable(Screen.Main.route) {
             MainScreen(navController, stopwatchService, countdownService)

@@ -34,10 +34,9 @@ fun TimePicker(
         buttons = {
             positiveButton(
                 text = stringResource(R.string.btn_ok),
-                textStyle = TextStyle(color = MaterialTheme.colors.primary)
-            ) {
-                setTime(time)
-            }
+                textStyle = TextStyle(color = MaterialTheme.colors.primary),
+                onClick = { setTime(time) }
+            )
             negativeButton(
                 text = stringResource(R.string.btn_cancel),
                 textStyle = TextStyle(color = MaterialTheme.colors.primary),

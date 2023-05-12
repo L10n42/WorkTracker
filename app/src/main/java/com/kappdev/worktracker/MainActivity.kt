@@ -24,6 +24,7 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.core.navigation.SetupNavGraph
+import com.kappdev.worktracker.tracker_feature.data.AlarmReceiver
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
@@ -45,12 +46,17 @@ class MainActivity: ComponentActivity() {
     private lateinit var systemUiController: SystemUiController
     private lateinit var stopwatchService: StopwatchService
     private lateinit var countdownService: CountdownService
+    private var startScreenRoute by mutableStateOf(Screen.Main.route)
     private var isStopwatchBound by mutableStateOf(false)
     private var isCountdownBound by mutableStateOf(false)
-
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (intent.getBooleanExtra(AlarmReceiver.IS_REPORT_INTENT_EXTRA, false)) {
+            startScreenRoute = Screen.WorkStatistic.route
+        }
+
         setContent {
             WorkTrackerTheme(darkTheme = true) {
                 navController = rememberAnimatedNavController()
@@ -79,6 +85,7 @@ class MainActivity: ComponentActivity() {
                     Box(modifier = Modifier.fillMaxSize()) {
                         SetupNavGraph(
                             navController = navController,
+                            startDestination = startScreenRoute,
                             stopwatchService = stopwatchService,
                             countdownService = countdownService,
                             stopwatchController = stopwatchController,

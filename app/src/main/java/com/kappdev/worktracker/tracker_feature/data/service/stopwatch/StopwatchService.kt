@@ -126,7 +126,7 @@ class StopwatchService: Service() {
 
     private fun startStopwatch() {
         currentState.value = ServiceState.Started
-        timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
+        timer = fixedRateTimer(initialDelay = 0L, period = 1000L) {
             duration = duration.plus(1.seconds)
             updateTimeUnits()
             updateNotification()

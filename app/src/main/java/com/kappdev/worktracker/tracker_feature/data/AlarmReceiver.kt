@@ -52,6 +52,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun sendReportNotification(context: Context, title: String, content: String) {
         val contentIntent = Intent(context, MainActivity::class.java)
+        contentIntent.putExtra(IS_REPORT_INTENT_EXTRA, true)
         val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
         val pendingIntent = PendingIntent.getActivity(context, ACTIVITY_REQUEST_CODE, contentIntent, flag)
 
@@ -104,6 +105,7 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun getTodayReport() = getDailyReportFor(LocalDate.now())
 
     companion object {
+        const val IS_REPORT_INTENT_EXTRA = "REPORT_INTENT_EXTRA"
         const val NOTIFICATION_CHANNEL_ID = "DAILY_REPORTS_NOTIFICATION_ID"
         const val NOTIFICATION_CHANNEL_NAME = "DAILY_REPORT_NOTIFICATION"
         const val ACTIVITY_REQUEST_CODE = 1237
