@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -14,6 +15,7 @@ import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.AddEditActivityViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.OutlineTextField
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.SelectorField
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.SelectTimeBottomSheet
 import com.kappdev.worktracker.ui.spacing
 import kotlinx.coroutines.launch
@@ -25,9 +27,10 @@ fun AddEditActivityScreen(
     activityId: Long?,
     viewModel: AddEditActivityViewModel = hiltViewModel()
 ) {
+    val focusManager = LocalFocusManager.current
     val navigate = viewModel.navigate.value
-    val name = viewModel.name.value
     val target = viewModel.target.value
+    val name = viewModel.name.value
 
     LaunchedEffect(key1 = true) {
         if (activityId != null && activityId > 0) {
@@ -45,7 +48,10 @@ fun AddEditActivityScreen(
         }
     }
 
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
     val scope = rememberCoroutineScope()
     fun hideSheet() = scope.launch { bottomSheetState.hide() }
     fun showSheet() = scope.launch { bottomSheetState.show() }
@@ -84,12 +90,15 @@ fun AddEditActivityScreen(
                     }
                 )
 
-                TargetField(
-                    value = target.stringFormat(),
+                SelectorField(
+                    value = target.stringFormat().ifBlank { stringResource(R.string.target_placeholder) },
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = ::showSheet
+                    label = stringResource(R.string.label_target),
+                    onClick = {
+                        focusManager.clearFocus()
+                        showSheet()
+                    }
                 )
-                // later implementation
             }
         }
     }

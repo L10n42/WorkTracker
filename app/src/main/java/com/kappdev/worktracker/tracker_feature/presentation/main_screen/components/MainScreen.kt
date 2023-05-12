@@ -51,7 +51,10 @@ fun MainScreen(
     val selectedActivities = viewModel.selectedActivities
 
     var currentSheet by rememberSaveable { mutableStateOf<MainScreenBottomSheet?>(null) }
-    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
 
     fun closeSheet() = scope.launch { sheetState.hide() }
 

@@ -9,6 +9,7 @@
     <string name="label_name">Name</string>
     <string name="label_notification_msg">Notification msg</string>
     <string name="label_target">Target</string>
+    <string name="label_report_time">Report time</string>
     <string name="name_placeholder">e.g. Reading.</string>
     <string name="notification_msg_placeholder">Enter message here.</string>
     <string name="target_placeholder">Everyday time target.</string>
@@ -27,6 +28,7 @@
     <string name="by_time_title">By Date</string>
 
     <string name="select_date_title">Select Date</string>
+    <string name="select_report_time_title">Select time for reports</string>
 
     <string name="remove_title">Remove</string>
     <string name="remove_activities_msg">Are you sure you want to remove all this activities and all that progress permanently?</string>
@@ -34,7 +36,8 @@
     <string name="set_time_title">Set Time</string>
     <string name="set_target_title">Set Target</string>
 
-    <string name="unfilled_field_error">Enter a name!</string>
+    <string name="unfilled_field_error">Enter name!</string>
+    <string name="unfilled_target_error">Set target!</string>
     <string name="wrong_time_error">set at least 1 sec</string>
 
     <string name="title_less">Less</string>
@@ -46,7 +49,8 @@
     <string name="activity_work_finished">You have finished %1$s!</string>
 
     <string name="voice_notification_title">Voice notification</string>
-    <string name="default_notification_msg">Congratulation! You have finished @.</string>
+    <string name="everyday_reports_enable_title">Everyday reports</string>
+    <string name="default_notification_msg">Congratulation! You have finished @name.</string>
 
     <string name="gv_day">Day</string>
     <string name="gv_week">Week</string>

@@ -38,6 +38,7 @@ import kotlin.time.toDuration
 class CountdownService: Service(), TextToSpeech.OnInitListener {
 
     @Inject
+    @Named("ServiceNotificationManager")
     lateinit var notificationManager: NotificationManager
 
     @Inject

@@ -1,6 +1,5 @@
 package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

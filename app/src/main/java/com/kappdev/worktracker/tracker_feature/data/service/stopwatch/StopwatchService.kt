@@ -39,6 +39,7 @@ import kotlin.time.Duration.Companion.seconds
 class StopwatchService: Service() {
 
     @Inject
+    @Named("ServiceNotificationManager")
     lateinit var notificationManager: NotificationManager
 
     @Inject

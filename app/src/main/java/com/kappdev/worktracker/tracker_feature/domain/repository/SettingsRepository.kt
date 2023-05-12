@@ -1,6 +1,7 @@
 package com.kappdev.worktracker.tracker_feature.domain.repository
 
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
+import java.time.LocalTime
 
 interface SettingsRepository {
 
@@ -15,4 +16,12 @@ interface SettingsRepository {
     fun setNotificationMsg(msg: String)
 
     fun getNotificationMsg(): String
+
+    fun setEverydayReports(enable: Boolean)
+
+    fun everydayReportsEnable(): Boolean
+
+    fun setReportTime(time: LocalTime)
+
+    fun getReportTime(): LocalTime
 }

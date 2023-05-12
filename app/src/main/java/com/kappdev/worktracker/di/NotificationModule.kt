@@ -50,6 +50,7 @@ object NotificationModule {
     }
 
     @Provides
+    @Named("ServiceNotificationManager")
     @ServiceScoped
     fun provideNotificationManager(
         @ApplicationContext context: Context
@@ -68,7 +69,7 @@ object NotificationModule {
     @ServiceScoped
     fun provideDoneNotification(
         context: Application,
-        notificationManager: NotificationManager
+        @Named("ServiceNotificationManager") notificationManager: NotificationManager
     ): DoneNotification {
         return DoneNotification(context, notificationManager)
     }

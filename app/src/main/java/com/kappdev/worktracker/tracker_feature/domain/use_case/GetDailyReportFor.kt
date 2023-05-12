@@ -1,7 +1,7 @@
 package com.kappdev.worktracker.tracker_feature.domain.use_case
 
 import androidx.compose.ui.graphics.Color
-import com.kappdev.worktracker.tracker_feature.domain.model.PieChartData
+import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
 import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.ColorUtil
@@ -10,13 +10,13 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Named
 
-class GetPieChartDataFor @Inject constructor(
+class GetDailyReportFor @Inject constructor(
     @Named("appActivityRepository") private val activityRepository: ActivityRepository,
     @Named("appSessionRepository") private val sessionRepository: SessionRepository
 ) {
 
-    operator fun invoke(date: LocalDate): List<PieChartData> {
-        val data = mutableListOf<PieChartData>()
+    operator fun invoke(date: LocalDate): List<ReportData> {
+        val data = mutableListOf<ReportData>()
         val dataMap = mutableMapOf<Long, Long>()
         val colors = mutableListOf<Color>()
 
@@ -36,7 +36,7 @@ class GetPieChartDataFor @Inject constructor(
                     color = RandomColorGenerator.getBrightColor()
                 }
 
-                val value = PieChartData(
+                val value = ReportData(
                     activity = activity,
                     timeValue = entry.value,
                     percent = percent,

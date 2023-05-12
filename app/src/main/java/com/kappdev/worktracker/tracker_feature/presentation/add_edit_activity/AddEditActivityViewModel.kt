@@ -1,9 +1,12 @@
 package com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity
 
+import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kappdev.worktracker.R
+import com.kappdev.worktracker.core.common.makeToast
 import com.kappdev.worktracker.tracker_feature.domain.model.*
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetActivityByIdUseCase
 import com.kappdev.worktracker.tracker_feature.domain.use_case.InsertActivityUseCase
@@ -15,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditActivityViewModel @Inject constructor(
     private val insertActivity: InsertActivityUseCase,
-    private val getActivityById: GetActivityByIdUseCase
+    private val getActivityById: GetActivityByIdUseCase,
+    private val app: Application
 ) : ViewModel() {
     private val _activity = mutableStateOf(Activity.Empty)
     val activity: State<Activity> = _activity
@@ -28,6 +32,13 @@ class AddEditActivityViewModel @Inject constructor(
 
     private val _navigate = mutableStateOf<String?>(null)
     val navigate: State<String?> = _navigate
+
+    fun detectErrorAndShowToast() {
+        when {
+            name.value.isBlank() -> app.makeToast(R.string.unfilled_field_error)
+            target.value.isEmpty() -> app.makeToast(R.string.unfilled_target_error)
+        }
+    }
 
     fun save() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -57,9 +68,7 @@ class AddEditActivityViewModel @Inject constructor(
     private fun fillWith(activity: Activity) {
         _activity.value = activity
         setName(activity.name)
-        setTarget(
-            Time.from(activity.targetInSec)
-        )
+        setTarget(Time.from(activity.targetInSec))
     }
 
     fun setTarget(time: Time) {

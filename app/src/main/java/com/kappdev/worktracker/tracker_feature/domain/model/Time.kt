@@ -23,7 +23,7 @@ data class Time(
 
 fun Time.isNotEmpty() = !this.isEmpty()
 
-fun Time.isEmpty() = (this.getHours() < 0) && (this.getMinutes() < 0) && (this.getSeconds() < 0)
+fun Time.isEmpty() = (this.getHours() <= 0) && (this.getMinutes() <= 0) && (this.getSeconds() <= 0)
 
 fun Time.inMillis() = this.inSeconds() * 1000L
 

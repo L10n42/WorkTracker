@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.presentation.common.components
 
+import android.graphics.Color.toArgb
 import android.view.LayoutInflater
 import android.widget.NumberPicker
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.kappdev.worktracker.R
@@ -88,12 +90,15 @@ private fun NumberPicker(
         value = timerValue
     }
 
+    val backgroundColor = MaterialTheme.colors.background.toArgb()
     AndroidView(
         modifier = modifier,
         update = { it.value = value },
         factory = { context ->
             val view = LayoutInflater.from(context).inflate(R.layout.number_picker, null)
             val numberPicker = view.findViewById<NumberPicker>(R.id.numberPicker)
+            numberPicker.setBackgroundColor(backgroundColor)
+            numberPicker.clipToOutline = true
             numberPicker.minValue = min
             numberPicker.maxValue = max
             numberPicker.value = value

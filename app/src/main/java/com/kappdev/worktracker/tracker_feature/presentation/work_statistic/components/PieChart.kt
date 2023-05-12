@@ -19,13 +19,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kappdev.worktracker.tracker_feature.domain.model.PieChartData
+import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 
 @Composable
 fun PieChart(
     modifier: Modifier = Modifier,
-    data: List<PieChartData>,
+    data: List<ReportData>,
     totalTime: Long,
     pieSize: Dp = 200.dp,
     chartBarWidth: Dp = 32.dp,

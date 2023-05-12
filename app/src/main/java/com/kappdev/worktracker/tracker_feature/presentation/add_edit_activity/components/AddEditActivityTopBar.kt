@@ -7,10 +7,8 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.kappdev.worktracker.R
-import com.kappdev.worktracker.core.common.makeToast
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.AddEditActivityViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.BackButton
@@ -21,7 +19,6 @@ import com.kappdev.worktracker.ui.elevation
 fun AddEditActivityTopBar(
     viewModel: AddEditActivityViewModel
 ) {
-    val context = LocalContext.current
     val title = viewModel.activity.value.name
     TopAppBar(
         backgroundColor = MaterialTheme.colors.surface,
@@ -47,7 +44,7 @@ fun AddEditActivityTopBar(
                         viewModel.save()
                         viewModel.navigate(Screen.Main.route)
                     } else {
-                        context.makeToast(R.string.unfilled_field_error)
+                        viewModel.detectErrorAndShowToast()
                     }
                 }
             ) {

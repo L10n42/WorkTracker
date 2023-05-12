@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.core.navigation.Screen
-import com.kappdev.worktracker.tracker_feature.domain.model.PieChartData
+import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.BackButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.LoadingScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.DataState
@@ -72,7 +72,7 @@ fun WorkStatisticScreen(
 
 @Composable
 private fun Content(
-    data: List<PieChartData>,
+    data: List<ReportData>,
     totalTime: Long,
     navigate: (route: String) -> Unit
 ) {

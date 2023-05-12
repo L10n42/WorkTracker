@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kappdev.worktracker.tracker_feature.domain.model.PieChartData
+import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
 import com.kappdev.worktracker.ui.customShape
@@ -24,7 +24,7 @@ import com.kappdev.worktracker.ui.spacing
 @Composable
 fun PieCard(
     modifier: Modifier = Modifier,
-    data: PieChartData,
+    data: ReportData,
     animDuration: Int
 ) {
     var targetPercent by remember {
