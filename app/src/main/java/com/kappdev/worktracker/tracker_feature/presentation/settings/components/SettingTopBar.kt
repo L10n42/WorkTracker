@@ -8,13 +8,14 @@ import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.BackButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.Title
 import com.kappdev.worktracker.ui.elevation
+import com.kappdev.worktracker.ui.theme.SuperDarkGray
 
 @Composable
 fun SettingsTopBar(
     navigate: (route: String) -> Unit,
 ) {
     TopAppBar(
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = SuperDarkGray,
         elevation = MaterialTheme.elevation.extraSmall,
         navigationIcon = {
             BackButton {

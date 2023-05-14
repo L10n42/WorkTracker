@@ -19,13 +19,9 @@ val Completed10 = Color(0xFF880000)
 
 val HeatScaleColors = listOf(Completed10, Completed30, Completed50, Completed75, Completed100)
 
-val Green75 = Color(0xBF1ED760)
-val Green50 = Color(0x801ED760)
-val Green30 = Color(0x4D1ED760)
-val Green10 = Color(0x1A1ED760)
-
+val SuperDarkGray = Color(0xFF121212)
 val DarkGray = Color(0xFF191919)
-val LightGray = Color(0xFF252525)
+val LightGray = Color(0xFF242424)
 val SuperLightGray = Color(0xFFf1f1ef)
 
 val onSurfaceDark = Color(0xFFd4d4d4)

@@ -238,10 +238,10 @@ private fun DateCard(
     modifier: Modifier = Modifier
 ) {
     val color = when {
-        time > target -> Completed100
-        time > (target * 0.75f) -> Completed75
-        time > (target * 0.5f) -> Completed50
-        time > (target * 0.3f) -> Completed30
+        time >= target -> Completed100
+        time >= (target * 0.75f) -> Completed75
+        time >= (target * 0.5f) -> Completed50
+        time >= (target * 0.3f) -> Completed30
         time > 0 -> Completed10
         else -> MaterialTheme.colors.surface
     }

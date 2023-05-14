@@ -14,6 +14,7 @@ import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.Ad
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.BackButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.Title
 import com.kappdev.worktracker.ui.elevation
+import com.kappdev.worktracker.ui.theme.SuperDarkGray
 
 @Composable
 fun AddEditActivityTopBar(
@@ -21,7 +22,7 @@ fun AddEditActivityTopBar(
 ) {
     val title = viewModel.activity.value.name
     TopAppBar(
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = SuperDarkGray,
         elevation = MaterialTheme.elevation.extraSmall,
         title = {
             Title(

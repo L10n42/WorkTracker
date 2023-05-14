@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -31,6 +32,7 @@ import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownContro
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets.CountdownBar
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchBar
+import com.kappdev.worktracker.ui.theme.SuperDarkGray
 import com.kappdev.worktracker.ui.theme.WorkTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -49,6 +51,7 @@ class MainActivity: ComponentActivity() {
     private var startScreenRoute by mutableStateOf(Screen.Main.route)
     private var isStopwatchBound by mutableStateOf(false)
     private var isCountdownBound by mutableStateOf(false)
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +72,7 @@ class MainActivity: ComponentActivity() {
                     Screen.StopwatchTimer.route,
                     Screen.CountdownTimer.route,
                     Screen.WorkStatistic.route -> MaterialTheme.colors.background
-                    else -> MaterialTheme.colors.surface
+                    else -> SuperDarkGray
                 }
                 val navigationBarColor = when (currentRoute) {
                     Screen.WorkStatistic.route -> MaterialTheme.colors.surface
