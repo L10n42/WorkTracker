@@ -8,7 +8,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.kappdev.worktracker.tracker_feature.data.AlarmReceiver
+import com.kappdev.worktracker.tracker_feature.data.receiver.AlarmReceiver
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

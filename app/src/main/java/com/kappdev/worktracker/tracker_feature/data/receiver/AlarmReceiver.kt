@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.data
+package com.kappdev.worktracker.tracker_feature.data.receiver
 
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,9 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.MainActivity
 import com.kappdev.worktracker.R
-import com.kappdev.worktracker.tracker_feature.domain.RemainderManager
 import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
-import com.kappdev.worktracker.tracker_feature.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetDailyReportFor
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,18 +24,11 @@ import javax.inject.Named
 class AlarmReceiver : BroadcastReceiver() {
 
     @Inject
-    @Named("AppSettingsRep")
-    lateinit var settings: SettingsRepository
-
-    @Inject
     @Named("SingletonNotificationManager")
     lateinit var notificationManager: NotificationManager
 
     @Inject
     lateinit var getDailyReportFor: GetDailyReportFor
-
-    @Inject
-    lateinit var remainderManager: RemainderManager
 
     override fun onReceive(context: Context, intent: Intent?) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -46,7 +37,6 @@ class AlarmReceiver : BroadcastReceiver() {
             val title = getTitleFrom(todayReport)
 
             sendReportNotification(context = context, content = content, title = title)
-            //remainderManager.updateRemainder(settings.getReportTime())
         }
     }
 
@@ -62,7 +52,7 @@ class AlarmReceiver : BroadcastReceiver() {
             setAutoCancel(true)
             setCategory(NotificationCompat.CATEGORY_ALARM)
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            priority = NotificationCompat.PRIORITY_HIGH
+            setPriority(NotificationCompat.PRIORITY_HIGH)
             setSmallIcon(R.drawable.baseline_assignment_24)
             setStyle(
                 NotificationCompat.BigTextStyle().bigText(content)

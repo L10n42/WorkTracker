@@ -6,7 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.kappdev.worktracker.tracker_feature.data.AlarmReceiver
+import com.kappdev.worktracker.tracker_feature.data.receiver.AlarmReceiver
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime

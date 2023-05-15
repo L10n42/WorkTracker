@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kappdev.worktracker">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".WorkTrackerApplication"
@@ -23,7 +24,6 @@
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
-            android:label="@string/app_name"
             android:theme="@style/Theme.WorkTracker">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +32,16 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".tracker_feature.data.AlarmReceiver"
+            android:name=".tracker_feature.data.receiver.BootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".tracker_feature.data.receiver.AlarmReceiver"
             android:enabled="true" />
         <service
             android:name=".tracker_feature.data.service.stopwatch.StopwatchService"
