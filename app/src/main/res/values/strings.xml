@@ -7,6 +7,7 @@
     <string name="edit_activity_title">Edit Activity</string>
 
     <string name="label_name">Name</string>
+    <string name="label_password">Password</string>
     <string name="label_notification_msg">Notification msg</string>
     <string name="label_target">Target</string>
     <string name="label_report_time">Report time</string>
@@ -21,6 +22,7 @@
     <string name="btn_finish">Finish</string>
     <string name="btn_pause">Pause</string>
     <string name="btn_ok">OK</string>
+    <string name="btn_next">Next</string>
 
     <string name="asc_title">Ascending</string>
     <string name="desc_title">Descending</string>
@@ -50,6 +52,7 @@
 
     <string name="voice_notification_title">Voice notification</string>
     <string name="everyday_reports_enable_title">Everyday reports</string>
+    <string name="privacy_enable_title">Privacy</string>
     <string name="default_notification_msg">Congratulation! You have finished @name.</string>
 
     <string name="gv_day">Day</string>
@@ -57,6 +60,7 @@
     <string name="gv_month">Month</string>
     <string name="gv_year">Year</string>
     <string name="use_keywords_msg">Use @name to mention the activity, and use @time to mention the time.</string>
+    <string name="set_password_title">Set Password</string>
 
     <string-array name="week_days">
         <item>Mon</item>

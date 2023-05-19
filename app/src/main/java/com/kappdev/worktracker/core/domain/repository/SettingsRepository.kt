@@ -1,4 +1,4 @@
-package com.kappdev.worktracker.tracker_feature.domain.repository
+package com.kappdev.worktracker.core.domain.repository
 
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
 import java.time.LocalTime
@@ -24,4 +24,12 @@ interface SettingsRepository {
     fun setReportTime(time: LocalTime)
 
     fun getReportTime(): LocalTime
+
+    fun setPrivacyEnable(enable: Boolean)
+
+    fun privacyEnable(): Boolean
+
+    fun setPassword(password: String)
+
+    fun checkPassword(password: String): Boolean
 }

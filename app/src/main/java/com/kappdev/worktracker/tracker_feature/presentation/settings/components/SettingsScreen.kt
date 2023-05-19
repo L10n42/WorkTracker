@@ -1,11 +1,12 @@
 package com.kappdev.worktracker.tracker_feature.presentation.settings.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,7 +17,9 @@ import com.kappdev.worktracker.tracker_feature.presentation.common.components.Ti
 import com.kappdev.worktracker.tracker_feature.presentation.settings.SettingsViewModel
 import com.kappdev.worktracker.ui.spacing
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
@@ -25,8 +28,11 @@ fun SettingsScreen(
     val voiceNotificationEnable = viewModel.voiceNotification.value
     val everydayReportsEnable = viewModel.everydayReportEnable.value
     val notificationMsg = viewModel.notificationMsg.value
+    val privacyEnable = viewModel.privacyEnable.value
     val reportTime = viewModel.reportTime.value
+    val password = viewModel.password.value
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
 
     val timeDialogState = rememberMaterialDialogState()
     TimePicker(
@@ -44,66 +50,111 @@ fun SettingsScreen(
         }
     )
 
-    Scaffold(
-        topBar = {
-            SettingsTopBar(navigate = navController::navigate)
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
+
+    fun closeSheet() = scope.launch { sheetState.hide() }
+    fun openSheet() = scope.launch { sheetState.show() }
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetBackgroundColor = Color.Transparent,
+        sheetContent = {
+            SetPasswordBottomSheet(
+                password = password,
+                onPasswordChanged = viewModel::setPassword,
+                onCommit = {
+                    val isCorrect = viewModel.isPasswordCorrect()
+                    if (isCorrect) {
+                        viewModel.setPrivacyEnable(true)
+                        viewModel.updatePassword()
+                        closeSheet()
+                        focusManager.clearFocus()
+                    }
+                    isCorrect
+                }
+            )
         }
-    ) { scaffoldPadding ->
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(scaffoldPadding),
-            contentPadding = PaddingValues(all = MaterialTheme.spacing.medium),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
-        ) {
-            
-            item {
-                TitledSwitch(
-                    title = stringResource(R.string.voice_notification_title),
-                    modifier = Modifier.fillMaxWidth(),
-                    checked = voiceNotificationEnable,
-                    onSwitch = viewModel::setVoiceNotification
-                )
+    ) {
+        Scaffold(
+            topBar = {
+                SettingsTopBar(navigate = navController::navigate)
             }
+        ) { scaffoldPadding ->
 
-            item {
-                NotificationMsgField(
-                    value = notificationMsg,
-                    enable = voiceNotificationEnable,
-                    label = stringResource(R.string.label_notification_msg),
-                    hint = stringResource(R.string.notification_msg_placeholder),
-                    modifier = Modifier.fillMaxWidth(),
-                    onValueChanged = viewModel::setNotificationMsg
-                )
-            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(scaffoldPadding),
+                contentPadding = PaddingValues(all = MaterialTheme.spacing.medium),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
+            ) {
 
-            item {
-                TitledSwitch(
-                    title = stringResource(R.string.everyday_reports_enable_title),
-                    modifier = Modifier.fillMaxWidth(),
-                    checked = everydayReportsEnable,
-                    onSwitch = { enable ->
-                        viewModel.setEverydayReportsEnable(enable)
-                        if (enable) {
-                            viewModel.updateRemainder()
-                        } else {
-                            viewModel.cancelRemainder()
+                item {
+                    TitledSwitch(
+                        title = stringResource(R.string.voice_notification_title),
+                        modifier = Modifier.fillMaxWidth(),
+                        checked = voiceNotificationEnable,
+                        onSwitch = viewModel::setVoiceNotification
+                    )
+                }
+
+                item {
+                    NotificationMsgField(
+                        value = notificationMsg,
+                        enable = voiceNotificationEnable,
+                        label = stringResource(R.string.label_notification_msg),
+                        hint = stringResource(R.string.notification_msg_placeholder),
+                        modifier = Modifier.fillMaxWidth(),
+                        onValueChanged = viewModel::setNotificationMsg
+                    )
+                }
+
+                item {
+                    TitledSwitch(
+                        title = stringResource(R.string.everyday_reports_enable_title),
+                        modifier = Modifier.fillMaxWidth(),
+                        checked = everydayReportsEnable,
+                        onSwitch = { enable ->
+                            viewModel.setEverydayReportsEnable(enable)
+                            if (enable) {
+                                viewModel.updateRemainder()
+                            } else {
+                                viewModel.cancelRemainder()
+                            }
                         }
-                    }
-                )
-            }
+                    )
+                }
 
-            item {
-                SelectorField(
-                    value = reportTime.toString(),
-                    enable = everydayReportsEnable,
-                    modifier = Modifier.fillMaxWidth(),
-                    label = stringResource(R.string.label_report_time),
-                    onClick = {
-                        timeDialogState.show()
-                    }
-                )
+                item {
+                    SelectorField(
+                        value = reportTime.toString(),
+                        enable = everydayReportsEnable,
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(R.string.label_report_time),
+                        onClick = {
+                            timeDialogState.show()
+                        }
+                    )
+                }
+
+                item {
+                    TitledSwitch(
+                        title = stringResource(R.string.privacy_enable_title),
+                        modifier = Modifier.fillMaxWidth(),
+                        checked = privacyEnable,
+                        onSwitch = { enable ->
+                            if (enable) {
+                                openSheet()
+                            } else {
+                                viewModel.setPrivacyEnable(false)
+                                viewModel.updatePassword()
+                            }
+                        }
+                    )
+                }
             }
         }
     }

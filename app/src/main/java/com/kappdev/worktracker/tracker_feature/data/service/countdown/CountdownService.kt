@@ -19,7 +19,7 @@ import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.model.*
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
-import com.kappdev.worktracker.tracker_feature.domain.repository.SettingsRepository
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope

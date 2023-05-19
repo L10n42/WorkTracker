@@ -8,14 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
-import com.kappdev.worktracker.tracker_feature.domain.repository.SettingsRepository
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetSortedActivities
 import com.kappdev.worktracker.tracker_feature.domain.use_case.RemoveActivitiesUseCase
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named

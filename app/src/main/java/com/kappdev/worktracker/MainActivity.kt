@@ -70,7 +70,8 @@ class MainActivity: ComponentActivity() {
                 val statusBarColor = when (currentRoute) {
                     Screen.StopwatchTimer.route,
                     Screen.CountdownTimer.route,
-                    Screen.WorkStatistic.route -> MaterialTheme.colors.background
+                    Screen.WorkStatistic.route,
+                    Screen.Privacy.route -> MaterialTheme.colors.background
                     else -> SuperDarkGray
                 }
                 val navigationBarColor = when (currentRoute) {

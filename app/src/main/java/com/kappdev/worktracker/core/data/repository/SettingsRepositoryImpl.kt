@@ -1,9 +1,9 @@
-package com.kappdev.worktracker.tracker_feature.data.repository
+package com.kappdev.worktracker.core.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
 import com.kappdev.worktracker.R
-import com.kappdev.worktracker.tracker_feature.domain.repository.SettingsRepository
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
 import com.kappdev.worktracker.tracker_feature.domain.util.OrderType
 import java.time.LocalTime
@@ -61,6 +61,23 @@ class SettingsRepositoryImpl(
         return Gson().fromJson(json, LocalTime::class.java)
     }
 
+    override fun setPrivacyEnable(enable: Boolean) {
+        editor.putBoolean(PRIVACY_ENABLE_KEY, enable).apply()
+    }
+
+    override fun privacyEnable(): Boolean {
+        return sharedPreferences.getBoolean(PRIVACY_ENABLE_KEY, false)
+    }
+
+    override fun setPassword(password: String) {
+        editor.putString(PASSWORD_KEY, password).apply()
+    }
+
+    override fun checkPassword(password: String): Boolean {
+        val rightPassword = sharedPreferences.getString(PASSWORD_KEY, "") ?: ""
+        return rightPassword == password
+    }
+
     private data class OrderJson(val orderId: String, val typeId: String)
 
     companion object {
@@ -71,6 +88,8 @@ class SettingsRepositoryImpl(
         private const val ACTIVITY_ORDER_KEY = "ACTIVITY_ORDER_KEY"
         private const val REPORT_TIME_KEY = "REPORT_TIME_KEY"
         private const val VOICE_NOTIFICATION_KEY = "VOICE_NOTIFICATION_KEY"
+        private const val PRIVACY_ENABLE_KEY = "PRIVACY_ENABLE_KEY"
+        private const val PASSWORD_KEY = "PASSWORD_KEY"
         private const val VOICE_NOTIFICATION_MSG_KEY = "VOICE_NOTIFICATION_MSG_KEY"
         private const val EVERYDAY_REPORTS_ENABLE_KEY = "EVERYDAY_REPORTS_ENABLE_KEY"
     }

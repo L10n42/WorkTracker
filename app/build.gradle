@@ -52,6 +52,9 @@ android {
 
 dependencies {
 
+    // Biometric prompt
+    implementation "androidx.biometric:biometric:1.1.0"
+
     // date and time picker for compose
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc"
 

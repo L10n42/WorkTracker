@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.kappdev.worktracker.tracker_feature.domain.RemainderManager
-import com.kappdev.worktracker.tracker_feature.domain.repository.SettingsRepository
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Named

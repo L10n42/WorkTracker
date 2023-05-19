@@ -4,11 +4,13 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
+import com.kappdev.worktracker.core.data.repository.SettingsRepositoryImpl
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
@@ -17,6 +19,7 @@ import com.kappdev.worktracker.tracker_feature.presentation.activity_review.comp
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.components.AddEditActivityScreen
 import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets.CountdownTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.components.MainScreen
+import com.kappdev.worktracker.tracker_feature.presentation.privacy.components.PrivacyScreen
 import com.kappdev.worktracker.tracker_feature.presentation.settings.components.SettingsScreen
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchTimerScreen
 import com.kappdev.worktracker.tracker_feature.presentation.work_statistic.components.WorkStatisticScreen
@@ -31,9 +34,14 @@ fun SetupNavGraph(
     stopwatchController: StopwatchController,
     countdownController: CountdownController
 ) {
+    val setting = SettingsRepositoryImpl(LocalContext.current)
     AnimatedNavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = if (setting.privacyEnable()) {
+            Screen.Privacy.route
+        } else {
+            startDestination
+        }
     ) {
         composable(Screen.Main.route) {
             MainScreen(navController, stopwatchService, countdownService)
@@ -45,6 +53,12 @@ fun SetupNavGraph(
 
         composable(Screen.Settings.route) {
             SettingsScreen(navController)
+        }
+
+        composable(Screen.Privacy.route) {
+            PrivacyScreen {
+                navController.navigate(startDestination)
+            }
         }
 
         composable(

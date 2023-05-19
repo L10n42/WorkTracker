@@ -5,6 +5,7 @@ sealed class Screen(val route: String) {
     object AddEditActivity: Screen("add_edit_activity_screen")
     object WorkStatistic: Screen("work_statistic_screen")
     object Settings: Screen("settings_screen")
+    object Privacy: Screen("privacy_screen")
     object ActivityReview: Screen("activity_review_screen")
     object StopwatchTimer: Screen("stopwatch_timer_screen")
     object CountdownTimer: Screen("countdown_timer_screen")
