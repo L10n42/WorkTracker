@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.kappdev.worktracker.core.data.repository.SettingsRepositoryImpl
+import com.kappdev.worktracker.tracker_feature.BiometricPromptHelper
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
@@ -32,7 +33,8 @@ fun SetupNavGraph(
     stopwatchService: StopwatchService,
     countdownService: CountdownService,
     stopwatchController: StopwatchController,
-    countdownController: CountdownController
+    countdownController: CountdownController,
+    biometricPromptHelper: BiometricPromptHelper
 ) {
     val setting = SettingsRepositoryImpl(LocalContext.current)
     AnimatedNavHost(
@@ -56,8 +58,10 @@ fun SetupNavGraph(
         }
 
         composable(Screen.Privacy.route) {
-            PrivacyScreen {
-                navController.navigate(startDestination)
+            PrivacyScreen(biometricPromptHelper) {
+                navController.navigate(startDestination) {
+                    popUpTo(0)
+                }
             }
         }
 

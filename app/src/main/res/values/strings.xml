@@ -24,6 +24,15 @@
     <string name="btn_ok">OK</string>
     <string name="btn_next">Next</string>
 
+    <string name="login_title">Enter password</string>
+    <string name="wrong_password_error">wrong password</string>
+    <string name="use_biometric_title">Use biometric</string>
+
+    <string name="use_password_btn">Use password</string>
+    <string name="biometric_prompt_title">Login</string>
+    <string name="biometric_prompt_description">Log in using your biometric credential</string>
+    <string name="biometric_auth_failed">Auth failed</string>
+
     <string name="asc_title">Ascending</string>
     <string name="desc_title">Descending</string>
     <string name="by_name_title">By Name</string>

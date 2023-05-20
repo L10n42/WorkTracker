@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -24,6 +26,7 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.core.navigation.SetupNavGraph
+import com.kappdev.worktracker.tracker_feature.BiometricPromptHelper
 import com.kappdev.worktracker.tracker_feature.data.receiver.AlarmReceiver
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
@@ -37,7 +40,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity: ComponentActivity() {
+class MainActivity: FragmentActivity() {
     @Inject
     lateinit var stopwatchController: StopwatchController
     @Inject
@@ -92,7 +95,8 @@ class MainActivity: ComponentActivity() {
                             stopwatchService = stopwatchService,
                             countdownService = countdownService,
                             stopwatchController = stopwatchController,
-                            countdownController = countdownController
+                            countdownController = countdownController,
+                            biometricPromptHelper = BiometricPromptHelper(this@MainActivity)
                         )
                         StopwatchBar(navController, stopwatchService, stopwatchController)
                         CountdownBar(navController, countdownService, countdownController)
