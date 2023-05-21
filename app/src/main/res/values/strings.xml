@@ -8,6 +8,7 @@
 
     <string name="label_name">Name</string>
     <string name="label_password">Password</string>
+    <string name="label_confirm_password">Confirm password</string>
     <string name="label_notification_msg">Notification msg</string>
     <string name="label_target">Target</string>
     <string name="label_report_time">Report time</string>

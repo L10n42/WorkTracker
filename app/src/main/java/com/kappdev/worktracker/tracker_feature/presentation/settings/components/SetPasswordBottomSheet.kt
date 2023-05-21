@@ -83,6 +83,7 @@ fun SetPasswordBottomSheet(
         PasswordTextField(
             value = password.second,
             isError = isPasswordError,
+            label = stringResource(R.string.label_confirm_password),
             modifier = Modifier.fillMaxWidth(),
             imaAction = ImeAction.Done,
             keyboardActions = KeyboardActions(

@@ -25,12 +25,13 @@ import com.kappdev.worktracker.R
 @Composable
 fun PasswordTextField(
     value: String,
-    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     enable: Boolean = true,
     isError: Boolean = false,
     imaAction: ImeAction = ImeAction.Done,
-    keyboardActions: KeyboardActions = KeyboardActions.Default
+    label: String = stringResource(R.string.label_password),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    onValueChange: (String) -> Unit
 ) {
     var isPasswordVisible by rememberSaveable {
         mutableStateOf(false)
@@ -47,7 +48,7 @@ fun PasswordTextField(
         colors = TextFieldDefaults.customOutlinedTextFieldColors(),
         label = {
             Text(
-                text = stringResource(R.string.label_password),
+                text = label,
                 fontSize = 16.sp
             )
         },
@@ -58,7 +59,7 @@ fun PasswordTextField(
         visualTransformation = if (isPasswordVisible) {
             VisualTransformation.None
         } else {
-            PasswordVisualTransformation()
+            PasswordVisualTransformation('*')
         },
         trailingIcon = {
             AnimatedVisibilityButton(isVisible = isPasswordVisible) {
