@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.kappdev.worktracker"
-        minSdk 21
+        minSdk 23
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -51,6 +51,9 @@ android {
 }
 
 dependencies {
+
+    // security sharedPrefs
+    implementation "androidx.security:security-crypto:1.0.0"
 
     // Biometric prompt
     implementation "androidx.biometric:biometric:1.1.0"

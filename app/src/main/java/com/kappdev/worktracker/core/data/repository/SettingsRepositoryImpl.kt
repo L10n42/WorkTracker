@@ -1,6 +1,8 @@
 package com.kappdev.worktracker.core.data.repository
 
 import android.content.Context
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import com.google.gson.Gson
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.domain.repository.SettingsRepository
@@ -11,6 +13,15 @@ import java.time.LocalTime
 class SettingsRepositoryImpl(
     private val context: Context
 ): SettingsRepository {
+
+    private val masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+    private val encryptedSharedPref = EncryptedSharedPreferences.create(
+        SECURED_PREFS, masterKey, context,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+    private val encryptedEditor = encryptedSharedPref.edit()
+
     private val sharedPreferences = context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE)
     private val editor = sharedPreferences.edit()
 
@@ -70,11 +81,11 @@ class SettingsRepositoryImpl(
     }
 
     override fun setPassword(password: String) {
-        editor.putString(PASSWORD_KEY, password).apply()
+        encryptedEditor.putString(PASSWORD_KEY, password).apply()
     }
 
     override fun checkPassword(password: String): Boolean {
-        val rightPassword = sharedPreferences.getString(PASSWORD_KEY, "") ?: ""
+        val rightPassword = encryptedSharedPref.getString(PASSWORD_KEY, "") ?: ""
         return rightPassword == password
     }
 
@@ -85,6 +96,7 @@ class SettingsRepositoryImpl(
         private val DefaultReportTime = LocalTime.of(21, 0)
 
         private const val SETTINGS = "settings"
+        private const val SECURED_PREFS = "secured_shared_prefs"
         private const val ACTIVITY_ORDER_KEY = "ACTIVITY_ORDER_KEY"
         private const val REPORT_TIME_KEY = "REPORT_TIME_KEY"
         private const val VOICE_NOTIFICATION_KEY = "VOICE_NOTIFICATION_KEY"
