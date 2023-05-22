@@ -71,6 +71,7 @@
     <string name="gv_year">Year</string>
     <string name="use_keywords_msg">Use @name to mention the activity, and use @time to mention the time.</string>
     <string name="set_password_title">Set Password</string>
+    <string name="loading_title">Loading</string>
 
     <string-array name="week_days">
         <item>Mon</item>

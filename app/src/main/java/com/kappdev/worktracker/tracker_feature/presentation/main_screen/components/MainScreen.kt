@@ -18,8 +18,7 @@ import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.EmptyScreen
-import com.kappdev.worktracker.tracker_feature.presentation.common.components.LoadingScreen
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.CustomLoadingScreen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.NoDataScreen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.VerticalSpace
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.DataState
@@ -98,7 +97,7 @@ fun MainScreen(
             ) { animDataState ->
                 when (animDataState) {
                     DataState.NO_DATA -> NoDataScreen()
-                    DataState.LOADING, DataState.IDLE -> LoadingActivitiesAnimation()
+                    DataState.LOADING, DataState.IDLE -> CustomLoadingScreen()
                     DataState.READY -> {
                         LazyColumn(
                             modifier = Modifier
