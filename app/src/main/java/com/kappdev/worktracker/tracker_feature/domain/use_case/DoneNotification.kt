@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.MainActivity
@@ -17,6 +18,8 @@ class DoneNotification @Inject constructor(
     private val context: Application,
     private val notificationManager: NotificationManager
 ) {
+    private val doneSoundUri = Uri.parse("android.resource://${context.packageName}/${R.raw.achievement_bell}")
+
     fun makeNotification(
         title: String,
         shortMessage: CharSequence,
@@ -42,10 +45,10 @@ class DoneNotification @Inject constructor(
             setStyle(bigTextFrom(fullMessage))
             setContentIntent(openAppIntent())
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            setSound(doneSoundUri)
             priority = NotificationCompat.PRIORITY_HIGH
             setVibrate(longArrayOf(300, 100, 300))
             setDefaults(NotificationCompat.DEFAULT_LIGHTS)
-            setDefaults(NotificationCompat.DEFAULT_SOUND)
         }
     }
 
@@ -54,7 +57,7 @@ class DoneNotification @Inject constructor(
     private fun openAppIntent(): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
         return PendingIntent.getActivity(
-            context, ACTIVITY_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            context, ACTIVITY_REQUEST_CODE, intent, PendingIntent.FLAG_IMMUTABLE
         )
     }
 
@@ -70,8 +73,11 @@ class DoneNotification @Inject constructor(
                 enableLights(true)
                 vibrationPattern = longArrayOf(300, 100, 300)
                 setSound(
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
-                    AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build()
+                    /* sound = */ doneSoundUri,
+                    /* audioAttributes = */ AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build()
                 )
                 lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
             }
