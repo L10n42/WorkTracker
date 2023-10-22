@@ -43,8 +43,7 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun sendReportNotification(context: Context, title: String, content: String) {
         val contentIntent = Intent(context, MainActivity::class.java)
         contentIntent.putExtra(IS_REPORT_INTENT_EXTRA, true)
-        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-        val pendingIntent = PendingIntent.getActivity(context, ACTIVITY_REQUEST_CODE, contentIntent, flag)
+        val pendingIntent = PendingIntent.getActivity(context, ACTIVITY_REQUEST_CODE, contentIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID).apply {
             setContentTitle(title)

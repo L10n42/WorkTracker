@@ -5,7 +5,6 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.kappdev.worktracker.tracker_feature.data.receiver.AlarmReceiver
 import java.time.LocalTime
 import java.time.ZoneId
@@ -15,23 +14,20 @@ import javax.inject.Inject
 class RemainderManager @Inject constructor(
     private val application: Application
 ) {
-    private val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+    private val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     fun startRemainder(time: LocalTime, id: Int = REMAINDER_NOTIFICATION_REQUEST_CODE) {
-        val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(application, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(application, id, intent, flag)
+            PendingIntent.getBroadcast(application, id, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
         val startTimeMillis = getStartTimeOf(time)
-        val intervalMillis = AlarmManager.INTERVAL_DAY
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTimeMillis, intervalMillis, intent)
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTimeMillis, AlarmManager.INTERVAL_DAY, intent)
     }
 
     fun stopRemainder(id: Int = REMAINDER_NOTIFICATION_REQUEST_CODE) {
-        val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(application, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(application, id, intent, flag)
+            PendingIntent.getBroadcast(application, id, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
         alarmManager.cancel(intent)
