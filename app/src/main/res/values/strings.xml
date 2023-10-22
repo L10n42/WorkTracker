@@ -59,7 +59,6 @@
     <string name="activity_work_finished">You have finished %1$s!</string>
 
     <string name="everyday_reports_enable_title">Everyday reports</string>
-    <string name="privacy_enable_title">Privacy</string>
     <string name="default_notification_msg">Congratulation! You have finished @name.</string>
 
     <string name="gv_day">Day</string>

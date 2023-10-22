@@ -54,14 +54,6 @@ class SettingsRepositoryImpl(
         return Gson().fromJson(json, LocalTime::class.java)
     }
 
-    override fun setPrivacyEnable(enable: Boolean) {
-        editor.putBoolean(PRIVACY_ENABLE_KEY, enable).apply()
-    }
-
-    override fun privacyEnable(): Boolean {
-        return sharedPreferences.getBoolean(PRIVACY_ENABLE_KEY, false)
-    }
-
     override fun setPassword(password: String) {
         encryptedEditor.putString(PASSWORD_KEY, password).apply()
     }
@@ -81,7 +73,6 @@ class SettingsRepositoryImpl(
         private const val SECURED_PREFS = "secured_shared_prefs"
         private const val ACTIVITY_ORDER_KEY = "ACTIVITY_ORDER_KEY"
         private const val REPORT_TIME_KEY = "REPORT_TIME_KEY"
-        private const val PRIVACY_ENABLE_KEY = "PRIVACY_ENABLE_KEY"
         private const val PASSWORD_KEY = "PASSWORD_KEY"
         private const val EVERYDAY_REPORTS_ENABLE_KEY = "EVERYDAY_REPORTS_ENABLE_KEY"
     }

@@ -6,9 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +24,6 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.core.navigation.SetupNavGraph
-import com.kappdev.worktracker.tracker_feature.BiometricPromptHelper
 import com.kappdev.worktracker.tracker_feature.data.receiver.AlarmReceiver
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
@@ -50,6 +47,7 @@ class MainActivity: FragmentActivity() {
     private lateinit var systemUiController: SystemUiController
     private lateinit var stopwatchService: StopwatchService
     private lateinit var countdownService: CountdownService
+
     private var startScreenRoute by mutableStateOf(Screen.Main.route)
     private var isStopwatchBound by mutableStateOf(false)
     private var isCountdownBound by mutableStateOf(false)
@@ -73,8 +71,7 @@ class MainActivity: FragmentActivity() {
                 val statusBarColor = when (currentRoute) {
                     Screen.StopwatchTimer.route,
                     Screen.CountdownTimer.route,
-                    Screen.WorkStatistic.route,
-                    Screen.Privacy.route -> MaterialTheme.colors.background
+                    Screen.WorkStatistic.route -> MaterialTheme.colors.background
                     else -> SuperDarkGray
                 }
                 val navigationBarColor = when (currentRoute) {
@@ -95,8 +92,7 @@ class MainActivity: FragmentActivity() {
                             stopwatchService = stopwatchService,
                             countdownService = countdownService,
                             stopwatchController = stopwatchController,
-                            countdownController = countdownController,
-                            biometricPromptHelper = BiometricPromptHelper(this@MainActivity)
+                            countdownController = countdownController
                         )
                         StopwatchBar(navController, stopwatchService, stopwatchController)
                         CountdownBar(navController, countdownService, countdownController)

@@ -17,10 +17,6 @@ interface SettingsRepository {
 
     fun getReportTime(): LocalTime
 
-    fun setPrivacyEnable(enable: Boolean)
-
-    fun privacyEnable(): Boolean
-
     fun setPassword(password: String)
 
     fun checkPassword(password: String): Boolean
