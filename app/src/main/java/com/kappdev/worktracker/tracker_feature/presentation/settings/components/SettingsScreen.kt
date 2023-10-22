@@ -1,6 +1,5 @@
 package com.kappdev.worktracker.tracker_feature.presentation.settings.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -25,9 +24,7 @@ fun SettingsScreen(
     navController: NavHostController,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val voiceNotificationEnable = viewModel.voiceNotification.value
     val everydayReportsEnable = viewModel.everydayReportEnable.value
-    val notificationMsg = viewModel.notificationMsg.value
     val privacyEnable = viewModel.privacyEnable.value
     val reportTime = viewModel.reportTime.value
     val password = viewModel.password.value
@@ -91,27 +88,6 @@ fun SettingsScreen(
                 contentPadding = PaddingValues(all = MaterialTheme.spacing.medium),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
             ) {
-
-                item {
-                    TitledSwitch(
-                        title = stringResource(R.string.voice_notification_title),
-                        modifier = Modifier.fillMaxWidth(),
-                        checked = voiceNotificationEnable,
-                        onSwitch = viewModel::setVoiceNotification
-                    )
-                }
-
-                item {
-                    NotificationMsgField(
-                        value = notificationMsg,
-                        enable = voiceNotificationEnable,
-                        label = stringResource(R.string.label_notification_msg),
-                        hint = stringResource(R.string.notification_msg_placeholder),
-                        modifier = Modifier.fillMaxWidth(),
-                        onValueChanged = viewModel::setNotificationMsg
-                    )
-                }
-
                 item {
                     TitledSwitch(
                         title = stringResource(R.string.everyday_reports_enable_title),

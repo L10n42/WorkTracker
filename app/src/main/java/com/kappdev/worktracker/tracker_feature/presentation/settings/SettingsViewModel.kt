@@ -1,11 +1,10 @@
 package com.kappdev.worktracker.tracker_feature.presentation.settings
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.kappdev.worktracker.tracker_feature.domain.RemainderManager
 import com.kappdev.worktracker.core.domain.repository.SettingsRepository
+import com.kappdev.worktracker.tracker_feature.domain.RemainderManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalTime
 import javax.inject.Inject
@@ -16,12 +15,6 @@ class SettingsViewModel @Inject constructor(
     @Named("AppSettingsRep") private val settings: SettingsRepository,
     private val remainderManager: RemainderManager
 ) : ViewModel() {
-
-    private val _voiceNotification = mutableStateOf(settings.getVoiceNotification())
-    val voiceNotification: State<Boolean> = _voiceNotification
-
-    private val _notificationMsg = mutableStateOf(settings.getNotificationMsg())
-    val notificationMsg: State<String> = _notificationMsg
 
     private val _everydayReportEnable = mutableStateOf(settings.everydayReportsEnable())
     val everydayReportEnable: State<Boolean> = _everydayReportEnable
@@ -69,15 +62,5 @@ class SettingsViewModel @Inject constructor(
     fun setEverydayReportsEnable(enable: Boolean) {
         _everydayReportEnable.value = enable
         settings.setEverydayReports(enable)
-    }
-
-    fun setNotificationMsg(msg: String) {
-        _notificationMsg.value = msg
-        settings.setNotificationMsg(msg)
-    }
-
-    fun setVoiceNotification(enable: Boolean) {
-        _voiceNotification.value = enable
-        settings.setVoiceNotification(enable)
     }
 }

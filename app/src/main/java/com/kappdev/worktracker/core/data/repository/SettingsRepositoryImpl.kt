@@ -4,14 +4,13 @@ import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.google.gson.Gson
-import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
 import com.kappdev.worktracker.tracker_feature.domain.util.OrderType
 import java.time.LocalTime
 
 class SettingsRepositoryImpl(
-    private val context: Context
+    context: Context
 ): SettingsRepository {
 
     private val masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -35,23 +34,6 @@ class SettingsRepositoryImpl(
         val jsonOrder = Gson().fromJson(json, OrderJson::class.java)
         val orderType = OrderType.getById(jsonOrder.typeId)
         return ActivityOrder.getById(jsonOrder.orderId, orderType)?: DefaultOrder
-    }
-
-    override fun setVoiceNotification(enable: Boolean) {
-        editor.putBoolean(VOICE_NOTIFICATION_KEY, enable).apply()
-    }
-
-    override fun getVoiceNotification(): Boolean {
-        return sharedPreferences.getBoolean(VOICE_NOTIFICATION_KEY, true)
-    }
-
-    override fun setNotificationMsg(msg: String) {
-        editor.putString(VOICE_NOTIFICATION_MSG_KEY, msg).apply()
-    }
-
-    override fun getNotificationMsg(): String {
-        val defaultMsg = context.getString(R.string.default_notification_msg)
-        return sharedPreferences.getString(VOICE_NOTIFICATION_MSG_KEY, null) ?: defaultMsg
     }
 
     override fun setEverydayReports(enable: Boolean) {
@@ -99,10 +81,8 @@ class SettingsRepositoryImpl(
         private const val SECURED_PREFS = "secured_shared_prefs"
         private const val ACTIVITY_ORDER_KEY = "ACTIVITY_ORDER_KEY"
         private const val REPORT_TIME_KEY = "REPORT_TIME_KEY"
-        private const val VOICE_NOTIFICATION_KEY = "VOICE_NOTIFICATION_KEY"
         private const val PRIVACY_ENABLE_KEY = "PRIVACY_ENABLE_KEY"
         private const val PASSWORD_KEY = "PASSWORD_KEY"
-        private const val VOICE_NOTIFICATION_MSG_KEY = "VOICE_NOTIFICATION_MSG_KEY"
         private const val EVERYDAY_REPORTS_ENABLE_KEY = "EVERYDAY_REPORTS_ENABLE_KEY"
     }
 }

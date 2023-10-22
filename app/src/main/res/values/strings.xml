@@ -9,11 +9,9 @@
     <string name="label_name">Name</string>
     <string name="label_password">Password</string>
     <string name="label_confirm_password">Confirm password</string>
-    <string name="label_notification_msg">Notification msg</string>
     <string name="label_target">Target</string>
     <string name="label_report_time">Report time</string>
     <string name="name_placeholder">e.g. Reading.</string>
-    <string name="notification_msg_placeholder">Enter message here.</string>
     <string name="target_placeholder">Everyday time target.</string>
 
     <string name="btn_dismiss">Dismiss</string>
@@ -60,7 +58,6 @@
     <string name="total_work_time">Total Time:</string>
     <string name="activity_work_finished">You have finished %1$s!</string>
 
-    <string name="voice_notification_title">Voice notification</string>
     <string name="everyday_reports_enable_title">Everyday reports</string>
     <string name="privacy_enable_title">Privacy</string>
     <string name="default_notification_msg">Congratulation! You have finished @name.</string>

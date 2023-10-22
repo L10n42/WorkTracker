@@ -9,7 +9,6 @@ import android.os.Binder
 import android.os.Build
 import android.os.CountDownTimer
 import android.os.PowerManager
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
@@ -19,7 +18,6 @@ import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.model.*
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
-import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +33,7 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 @AndroidEntryPoint
-class CountdownService: Service(), TextToSpeech.OnInitListener {
+class CountdownService: Service() {
 
     @Inject
     @Named("ServiceNotificationManager")
@@ -48,11 +46,6 @@ class CountdownService: Service(), TextToSpeech.OnInitListener {
     @Named("serviceSessionRepository")
     lateinit var sessionRepository: SessionRepository
 
-    @Inject
-    @Named("ServiceSettingsRep")
-    lateinit var settings: SettingsRepository
-
-    private var tts: TextToSpeech? = null
     private val binder = CountdownBinder()
     private val points = mutableListOf<Long>()
     private var wakeLock: PowerManager.WakeLock? = null
@@ -82,7 +75,6 @@ class CountdownService: Service(), TextToSpeech.OnInitListener {
     override fun onCreate() {
         super.onCreate()
         builder = defaultNotificationBuilder()
-        tts = TextToSpeech(this, this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -135,7 +127,7 @@ class CountdownService: Service(), TextToSpeech.OnInitListener {
         val timerDuration = intent?.getLongExtra(ServiceConstants.DURATION, 0)
 
         if (id != null && id > 0) activityId.value = id
-        if (name != null && name.isNotEmpty()) activityName.value = name
+        if (!name.isNullOrEmpty()) activityName.value = name
         if (timerDuration != null) {
             duration = timerDuration.toDuration(DurationUnit.MILLISECONDS)
             wholeDuration = timerDuration
@@ -156,7 +148,6 @@ class CountdownService: Service(), TextToSpeech.OnInitListener {
             override fun onFinish() {
                 stopCountdown()
                 makeFinishNotification()
-                makeVoiceNotificationIfNeed()
                 cancelCountdown()
                 stopForegroundService()
             }
@@ -169,13 +160,6 @@ class CountdownService: Service(), TextToSpeech.OnInitListener {
         saveTimer = fixedRateTimer(initialDelay = 60_000L, period = 60_000L) {
             points.add(System.currentTimeMillis())
             saveSession()
-        }
-    }
-
-    private fun makeVoiceNotificationIfNeed() {
-        val voiceNotificationEnable = settings.getVoiceNotification()
-        if (voiceNotificationEnable) {
-            notifyByVoice()
         }
     }
 
@@ -307,19 +291,7 @@ class CountdownService: Service(), TextToSpeech.OnInitListener {
             .setContentIntent(CountdownHelper.clickPendingIntent(this))
     }
 
-    private fun notifyByVoice() {
-        val finalMsg = settings.getNotificationMsg()
-            .replace(NAME_KEYWORD, activityName.value)
-            .replace(TIME_KEYWORD, totalTime.value.fullStringFormat())
-
-        tts?.speak(finalMsg, TextToSpeech.QUEUE_FLUSH, null,"")
-    }
-
     companion object {
-        private const val NAME_KEYWORD = "@name"
-        private const val TIME_KEYWORD = "@time"
-        val CountdownKeywords = listOf(NAME_KEYWORD, TIME_KEYWORD)
-
         private const val NOTIFICATION_CHANNEL_ID = "COUNTDOWN_NOTIFICATION_ID"
         private const val NOTIFICATION_CHANNEL_NAME = "COUNTDOWN_NOTIFICATION"
         private const val NOTIFICATION_ID = 32
@@ -327,15 +299,5 @@ class CountdownService: Service(), TextToSpeech.OnInitListener {
 
     inner class CountdownBinder: Binder() {
         fun getService(): CountdownService = this@CountdownService
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val result = tts?.setLanguage(Locale.US)
-
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS","The Language not supported!")
-            }
-        }
     }
 }
