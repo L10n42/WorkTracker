@@ -12,7 +12,7 @@ sealed class ActivityOrder(val orderType: OrderType, val id: String) {
     }
 
     companion object {
-        private const val NAME_ID = "name"
+        private const val NAME_ID = "activity_name"
         private const val DATE_ID = "creation_timestamp"
 
         fun getById(id: String, orderType: OrderType?): ActivityOrder? {

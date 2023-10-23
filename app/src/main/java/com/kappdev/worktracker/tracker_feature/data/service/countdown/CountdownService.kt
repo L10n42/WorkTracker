@@ -47,7 +47,6 @@ class CountdownService: Service() {
     lateinit var sessionRepository: SessionRepository
 
     private val binder = CountdownBinder()
-    private val points = mutableListOf<Long>()
     private var wakeLock: PowerManager.WakeLock? = null
     private var duration: Duration = Duration.ZERO
     private var wholeDuration: Long = 0
@@ -80,6 +79,7 @@ class CountdownService: Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.getStringExtra(ServiceConstants.SERVICE_STATE)) {
             ServiceState.Started.name -> {
+                startSession()
                 setButton(NotificationButton.Stop)
                 startForegroundService()
                 startCountdown()
@@ -158,7 +158,6 @@ class CountdownService: Service() {
 
     private fun startSaveTimer() {
         saveTimer = fixedRateTimer(initialDelay = 60_000L, period = 60_000L) {
-            points.add(System.currentTimeMillis())
             saveSession()
         }
     }
@@ -191,8 +190,7 @@ class CountdownService: Service() {
         CoroutineScope(Dispatchers.IO).launch {
             sessionRepository.saveSession(
                 id = sessionId,
-                timeInSec = getDuration(),
-                minutePoints = MinutePoints(points)
+                timeInSec = getDuration()
             )
             onFinish()
         }
@@ -207,7 +205,6 @@ class CountdownService: Service() {
         currentState.value = ServiceState.Idle
         activityId.value = 0
         activityName.value = ""
-        points.clear()
     }
 
     private fun updateTimeUnits() {

@@ -10,6 +10,12 @@ object DateTimeHelper {
         return calendar.get(Calendar.HOUR_OF_DAY)
     }
 
+    fun getMinuteOfHour(timestamp: Long): Int {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timestamp
+        return calendar.get(Calendar.MINUTE)
+    }
+
     fun isCurrentDay(timestamp: Long): Boolean {
         val timestampDay = getDayFrom(timestamp)
         val currentDay = getCurrentDay()

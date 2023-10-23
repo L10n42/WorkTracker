@@ -21,7 +21,7 @@ class AddEditActivityViewModel @Inject constructor(
     private val getActivityById: GetActivityByIdUseCase,
     private val app: Application
 ) : ViewModel() {
-    private val _activity = mutableStateOf(Activity.Empty)
+    private val _activity = mutableStateOf(Activity())
     val activity: State<Activity> = _activity
 
     private val _target = mutableStateOf(Time())

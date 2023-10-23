@@ -7,20 +7,16 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "activities")
 data class Activity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    @ColumnInfo(name = "activity_id")
+    val id: Long = 0,
 
-    @ColumnInfo(name = "name")
-    val name: String,
+    @ColumnInfo(name = "activity_name")
+    val name: String = "",
 
     @ColumnInfo(name = "creation_timestamp")
-    val creationTimestamp: Long,
+    val creationTimestamp: Long = 0,
 
     @ColumnInfo(name = "target_in_seconds")
-    val targetInSec: Long
-){
-    companion object { /* Empty Initialization */ }
-}
-
-val Activity.Companion.Empty: Activity
-    get() = Activity(id = 0, name = "", creationTimestamp = 0, targetInSec = 0)
+    val targetInSec: Long = 0
+)
 
