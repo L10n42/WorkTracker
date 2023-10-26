@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.domain.use_case
 
+import com.kappdev.worktracker.tracker_feature.domain.model.getDurationInSecond
 import com.kappdev.worktracker.tracker_feature.domain.repository.StatisticRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.DateUtil
 import java.time.LocalDate
@@ -25,7 +26,7 @@ class GetCalendarDataFor @Inject constructor(
 
         sessions.forEach { session ->
             val startDay = DateUtil.getDateOf(session.startTimestamp)
-            addTimeAt(startDay.dayOfMonth, session.timeInSec)
+            addTimeAt(startDay.dayOfMonth, session.getDurationInSecond())
         }
 
         return map

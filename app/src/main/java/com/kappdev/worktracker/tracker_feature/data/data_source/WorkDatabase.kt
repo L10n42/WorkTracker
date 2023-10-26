@@ -8,7 +8,7 @@ import com.kappdev.worktracker.tracker_feature.domain.model.Session
 
 @Database(
     entities = [Activity::class, Session::class],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class WorkDatabase: RoomDatabase() {

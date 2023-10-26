@@ -2,6 +2,7 @@ package com.kappdev.worktracker.tracker_feature.domain.use_case
 
 import androidx.compose.ui.graphics.Color
 import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
+import com.kappdev.worktracker.tracker_feature.domain.model.getDurationInSecond
 import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.ColorUtil
@@ -24,7 +25,7 @@ class GetDailyReportFor @Inject constructor(
         val sessions = sessionRepository.getSessionForDate(date)
         sessions.forEach { session ->
             val id  = session.activityId
-            dataMap[id] = (dataMap[id] ?: 0) + session.timeInSec
+            dataMap[id] = (dataMap[id] ?: 0) + session.getDurationInSecond()
         }
 
         val totalSum = dataMap.values.sum()

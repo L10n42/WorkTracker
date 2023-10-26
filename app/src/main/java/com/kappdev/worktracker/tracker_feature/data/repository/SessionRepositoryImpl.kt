@@ -10,10 +10,9 @@ class SessionRepositoryImpl(
     private val sessionDao: SessionDao
 ): SessionRepository {
 
-    override suspend fun saveSession(id: Long, timeInSec: Long) {
+    override suspend fun saveSession(id: Long) {
         val session = sessionDao.getSessionById(id).copy(
-            endTimestamp = System.currentTimeMillis(),
-            timeInSec = timeInSec
+            endTimestamp = System.currentTimeMillis()
         )
         sessionDao.insertSession(session)
     }
@@ -24,8 +23,7 @@ class SessionRepositoryImpl(
                 id = 0,
                 activityId = activityId,
                 startTimestamp = System.currentTimeMillis(),
-                endTimestamp = 0,
-                timeInSec = 0
+                endTimestamp = 0
             )
         )
     }

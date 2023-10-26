@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 interface SessionRepository {
 
-    suspend fun saveSession(id: Long, timeInSec: Long)
+    suspend fun saveSession(id: Long)
 
     suspend fun startSessionFor(activityId: Long): Long
 

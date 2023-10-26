@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.domain.use_case
 
+import com.kappdev.worktracker.tracker_feature.domain.model.getDurationInSecond
 import com.kappdev.worktracker.tracker_feature.domain.repository.StatisticRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.DateUtil
 import com.kappdev.worktracker.tracker_feature.domain.util.emptyPeriodMap
@@ -21,7 +22,7 @@ class GetWeekDataFor @Inject constructor(
 
         sessions.forEach { session ->
             val sessionDate = DateUtil.getDateOf(session.startTimestamp)
-            map[sessionDate] = (map[sessionDate] ?: 0) + session.timeInSec
+            map[sessionDate] = (map[sessionDate] ?: 0) + session.getDurationInSecond()
         }
 
         return map.toWeekMap()

@@ -188,15 +188,10 @@ class CountdownService: Service() {
 
     private fun saveSession(onFinish: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
-            sessionRepository.saveSession(
-                id = sessionId,
-                timeInSec = getDuration()
-            )
+            sessionRepository.saveSession(sessionId)
             onFinish()
         }
     }
-
-    private fun getDuration() = (wholeDuration - duration.inWholeMilliseconds) / 1_000
 
     private fun clearData() {
         sessionId = 0

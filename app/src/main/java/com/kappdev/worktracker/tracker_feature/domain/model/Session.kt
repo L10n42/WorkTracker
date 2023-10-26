@@ -17,8 +17,9 @@ data class Session(
     val startTimestamp: Long,
 
     @ColumnInfo(name = "end_timestamp")
-    val endTimestamp: Long,
-
-    @ColumnInfo(name = "time_in_seconds")
-    val timeInSec: Long
+    val endTimestamp: Long
 )
+
+fun Session.getDurationInSecond(): Long {
+    return (this.endTimestamp - this.startTimestamp) / 1000
+}

@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.domain.use_case
 
+import com.kappdev.worktracker.tracker_feature.domain.model.getDurationInSecond
 import com.kappdev.worktracker.tracker_feature.domain.repository.StatisticRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.DateTimeHelper.getHourOfDay
 import com.kappdev.worktracker.tracker_feature.domain.util.DateTimeHelper.getMinuteOfHour
@@ -27,7 +28,7 @@ class GetDayDataFor @Inject constructor(
             val endHour = getHourOfDay(session.endTimestamp)
 
             if (startHour == endHour) {
-                addTimeAt(startHour, session.timeInSec)
+                addTimeAt(startHour, session.getDurationInSecond())
             } else {
                 val startHourSecond = (60 - getMinuteOfHour(session.startTimestamp)) * 60L
                 val endHourSecond = getMinuteOfHour(session.endTimestamp) * 60L

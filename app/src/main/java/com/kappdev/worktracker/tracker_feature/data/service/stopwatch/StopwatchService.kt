@@ -157,10 +157,7 @@ class StopwatchService: Service() {
 
     private fun saveSession(onFinish: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
-            sessionRepository.saveSession(
-                id = sessionId,
-                timeInSec = duration.inWholeSeconds,
-            )
+            sessionRepository.saveSession(sessionId)
             onFinish()
         }
     }
