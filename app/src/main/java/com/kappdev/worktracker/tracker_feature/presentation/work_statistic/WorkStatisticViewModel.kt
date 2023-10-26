@@ -13,10 +13,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class WorkStatisticViewModel @Inject constructor(
-    private val getDailyReportFor: GetDailyReportFor
+    @Named("AppReport") private val getDailyReportFor: GetDailyReportFor
 ) : ViewModel() {
 
     private val _data = mutableStateOf<List<ReportData>>(emptyList())

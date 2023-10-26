@@ -28,6 +28,7 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var notificationManager: NotificationManager
 
     @Inject
+    @Named("SingletonReport")
     lateinit var getDailyReportFor: GetDailyReportFor
 
     override fun onReceive(context: Context, intent: Intent?) {

@@ -1,7 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.data.repository
 
 import androidx.sqlite.db.SimpleSQLiteQuery
-import androidx.sqlite.db.SupportSQLiteQueryBuilder
 import com.kappdev.worktracker.tracker_feature.data.data_source.ActivityDao
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
@@ -37,5 +36,9 @@ class ActivityRepositoryImpl(
 
     override suspend fun deleteActivity(activity: Activity): Int {
         return activityDao.deleteActivity(activity)
+    }
+
+    override fun isNotEmpty(): Boolean {
+        return activityDao.getItemCount() > 0
     }
 }

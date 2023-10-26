@@ -49,6 +49,11 @@
 
     <string name="everyday_reports_enable_title">Daily reports</string>
 
+    <string name="db_export_title">Export database</string>
+    <string name="db_export_description">Generates a zip-file that contains all your data. This file can be imported back.</string>
+    <string name="db_import_title">Import database</string>
+    <string name="db_import_description">Supports zip-files exported by this app.</string>
+
     <string name="gv_day">Day</string>
     <string name="gv_week">Week</string>
     <string name="gv_month">Month</string>

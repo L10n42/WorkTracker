@@ -6,6 +6,7 @@ import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityReposit
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.ColorUtil
 import com.kappdev.worktracker.tracker_feature.domain.util.RandomColorGenerator
+import dagger.hilt.android.scopes.ViewModelScoped
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Named
