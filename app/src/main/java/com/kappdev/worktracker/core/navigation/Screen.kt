@@ -8,4 +8,5 @@ sealed class Screen(val route: String) {
     object ActivityReview: Screen("activity_review_screen")
     object StopwatchTimer: Screen("stopwatch_timer_screen")
     object CountdownTimer: Screen("countdown_timer_screen")
+    object SplashScreen: Screen("splash_screen")
 }

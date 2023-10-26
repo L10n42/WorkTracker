@@ -71,6 +71,7 @@ class MainActivity: FragmentActivity() {
                 val statusBarColor = when (currentRoute) {
                     Screen.StopwatchTimer.route,
                     Screen.CountdownTimer.route,
+                    Screen.SplashScreen.route,
                     Screen.WorkStatistic.route -> MaterialTheme.colors.background
                     else -> SuperDarkGray
                 }
