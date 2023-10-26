@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
 import com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity.AddEditActivityViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.OutlineTextField
@@ -28,23 +29,15 @@ fun AddEditActivityScreen(
     viewModel: AddEditActivityViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
-    val navigate = viewModel.navigate.value
     val target = viewModel.target.value
     val name = viewModel.name.value
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         if (activityId != null && activityId > 0) {
             viewModel.getActivityBy(
                 id = activityId,
                 onError = { navController.popBackStack() }
             )
-        }
-    }
-
-    LaunchedEffect(key1 = navigate) {
-        if (navigate != null) {
-            navController.navigate(navigate)
-            viewModel.clearNavigationRoute()
         }
     }
 
@@ -70,7 +63,20 @@ fun AddEditActivityScreen(
     ) {
         Scaffold(
             topBar = {
-                AddEditActivityTopBar(viewModel)
+                AddEditActivityTopBar(viewModel) {
+                    navController.navigate(Screen.Main.route)
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+            floatingActionButton = {
+                DoneButton {
+                    if (viewModel.canSave()) {
+                        viewModel.save()
+                        navController.navigate(Screen.Main.route)
+                    } else {
+                        viewModel.detectErrorAndShowToast()
+                    }
+                }
             }
         ) { scaffoldPadding ->
             Column(

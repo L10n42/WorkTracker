@@ -30,9 +30,6 @@ class AddEditActivityViewModel @Inject constructor(
     private val _name = mutableStateOf("")
     val name: State<String> = _name
 
-    private val _navigate = mutableStateOf<String?>(null)
-    val navigate: State<String?> = _navigate
-
     fun detectErrorAndShowToast() {
         when {
             name.value.isBlank() -> app.makeToast(R.string.unfilled_field_error)
@@ -73,14 +70,6 @@ class AddEditActivityViewModel @Inject constructor(
 
     fun setTarget(time: Time) {
         _target.value = time
-    }
-
-    fun navigate(route: String) {
-        _navigate.value = route
-    }
-
-    fun clearNavigationRoute() {
-        _navigate.value = null
     }
 
     fun setName(value: String) {
