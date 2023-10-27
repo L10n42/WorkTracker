@@ -208,8 +208,9 @@ class StopwatchService: Service() {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             )
+            channel.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -239,6 +240,9 @@ class StopwatchService: Service() {
             .setContentText(time.value.format())
             .setSmallIcon(R.drawable.ic_baseline_access_time_24)
             .setOngoing(true)
+            .setSilent(true)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(StopwatchHelper.clickPendingIntent(this))
     }
 
