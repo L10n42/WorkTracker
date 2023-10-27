@@ -30,6 +30,12 @@ import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.elevation
 import com.kappdev.worktracker.ui.spacing
 
+private val NotAllowedRoutes = listOf(
+    Screen.WorkStatistic.route,
+    Screen.CountdownTimer.route,
+    Screen.SplashScreen.route
+)
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BoxScope.CountdownBar(
@@ -46,11 +52,9 @@ fun BoxScope.CountdownBar(
     val currentRoute = navBackStackEntry?.destination?.route
 
     val serviceIsStarted = countdownService.currentState.value != ServiceState.Idle
-    val isNotStatisticScreen = currentRoute != Screen.WorkStatistic.route
-    val isNotCountdownTimerScreen = currentRoute != Screen.CountdownTimer.route
 
     AnimatedVisibility(
-        visible = serviceIsStarted && isNotCountdownTimerScreen && isNotStatisticScreen,
+        visible = serviceIsStarted && (currentRoute !in NotAllowedRoutes),
         modifier = Modifier.align(Alignment.BottomCenter),
         enter = slideInVertically { it },
         exit = slideOutVertically { it }
