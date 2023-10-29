@@ -12,7 +12,7 @@ interface SessionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSession(session: Session): Long
 
-    @Query("SELECT * FROM sessions WHERE id=:id")
+    @Query("SELECT * FROM sessions WHERE session_id=:id")
     fun getSessionById(id: Long): Session
 
     @Query("SELECT * FROM sessions WHERE activity_id=:id")
@@ -25,13 +25,4 @@ interface SessionDao {
 
     @Query("DELETE FROM sessions WHERE activity_id=:id")
     fun deleteSessionsByActivity(id: Long)
-
-    @Query("DELETE FROM sessions WHERE id=:id")
-    fun deleteSessionById(id: Long)
-
-    @Delete
-    suspend fun deleteSession(session: Session): Int
-
-    @RawQuery
-    fun getSessionsFor(query: SupportSQLiteQuery): List<Session>
 }

@@ -1,15 +1,31 @@
 package com.kappdev.worktracker.tracker_feature.presentation.activity_review.components
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -26,21 +42,19 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
-import com.kappdev.worktracker.tracker_feature.presentation.activity_review.ActivityReviewViewModel
 import com.kappdev.worktracker.tracker_feature.presentation.activity_review.GraphViewState
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
 
 @Composable
-fun CustomDailyGraph(
+fun CustomGraph(
     value: Map<String, Long>,
     totalTime: String,
+    viewState: GraphViewState,
     modifier: Modifier = Modifier,
     maxValue: Long = value.maxByOrNull { it.value }?.value ?: 0L,
-    viewModel: ActivityReviewViewModel
+    onViewChange: (viewState: GraphViewState) -> Unit
 ) {
-    val selectedView = viewModel.graphViewState.value
-
     Column(
         modifier = modifier
             .border(
@@ -52,12 +66,8 @@ fun CustomDailyGraph(
     ) {
         GraphViewSelector(
             modifier = Modifier.align(Alignment.End),
-            selected = selectedView,
-            onViewChange = {
-                viewModel.setGraphViewState(it)
-                viewModel.resetGraphDate()
-                viewModel.updateGraphData()
-            }
+            selected = viewState,
+            onViewChange = onViewChange
         )
 
         Box(
@@ -67,8 +77,9 @@ fun CustomDailyGraph(
                 .fillMaxHeight(0.85f)
         ) {
             val columnSpace by animateDpAsState(
-                targetValue = if (selectedView == GraphViewState.WEEK) 12.dp else 4.dp,
-                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                targetValue = if (viewState == GraphViewState.WEEK) 12.dp else 4.dp,
+                animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                label = "column space"
             )
 
             LazyRow(
@@ -78,7 +89,7 @@ fun CustomDailyGraph(
                 horizontalArrangement = Arrangement.spacedBy(columnSpace)
             ) {
                 items(value.toList()) { item ->
-                    GraphColumn(item, maxValue, viewState = selectedView)
+                    GraphColumn(item, maxValue, viewState = viewState)
                 }
             }
 
@@ -141,7 +152,8 @@ private fun GraphColumn(
 
     val animFraction by animateFloatAsState(
         targetValue = targetFraction,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "bar height fraction"
     )
 
     LaunchedEffect(key1 = value) {
@@ -176,12 +188,14 @@ private fun GraphColumn(
             viewState == GraphViewState.MONTH && value.second >= 3600L -> 36.dp
             else -> 20.dp
         },
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "column width"
     )
 
     val textRotate by animateFloatAsState(
         targetValue = targetTextRotation,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "text rotate"
     )
 
     Box(

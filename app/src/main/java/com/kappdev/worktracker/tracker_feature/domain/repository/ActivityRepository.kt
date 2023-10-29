@@ -18,4 +18,6 @@ interface ActivityRepository {
 
     suspend fun deleteActivity(activity: Activity): Int
 
+    fun isNotEmpty(): Boolean
+
 }

@@ -13,7 +13,7 @@ import javax.inject.Named
 class BootReceiver: BroadcastReceiver() {
 
     @Inject
-    @Named("AppSettingsRep")
+    @Named("SingletonAppSettingsRep")
     lateinit var settings: SettingsRepository
 
     @Inject

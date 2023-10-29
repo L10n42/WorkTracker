@@ -32,12 +32,14 @@ fun ActivityReviewScreen(
     val navigate = viewModel.navigate.value
     val graphDate = viewModel.graphDate.value
     val activity = viewModel.currentActivity.value
+
     val dailyGraphData = viewModel.graphData.value
     val graphDataState = viewModel.graphDataState.value
+    val graphViewState = viewModel.graphViewState.value
+
     val totalDailyWorkingTime = viewModel.totalTime.value
     val calendarData = viewModel.calendarData.value
     val calendarDate = viewModel.calendarDate.value
-    val graphViewState = viewModel.graphViewState.value
 
     val graphModifier = Modifier
         .fillMaxWidth()
@@ -70,18 +72,23 @@ fun ActivityReviewScreen(
                 targetState = graphDataState,
                 transitionSpec = {
                     fadeIn() with fadeOut()
-                }
+                }, label = ""
             ) { state ->
                 when (state) {
                     GraphDataState.LOADING -> {
                         LoadingGraph(modifier = graphModifier)
                     }
                     else -> {
-                        CustomDailyGraph(
+                        CustomGraph(
                             value = dailyGraphData,
                             totalTime = totalDailyWorkingTime,
                             modifier = graphModifier,
-                            viewModel = viewModel
+                            viewState = graphViewState,
+                            onViewChange = { newState ->
+                                viewModel.setGraphViewState(newState)
+                                viewModel.resetGraphDate()
+                                viewModel.updateGraphData()
+                            },
                         )
                     }
                 }
@@ -99,7 +106,7 @@ fun ActivityReviewScreen(
                 targetState = graphViewState,
                 transitionSpec = {
                     fadeIn() with fadeOut()
-                }
+                }, label = ""
             ) { view ->
                 when (view) {
                     GraphViewState.DAY -> {

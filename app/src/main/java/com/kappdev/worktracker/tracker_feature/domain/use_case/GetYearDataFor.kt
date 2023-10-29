@@ -1,5 +1,6 @@
 package com.kappdev.worktracker.tracker_feature.domain.use_case
 
+import com.kappdev.worktracker.tracker_feature.domain.model.getDurationInSecond
 import com.kappdev.worktracker.tracker_feature.domain.repository.StatisticRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.DateUtil
 import com.kappdev.worktracker.tracker_feature.domain.util.getName
@@ -19,7 +20,7 @@ class GetYearDataFor @Inject constructor(
 
         sessions.forEach { session ->
             val sessionMonth = DateUtil.getDateOf(session.startTimestamp).monthValue
-            map[sessionMonth] = (map[sessionMonth] ?: 0) + session.timeInSec
+            map[sessionMonth] = (map[sessionMonth] ?: 0) + session.getDurationInSecond()
         }
 
         return map.toYearMap()

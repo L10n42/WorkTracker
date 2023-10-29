@@ -1,28 +1,26 @@
 package com.kappdev.worktracker.core.presentation.common_components
 
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateValue
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kappdev.worktracker.ui.theme.WorkTrackerTheme
 
 @Composable
 fun AnimatedDotsText(
     text: String,
     modifier: Modifier = Modifier,
-    cycleDuration: Int = 1_200,
+    cycleDuration: Int = 800,
     style: TextStyle = TextStyle(fontSize = 18.sp)
 ) {
-    val transition = rememberInfiniteTransition()
+    val transition = rememberInfiniteTransition(label = "dots transition")
     val dotsVisible = transition.animateValue(
         initialValue = 1,
         targetValue = 4,
@@ -33,7 +31,8 @@ fun AnimatedDotsText(
                 easing = LinearEasing
             ),
             repeatMode = RepeatMode.Restart
-        )
+        ),
+        label = "dots amount transition"
     )
 
     Text(

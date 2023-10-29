@@ -58,7 +58,7 @@ fun CalendarView(
 
     val animatedHeight by animateDpAsState(
         targetValue = if (largeCalendar) 410.dp else 365.dp,
-        animationSpec = tween(durationMillis = 100, easing = LinearEasing)
+        animationSpec = tween(durationMillis = 100, easing = LinearEasing), label = ""
     )
 
     Column(
@@ -102,7 +102,8 @@ fun CalendarView(
                 } else {
                     slideInHorizontally { -it } + fadeIn() with slideOutHorizontally { it } + fadeOut()
                 }
-            }
+            },
+            label = ""
         ) { state ->
             val start = state.withDayOfMonth(1)
             val startWeekDay = start.dayOfWeek.value

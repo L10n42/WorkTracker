@@ -27,6 +27,12 @@ import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.elevation
 import com.kappdev.worktracker.ui.spacing
 
+private val NotAllowedRoutes = listOf(
+    Screen.WorkStatistic.route,
+    Screen.StopwatchTimer.route,
+    Screen.SplashScreen.route
+)
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BoxScope.StopwatchBar(
@@ -42,11 +48,9 @@ fun BoxScope.StopwatchBar(
     val currentRoute = navBackStackEntry?.destination?.route
 
     val serviceIsStarted = stopwatchService.currentState.value != ServiceState.Idle
-    val isNotStatisticScreen = currentRoute != Screen.WorkStatistic.route
-    val isNotStopwatchTimerScreen = currentRoute != Screen.StopwatchTimer.route
 
     AnimatedVisibility(
-        visible = serviceIsStarted && isNotStopwatchTimerScreen && isNotStatisticScreen,
+        visible = serviceIsStarted && (currentRoute !in NotAllowedRoutes),
         modifier = Modifier.align(Alignment.BottomCenter),
         enter = slideInVertically { it },
         exit = slideOutVertically { it }

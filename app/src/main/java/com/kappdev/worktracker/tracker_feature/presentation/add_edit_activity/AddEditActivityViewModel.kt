@@ -21,7 +21,7 @@ class AddEditActivityViewModel @Inject constructor(
     private val getActivityById: GetActivityByIdUseCase,
     private val app: Application
 ) : ViewModel() {
-    private val _activity = mutableStateOf(Activity.Empty)
+    private val _activity = mutableStateOf(Activity())
     val activity: State<Activity> = _activity
 
     private val _target = mutableStateOf(Time())
@@ -29,9 +29,6 @@ class AddEditActivityViewModel @Inject constructor(
 
     private val _name = mutableStateOf("")
     val name: State<String> = _name
-
-    private val _navigate = mutableStateOf<String?>(null)
-    val navigate: State<String?> = _navigate
 
     fun detectErrorAndShowToast() {
         when {
@@ -73,14 +70,6 @@ class AddEditActivityViewModel @Inject constructor(
 
     fun setTarget(time: Time) {
         _target.value = time
-    }
-
-    fun navigate(route: String) {
-        _navigate.value = route
-    }
-
-    fun clearNavigationRoute() {
-        _navigate.value = null
     }
 
     fun setName(value: String) {

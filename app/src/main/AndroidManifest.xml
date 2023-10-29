@@ -31,6 +31,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
         <receiver
             android:name=".tracker_feature.data.receiver.BootReceiver"
             android:enabled="true"
@@ -43,10 +54,12 @@
         <receiver
             android:name=".tracker_feature.data.receiver.AlarmReceiver"
             android:enabled="true" />
+
         <service
             android:name=".tracker_feature.data.service.stopwatch.StopwatchService"
             android:enabled="true"
             android:exported="false"/>
+
         <service
             android:name=".tracker_feature.data.service.countdown.CountdownService"
             android:enabled="true"

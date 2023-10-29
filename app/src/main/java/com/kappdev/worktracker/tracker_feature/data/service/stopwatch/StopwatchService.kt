@@ -20,7 +20,6 @@ import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.ACTIVI
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.ACTIVITY_NAME
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceConstants.SERVICE_STATE
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
-import com.kappdev.worktracker.tracker_feature.domain.model.MinutePoints
 import com.kappdev.worktracker.tracker_feature.domain.model.Time
 import com.kappdev.worktracker.tracker_feature.domain.model.format
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
@@ -47,7 +46,6 @@ class StopwatchService: Service() {
     lateinit var sessionRepository: SessionRepository
 
     private val binder = StopwatchBinder()
-    private val points = mutableListOf<Long>()
     private var wakeLock: PowerManager.WakeLock? = null
     private var duration: Duration = Duration.ZERO
     private var sessionId: Long = 0
@@ -75,6 +73,7 @@ class StopwatchService: Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.getStringExtra(SERVICE_STATE)) {
             ServiceState.Started.name -> {
+                startSession()
                 setButton(NotificationButton.Stop)
                 startForegroundService()
                 startStopwatch()
@@ -94,7 +93,7 @@ class StopwatchService: Service() {
             when (it) {
                 ACTION_SERVICE_START -> {
                     if (activityId.value <= 0) {
-                        catchAndUpdateDataFrom(intent)
+                        updateDataFrom(intent)
                         startSession()
                     }
                     setButton(NotificationButton.Stop)
@@ -116,12 +115,12 @@ class StopwatchService: Service() {
         return START_STICKY
     }
 
-    private fun catchAndUpdateDataFrom(intent: Intent?) {
+    private fun updateDataFrom(intent: Intent?) {
         val id = intent?.getLongExtra(ACTIVITY_ID, 0)
         val name = intent?.getStringExtra(ACTIVITY_NAME)
 
         if (id != null && id > 0) activityId.value = id
-        if (name != null && name.isNotEmpty()) activityName.value = name
+        if (!name.isNullOrEmpty()) activityName.value = name
     }
 
     private fun startStopwatch() {
@@ -136,7 +135,6 @@ class StopwatchService: Service() {
 
     private fun startSaveTimer() {
         saveTimer = fixedRateTimer(initialDelay = 60_000L, period = 60_000L) {
-            points.add(System.currentTimeMillis())
             saveSession()
         }
     }
@@ -159,11 +157,7 @@ class StopwatchService: Service() {
 
     private fun saveSession(onFinish: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
-            sessionRepository.saveSession(
-                id = sessionId,
-                timeInSec = duration.inWholeSeconds,
-                minutePoints = MinutePoints(points)
-            )
+            sessionRepository.saveSession(sessionId)
             onFinish()
         }
     }
@@ -174,7 +168,6 @@ class StopwatchService: Service() {
         currentState.value = ServiceState.Idle
         activityId.value = 0
         activityName.value = ""
-        points.clear()
     }
 
     private fun updateTimeUnits() {
@@ -187,6 +180,7 @@ class StopwatchService: Service() {
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
             newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "StopwatchService::lock").apply {
                 acquire()
+                acquire(10*60*1000L /*10 minutes*/)
             }
         }
 
@@ -214,8 +208,9 @@ class StopwatchService: Service() {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_DEFAULT
             )
+            channel.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -245,6 +240,9 @@ class StopwatchService: Service() {
             .setContentText(time.value.format())
             .setSmallIcon(R.drawable.ic_baseline_access_time_24)
             .setOngoing(true)
+            .setSilent(true)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(StopwatchHelper.clickPendingIntent(this))
     }
 

@@ -7,8 +7,6 @@
     <string name="edit_activity_title">Edit Activity</string>
 
     <string name="label_name">Name</string>
-    <string name="label_password">Password</string>
-    <string name="label_confirm_password">Confirm password</string>
     <string name="label_target">Target</string>
     <string name="label_report_time">Report time</string>
     <string name="name_placeholder">e.g. Reading.</string>
@@ -22,15 +20,6 @@
     <string name="btn_pause">Pause</string>
     <string name="btn_ok">OK</string>
     <string name="btn_next">Next</string>
-
-    <string name="login_title">Enter password</string>
-    <string name="wrong_password_error">wrong password</string>
-    <string name="use_biometric_title">Use biometric</string>
-
-    <string name="use_password_btn">Use password</string>
-    <string name="biometric_prompt_title">Login</string>
-    <string name="biometric_prompt_description">Log in using your biometric credential</string>
-    <string name="biometric_auth_failed">Auth failed</string>
 
     <string name="asc_title">Ascending</string>
     <string name="desc_title">Descending</string>
@@ -58,16 +47,19 @@
     <string name="total_work_time">Total Time:</string>
     <string name="activity_work_finished">You have finished %1$s!</string>
 
-    <string name="everyday_reports_enable_title">Everyday reports</string>
-    <string name="default_notification_msg">Congratulation! You have finished @name.</string>
+    <string name="everyday_reports_enable_title">Daily reports</string>
+
+    <string name="db_export_title">Export database</string>
+    <string name="db_export_description">Generates a zip-file that contains all your data. This file can be imported back.</string>
+    <string name="db_import_title">Import database</string>
+    <string name="db_import_description">Supports zip-files exported by this app.</string>
 
     <string name="gv_day">Day</string>
     <string name="gv_week">Week</string>
     <string name="gv_month">Month</string>
     <string name="gv_year">Year</string>
-    <string name="use_keywords_msg">Use @name to mention the activity, and use @time to mention the time.</string>
-    <string name="set_password_title">Set Password</string>
     <string name="loading_title">Loading</string>
+    <string name="btn_done">Done</string>
 
     <string-array name="week_days">
         <item>Mon</item>

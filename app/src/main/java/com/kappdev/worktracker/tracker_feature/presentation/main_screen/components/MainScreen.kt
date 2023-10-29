@@ -93,7 +93,8 @@ fun MainScreen(
                 targetState = dataState,
                 transitionSpec = {
                     fadeIn() with fadeOut()
-                }
+                },
+                label = ""
             ) { animDataState ->
                 when (animDataState) {
                     DataState.NO_DATA -> NoDataScreen()

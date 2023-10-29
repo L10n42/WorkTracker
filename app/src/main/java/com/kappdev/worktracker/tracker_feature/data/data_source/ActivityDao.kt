@@ -17,11 +17,14 @@ interface ActivityDao {
     @RawQuery
     fun getWithOrder(query: SupportSQLiteQuery): List<Activity>
 
-    @Query("SELECT * FROM activities WHERE id=:id")
+    @Query("SELECT * FROM activities WHERE activity_id=:id")
     fun getActivityById(id: Long): Activity
 
-    @Query("DELETE FROM activities WHERE id=:id")
+    @Query("DELETE FROM activities WHERE activity_id=:id")
     fun deleteActivityById(id: Long)
+
+    @Query("SELECT COUNT(*) FROM activities")
+    fun getItemCount(): Int
 
     @Delete
     suspend fun deleteActivity(activity: Activity): Int

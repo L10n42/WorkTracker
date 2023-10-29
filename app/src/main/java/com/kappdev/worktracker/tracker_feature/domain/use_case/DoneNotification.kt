@@ -46,7 +46,8 @@ class DoneNotification @Inject constructor(
             setContentIntent(openAppIntent())
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             setSound(doneSoundUri)
-            priority = NotificationCompat.PRIORITY_HIGH
+            priority = NotificationCompat.PRIORITY_MAX
+            setSilent(false)
             setVibrate(longArrayOf(300, 100, 300))
             setDefaults(NotificationCompat.DEFAULT_LIGHTS)
         }
@@ -75,8 +76,8 @@ class DoneNotification @Inject constructor(
                 setSound(
                     /* sound = */ doneSoundUri,
                     /* audioAttributes = */ AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                         .build()
                 )
                 lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
