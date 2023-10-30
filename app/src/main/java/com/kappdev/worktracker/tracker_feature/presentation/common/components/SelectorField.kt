@@ -37,7 +37,7 @@ fun SelectorField(
         singleLine = true,
         readOnly = true,
         onValueChange = { /* NOTHING */ },
-        textStyle = TextStyle(fontSize = 18.sp),
+        textStyle = TextStyle(fontSize = 16.sp),
         colors = TextFieldDefaults.customOutlinedTextFieldColors(),
         trailingIcon = {
             Icon(
