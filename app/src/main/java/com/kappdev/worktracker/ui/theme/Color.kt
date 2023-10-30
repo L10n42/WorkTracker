@@ -35,3 +35,36 @@ val ErrorRed = Color(0xFFb85f66)
 val LightRed = Color(0xFFE27F91)
 val StrongRed = Color(0xFFDF1237)
 
+val ActivityColors = listOf(
+    Color(0xFFf44336),   // Red
+    Color(0xFFe91e63),   // Pink
+    Color(0xFF9c27b0),   // Purple
+    Color(0xFF673ab7),   // Deep Purple
+    Color(0xFF3f51b5),   // Indigo
+    Color(0xFF2196f3),   // Blue
+    Color(0xFF03a9f4),   // Light Blue
+    Color(0xFF00bcd4),   // Cyan
+    Color(0xFF009688),   // Teal
+    Color(0xFF4caf50),   // Green
+    Color(0xFF8bc34a),   // Light Green
+    Color(0xFFcddc39),   // Lime
+    Color(0xFFffeb3b),   // Yellow
+    Color(0xFFffc107),   // Amber
+    Color(0xFFff9800),   // Orange
+    Color(0xFFff5722),   // Deep Orange
+    Color(0xFF795548),   // Brown
+    Color(0xFF9e9e9e),   // Grey
+    Color(0xFF607d8b),   // Blue Grey
+    Color(0xFF536dfe),   // Sapphire Blue
+    Color(0xFFff3d00),   // Vermilion
+    Color(0xFFc2185b),   // Rose
+    Color(0xFFaa00ff),   // Electric Purple
+    Color(0xFF320b86),   // Royal Blue
+    Color(0xFF00e676),   // Emerald Green
+    Color(0xFF00b8d4),   // Turquoise
+    Color(0xFFb2ff59),   // Lime Green
+    Color(0xFFffd600),   // Golden Yellow
+    Color(0xFFff6d00),   // Sunset Orange
+    Color(0xFF607d8b)    // Steel Grey
+)
+

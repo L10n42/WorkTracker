@@ -60,6 +60,7 @@
     <string name="gv_year">Year</string>
     <string name="loading_title">Loading</string>
     <string name="btn_done">Done</string>
+    <string name="title_color">Color</string>
 
     <string-array name="week_days">
         <item>Mon</item>
