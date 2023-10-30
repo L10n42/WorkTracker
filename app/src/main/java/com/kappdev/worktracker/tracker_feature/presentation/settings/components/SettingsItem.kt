@@ -38,15 +38,14 @@ fun SettingItem(
         ) {
             Text(
                 text = stringResource(titleRes),
-                fontSize = 18.sp,
-                color = MaterialTheme.colors.onSurface,
-                overflow = TextOverflow.Ellipsis
+                fontSize = 16.sp,
+                color = MaterialTheme.colors.onSurface
             )
 
             if (descriptionRes != null) {
                 Text(
                     text = stringResource(descriptionRes),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = MaterialTheme.colors.onBackground
                 )
             }

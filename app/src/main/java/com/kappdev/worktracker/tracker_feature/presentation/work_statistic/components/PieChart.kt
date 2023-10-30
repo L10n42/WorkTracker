@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
+import com.kappdev.worktracker.tracker_feature.domain.model.getColor
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 
 @Composable
@@ -35,11 +36,11 @@ fun PieChart(
     var totalTimeString by remember { mutableStateOf("") }
     var lastValue = remember { 0f }
 
-    LaunchedEffect(key1 = totalTime) {
+    LaunchedEffect(totalTime) {
         totalTimeString = TimeUtil.splitTime(totalTime, shortForm = true)
     }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         animationPlayed = true
     }
 
@@ -48,7 +49,7 @@ fun PieChart(
         animationSpec = tween(
             durationMillis = animDuration,
             easing = LinearOutSlowInEasing
-        )
+        ), label = "chart size"
     )
     
     val animRotation by animateFloatAsState(
@@ -56,7 +57,7 @@ fun PieChart(
         animationSpec = tween(
             durationMillis = animDuration,
             easing = LinearOutSlowInEasing
-        )
+        ), label = "chart rotation"
     )
 
     Column(
@@ -77,7 +78,7 @@ fun PieChart(
                 data.forEach { pieChart ->
                     val value = 360 * pieChart.percent
                     drawArc(
-                        color = pieChart.color,
+                        color = pieChart.activity.getColor(),
                         startAngle = lastValue,
                         sweepAngle = value + 1,
                         useCenter = false,

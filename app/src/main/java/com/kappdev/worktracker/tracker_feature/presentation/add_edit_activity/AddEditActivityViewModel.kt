@@ -3,6 +3,8 @@ package com.kappdev.worktracker.tracker_feature.presentation.add_edit_activity
 import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kappdev.worktracker.R
@@ -10,6 +12,7 @@ import com.kappdev.worktracker.core.common.makeToast
 import com.kappdev.worktracker.tracker_feature.domain.model.*
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetActivityByIdUseCase
 import com.kappdev.worktracker.tracker_feature.domain.use_case.InsertActivityUseCase
+import com.kappdev.worktracker.ui.theme.ActivityColors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +33,9 @@ class AddEditActivityViewModel @Inject constructor(
     private val _name = mutableStateOf("")
     val name: State<String> = _name
 
+    private val _color = mutableStateOf(ActivityColors.random())
+    val color: State<Color> = _color
+
     fun detectErrorAndShowToast() {
         when {
             name.value.isBlank() -> app.makeToast(R.string.unfilled_field_error)
@@ -47,7 +53,8 @@ class AddEditActivityViewModel @Inject constructor(
         id = activity.value.id,
         name = name.value.trim(),
         creationTimestamp = getTimestamp(),
-        targetInSec = target.value.inSeconds()
+        targetInSec = target.value.inSeconds(),
+        color = color.value.toArgb()
     )
 
     private fun getTimestamp(): Long {
@@ -66,6 +73,11 @@ class AddEditActivityViewModel @Inject constructor(
         _activity.value = activity
         setName(activity.name)
         setTarget(Time.from(activity.targetInSec))
+        setColor(activity.getColor())
+    }
+
+    fun setColor(color: Color) {
+        _color.value = color
     }
 
     fun setTarget(time: Time) {

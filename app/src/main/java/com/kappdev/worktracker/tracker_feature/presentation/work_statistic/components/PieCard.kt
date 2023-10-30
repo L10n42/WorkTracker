@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
+import com.kappdev.worktracker.tracker_feature.domain.model.getColor
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.HorizontalSpace
 import com.kappdev.worktracker.ui.customShape
@@ -23,39 +24,33 @@ import com.kappdev.worktracker.ui.spacing
 
 @Composable
 fun PieCard(
-    modifier: Modifier = Modifier,
     data: ReportData,
-    animDuration: Int
+    modifier: Modifier = Modifier,
+    animationSpec: AnimationSpec<Float>
 ) {
-    var targetPercent by remember {
-        mutableStateOf(0f)
-    }
+    var targetPercent by remember { mutableStateOf(0f) }
 
-    LaunchedEffect(key1 = data) {
+    LaunchedEffect(data) {
         targetPercent = data.percent
     }
 
     val animPercent by animateFloatAsState(
         targetValue = targetPercent * 100,
-        animationSpec = tween(
-            durationMillis = animDuration,
-            easing = LinearOutSlowInEasing
-        )
+        animationSpec = animationSpec,
+        label = "percent"
     )
 
     val animProgress by animateFloatAsState(
         targetValue = targetPercent,
-        animationSpec = tween(
-            durationMillis = animDuration,
-            easing = LinearOutSlowInEasing
-        )
+        animationSpec = animationSpec,
+        label = "progress"
     )
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        PieColor(data.color)
+        PieColor(data.activity.getColor())
 
         HorizontalSpace(MaterialTheme.spacing.medium)
         Column(
@@ -79,7 +74,7 @@ fun PieCard(
             ) {
                 PieProgress(
                     progress = animProgress,
-                    color = data.color,
+                    color = data.activity.getColor(),
                     modifier = Modifier.fillMaxWidth(0.8f)
                 )
                 PiePercent(percent = animPercent)
@@ -125,6 +120,7 @@ private fun PieText(
 ) {
     Text(
         text = text,
+        maxLines = 1,
         fontSize = 16.sp,
         modifier = modifier,
         overflow = TextOverflow.Ellipsis,

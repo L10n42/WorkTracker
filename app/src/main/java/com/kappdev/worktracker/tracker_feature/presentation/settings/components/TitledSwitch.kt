@@ -25,7 +25,7 @@ fun TitledSwitch(
     ) {
         Text(
             text = title,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             color = MaterialTheme.colors.onSurface
         )
 

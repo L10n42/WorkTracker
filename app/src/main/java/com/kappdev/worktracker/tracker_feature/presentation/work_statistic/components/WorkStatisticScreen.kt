@@ -1,6 +1,8 @@
 package com.kappdev.worktracker.tracker_feature.presentation.work_statistic.components
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,7 +41,7 @@ fun WorkStatisticScreen(
     val totalTime = viewModel.totalTime.value
     val dataState = viewModel.dataState.value
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         viewModel.getData()
     }
 
@@ -51,19 +53,21 @@ fun WorkStatisticScreen(
             }
         }
     ) { scaffoldPadding ->
-
         AnimatedContent(
             targetState = dataState,
             modifier = Modifier.padding(scaffoldPadding),
             transitionSpec = {
                 fadeIn() with fadeOut()
-            }
+            },
+            label = "screen state transition"
         ) { state ->
             when(state) {
-                DataState.READY -> Content(data, totalTime) { route ->
-                    navController.navigate(route)
+                DataState.READY -> Content(data, totalTime) {
+                    navController.popBackStack()
                 }
-                DataState.NO_DATA -> EmptyWorkScreen(date)
+                DataState.NO_DATA -> EmptyWorkScreen(date) {
+                    navController.popBackStack()
+                }
                 else -> SimpleLoadingScreen()
             }
         }
@@ -74,7 +78,7 @@ fun WorkStatisticScreen(
 private fun Content(
     data: List<ReportData>,
     totalTime: Long,
-    navigate: (route: String) -> Unit
+    onBack: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -82,9 +86,10 @@ private fun Content(
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
     ) {
         item {
-            BackButton(Icons.Default.Close) {
-                navigate(Screen.Main.route)
-            }
+            BackButton(
+                icon = Icons.Default.Close,
+                onClick = onBack
+            )
         }
 
         item {
@@ -104,30 +109,44 @@ private fun Content(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = MaterialTheme.spacing.medium),
-                animDuration = ANIM_DURATION
+                animationSpec = tween(
+                    durationMillis = ANIM_DURATION,
+                    easing = LinearOutSlowInEasing
+                )
             )
         }
     }
 }
 
 @Composable
-fun EmptyWorkScreen(date: LocalDate) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+fun EmptyWorkScreen(
+    date: LocalDate,
+    onBack: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Icon(
-            imageVector = Icons.Default.DataUsage,
-            contentDescription = "pie chart icon",
-            tint = MaterialTheme.colors.onBackground,
-            modifier = Modifier.size(128.dp)
+        BackButton(
+            icon = Icons.Default.Close,
+            modifier = Modifier.align(Alignment.TopStart),
+            onClick = onBack
         )
-        Text(
-            text = "You didn't work on $date.",
-            fontSize = 18.sp,
-            color = MaterialTheme.colors.onBackground
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Icon(
+                imageVector = Icons.Default.DataUsage,
+                contentDescription = "pie chart icon",
+                tint = MaterialTheme.colors.onBackground,
+                modifier = Modifier.size(128.dp)
+            )
+            Text(
+                text = "You didn't work on $date.",
+                fontSize = 18.sp,
+                color = MaterialTheme.colors.onBackground
+            )
+        }
     }
 }
 
