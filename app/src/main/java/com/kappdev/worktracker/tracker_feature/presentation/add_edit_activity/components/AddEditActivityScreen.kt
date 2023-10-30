@@ -62,8 +62,8 @@ fun AddEditActivityScreen(
         bottomSheetType = IDLE
     }
     fun showSheet(type: AddEditActivitySheet) = scope.launch {
-        bottomSheetState.show()
         bottomSheetType = type
+        bottomSheetState.show()
     }
 
     ModalBottomSheetLayout(
