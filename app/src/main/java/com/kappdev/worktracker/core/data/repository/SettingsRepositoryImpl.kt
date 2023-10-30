@@ -34,6 +34,14 @@ class SettingsRepositoryImpl(
         return sharedPreferences.getBoolean(EVERYDAY_REPORTS_ENABLE_KEY, false)
     }
 
+    override fun enableTimeTemplate(enable: Boolean) {
+        editor.putBoolean(TIME_TEMPLATE_KEY, enable).apply()
+    }
+
+    override fun isTimeTemplateEnabled(): Boolean {
+        return sharedPreferences.getBoolean(TIME_TEMPLATE_KEY, false)
+    }
+
     override fun setReportTime(time: LocalTime) {
         val timeJson = Gson().toJson(time)
         editor.putString(REPORT_TIME_KEY, timeJson).apply()
@@ -51,8 +59,8 @@ class SettingsRepositoryImpl(
         private val DefaultReportTime = LocalTime.of(21, 0)
 
         private const val SETTINGS = "settings"
-        private const val SECURED_PREFS = "secured_shared_prefs"
         private const val ACTIVITY_ORDER_KEY = "ACTIVITY_ORDER_KEY"
+        private const val TIME_TEMPLATE_KEY = "TIME_TEMPLATE_KEY"
         private const val REPORT_TIME_KEY = "REPORT_TIME_KEY"
         private const val EVERYDAY_REPORTS_ENABLE_KEY = "EVERYDAY_REPORTS_ENABLE_KEY"
     }

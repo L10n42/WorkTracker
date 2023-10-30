@@ -29,6 +29,8 @@ class MainScreenViewModel @Inject constructor(
     val countdownController: CountdownController
 ) : ViewModel() {
 
+    val showTimeTemplateByDefault = settings.isTimeTemplateEnabled()
+
     val selectedActivities = mutableStateListOf<Activity>()
 
     private val _screenState = mutableStateOf(MainScreenState.NORMAL_MODE)

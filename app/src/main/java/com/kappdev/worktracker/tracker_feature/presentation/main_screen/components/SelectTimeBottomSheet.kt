@@ -28,16 +28,21 @@ import com.kappdev.worktracker.ui.spacing
 @Composable
 fun SelectTimeBottomSheet(
     initValue: Time = Time(),
+    showTimeTemplateByDefault: Boolean = false,
     title: String = stringResource(R.string.set_time_title),
     closeSheet: () -> Unit,
     onTimeSelected: (time: Time) -> Unit
 ) {
     var currentTime by remember { mutableStateOf(initValue) }
-    var isCommonTimeVisible by remember { mutableStateOf(false) }
+    var isCommonTimeVisible by remember { mutableStateOf(showTimeTemplateByDefault) }
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = initValue) {
+    LaunchedEffect(initValue) {
         currentTime = initValue
+    }
+
+    LaunchedEffect(showTimeTemplateByDefault) {
+        isCommonTimeVisible = showTimeTemplateByDefault
     }
 
     Column(

@@ -13,6 +13,10 @@ interface SettingsRepository {
 
     fun everydayReportsEnable(): Boolean
 
+    fun enableTimeTemplate(enable: Boolean)
+
+    fun isTimeTemplateEnabled(): Boolean
+
     fun setReportTime(time: LocalTime)
 
     fun getReportTime(): LocalTime

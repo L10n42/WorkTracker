@@ -61,6 +61,7 @@
     <string name="loading_title">Loading</string>
     <string name="btn_done">Done</string>
     <string name="title_color">Color</string>
+    <string name="show_time_templates">Show time templates</string>
 
     <string-array name="week_days">
         <item>Mon</item>

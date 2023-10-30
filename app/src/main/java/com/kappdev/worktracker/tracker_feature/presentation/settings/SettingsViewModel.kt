@@ -37,6 +37,9 @@ class SettingsViewModel @Inject constructor(
     private val _reportTime = mutableStateOf(settings.getReportTime())
     val reportTime: State<LocalTime> = _reportTime
 
+    private val _showTimeTemplates = mutableStateOf(settings.isTimeTemplateEnabled())
+    val showTimeTemplates: State<Boolean> = _showTimeTemplates
+
     val snackbarState = SnackbarState()
 
     private var exportJob: Job? = null
@@ -68,6 +71,11 @@ class SettingsViewModel @Inject constructor(
 
     fun updateRemainder() {
         remainderManager.startRemainder(reportTime.value)
+    }
+
+    fun enableTimeTemplates(enable: Boolean) {
+        _showTimeTemplates.value = enable
+        settings.enableTimeTemplate(enable)
     }
 
     fun setReportTime(time: LocalTime) {

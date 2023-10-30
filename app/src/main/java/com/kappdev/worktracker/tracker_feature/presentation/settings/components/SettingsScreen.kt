@@ -40,6 +40,7 @@ fun SettingsScreen(
     val scaffoldState = rememberScaffoldState()
     val everydayReportsEnable = viewModel.everydayReportEnable.value
     val reportTime = viewModel.reportTime.value
+    val showTimeTemplates = viewModel.showTimeTemplates.value
     val focusManager = LocalFocusManager.current
 
     InfoSnackbarHandler(hostState = scaffoldState.snackbarHostState, snackbarState = viewModel.snackbarState)
@@ -87,6 +88,17 @@ fun SettingsScreen(
                 .padding(scaffoldPadding),
             contentPadding = PaddingValues(all = MaterialTheme.spacing.medium)
         ) {
+            item {
+                TitledSwitch(
+                    title = stringResource(R.string.show_time_templates),
+                    modifier = Modifier.fillMaxWidth(),
+                    checked = showTimeTemplates,
+                    onSwitch = viewModel::enableTimeTemplates
+                )
+            }
+
+            settingsDivider()
+
             item {
                 TitledSwitch(
                     title = stringResource(R.string.everyday_reports_enable_title),

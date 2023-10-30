@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.common.makeToast
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.model.*
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetActivityByIdUseCase
 import com.kappdev.worktracker.tracker_feature.domain.use_case.InsertActivityUseCase
@@ -17,13 +18,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class AddEditActivityViewModel @Inject constructor(
     private val insertActivity: InsertActivityUseCase,
     private val getActivityById: GetActivityByIdUseCase,
+    @Named("AppSettingsRep") private val settings: SettingsRepository,
     private val app: Application
 ) : ViewModel() {
+
+    val showTimeTemplateByDefault = settings.isTimeTemplateEnabled()
+
     private val _activity = mutableStateOf(Activity())
     val activity: State<Activity> = _activity
 

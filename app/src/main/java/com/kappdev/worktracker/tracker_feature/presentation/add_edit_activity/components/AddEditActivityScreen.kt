@@ -82,6 +82,7 @@ fun AddEditActivityScreen(
                         initValue = target,
                         closeSheet = ::hideSheet,
                         onTimeSelected = viewModel::setTarget,
+                        showTimeTemplateByDefault = viewModel.showTimeTemplateByDefault,
                         title = stringResource(R.string.set_target_title)
                     )
                 }
