@@ -72,7 +72,9 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            SettingsTopBar(navigate = navController::navigate)
+            SettingsTopBar {
+                navController.popBackStack()
+            }
         },
         snackbarHost = {
             SnackbarHost(

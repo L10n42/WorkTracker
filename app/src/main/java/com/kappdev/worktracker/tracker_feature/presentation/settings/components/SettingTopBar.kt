@@ -12,15 +12,13 @@ import com.kappdev.worktracker.ui.theme.SuperDarkGray
 
 @Composable
 fun SettingsTopBar(
-    navigate: (route: String) -> Unit,
+    onBack: () -> Unit,
 ) {
     TopAppBar(
         backgroundColor = SuperDarkGray,
         elevation = MaterialTheme.elevation.extraSmall,
         navigationIcon = {
-            BackButton {
-                 navigate(Screen.Main.route)
-            }
+            BackButton(onClick = onBack)
         },
         title = {
             Title(R.string.settings_screen_title)

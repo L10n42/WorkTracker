@@ -43,7 +43,6 @@ fun SetupNavGraph(
                 when {
                     navigatesFrom(Screen.AddEditActivity) -> slideInRight()
                     navigatesFrom(Screen.ActivityReview) -> slideInRight()
-                    navigatesFrom(Screen.Settings) -> cornerScaleIn(Corner.BOTTOM_LEFT)
                     else -> null
                 }
             },
@@ -52,6 +51,12 @@ fun SetupNavGraph(
                     navigatesToward(Screen.AddEditActivity) -> slideOutLeft()
                     navigatesToward(Screen.ActivityReview) -> slideOutLeft()
                     navigatesToward(Screen.Settings) -> cornerScaleOut(Corner.BOTTOM_LEFT)
+                    else -> null
+                }
+            },
+            popEnterTransition = {
+                when {
+                    navigatesFrom(Screen.Settings) -> cornerScaleIn(Corner.BOTTOM_RIGHT)
                     else -> null
                 }
             }
@@ -70,7 +75,7 @@ fun SetupNavGraph(
         composable(
             Screen.Settings.route,
             enterTransition = { cornerScaleIn(Corner.TOP_RIGHT) },
-            exitTransition = { cornerScaleOut(Corner.TOP_RIGHT) }
+            popExitTransition = { cornerScaleOut(Corner.TOP_LEFT) }
         ) {
             SettingsScreen(navController)
         }
