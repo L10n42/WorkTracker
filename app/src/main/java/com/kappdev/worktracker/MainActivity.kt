@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.compose.setContent
@@ -22,6 +23,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kappdev.worktracker.core.data.repository.SettingsRepositoryImpl
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.core.navigation.SetupNavGraph
 import com.kappdev.worktracker.tracker_feature.data.receiver.AlarmReceiver
@@ -33,15 +36,21 @@ import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.comp
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchBar
 import com.kappdev.worktracker.ui.theme.SuperDarkGray
 import com.kappdev.worktracker.ui.theme.WorkTrackerTheme
+import com.kappdev.worktracker.ui.theme.getTopBarColor
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import javax.inject.Named
 
 @AndroidEntryPoint
-class MainActivity: FragmentActivity() {
+class MainActivity: FragmentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     @Inject
     lateinit var stopwatchController: StopwatchController
     @Inject
     lateinit var countdownController: CountdownController
+
+    @Inject
+    @Named("SingletonAppSettingsRep")
+    lateinit var settings: SettingsRepository
 
     private lateinit var navController: NavHostController
     private lateinit var systemUiController: SystemUiController
@@ -51,6 +60,7 @@ class MainActivity: FragmentActivity() {
     private var startScreenRoute by mutableStateOf(Screen.Main.route)
     private var isStopwatchBound by mutableStateOf(false)
     private var isCountdownBound by mutableStateOf(false)
+    private var isThemeDark by mutableStateOf(true)
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,8 +70,11 @@ class MainActivity: FragmentActivity() {
             startScreenRoute = Screen.WorkStatistic.route
         }
 
+        settings.sharedPref.registerOnSharedPreferenceChangeListener(this)
+        updateTheme()
+
         setContent {
-            WorkTrackerTheme(darkTheme = true) {
+            WorkTrackerTheme(darkTheme = isThemeDark) {
                 navController = rememberAnimatedNavController()
                 systemUiController = rememberSystemUiController()
 
@@ -73,7 +86,7 @@ class MainActivity: FragmentActivity() {
                     Screen.CountdownTimer.route,
                     Screen.SplashScreen.route,
                     Screen.WorkStatistic.route -> MaterialTheme.colors.background
-                    else -> SuperDarkGray
+                    else -> getTopBarColor()
                 }
                 val navigationBarColor = when (currentRoute) {
                     Screen.WorkStatistic.route -> MaterialTheme.colors.surface
@@ -143,5 +156,20 @@ class MainActivity: FragmentActivity() {
         unbindService(countdownConnection)
         isStopwatchBound = false
         isCountdownBound = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        settings.sharedPref.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(sp: SharedPreferences?, key: String?) {
+        if (key == SettingsRepositoryImpl.DARK_THEME_KEY) {
+            updateTheme()
+        }
+    }
+
+    private fun updateTheme() {
+        isThemeDark = settings.isThemeDark()
     }
 }

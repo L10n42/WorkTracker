@@ -12,7 +12,7 @@ import com.kappdev.worktracker.tracker_feature.presentation.activity_review.Acti
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.BackButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.Title
 import com.kappdev.worktracker.ui.elevation
-import com.kappdev.worktracker.ui.theme.SuperDarkGray
+import com.kappdev.worktracker.ui.theme.getTopBarColor
 
 @Composable
 fun ActivityReviewTopBar(
@@ -20,7 +20,7 @@ fun ActivityReviewTopBar(
 ) {
     val activityName = viewModel.currentActivity.value?.name
     TopAppBar(
-        backgroundColor = SuperDarkGray,
+        backgroundColor = getTopBarColor(),
         elevation = MaterialTheme.elevation.extraSmall,
         title = {
             Title(activityName ?: "")

@@ -67,3 +67,9 @@ fun WorkTrackerTheme(
         )
     }
 }
+
+@Composable
+fun getTopBarColor() = if (MaterialTheme.colors.isLight) MaterialTheme.colors.surface else SuperDarkGray
+
+@Composable
+fun getButtonColor() = if (MaterialTheme.colors.isLight) LightButtonColor else DarkButtonColor

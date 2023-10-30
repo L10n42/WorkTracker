@@ -40,6 +40,9 @@ class SettingsViewModel @Inject constructor(
     private val _showTimeTemplates = mutableStateOf(settings.isTimeTemplateEnabled())
     val showTimeTemplates: State<Boolean> = _showTimeTemplates
 
+    private val _isThemeDark = mutableStateOf(settings.isThemeDark())
+    val isThemeDark: State<Boolean> = _isThemeDark
+
     val snackbarState = SnackbarState()
 
     private var exportJob: Job? = null
@@ -71,6 +74,11 @@ class SettingsViewModel @Inject constructor(
 
     fun updateRemainder() {
         remainderManager.startRemainder(reportTime.value)
+    }
+
+    fun setDarkTheme(darkTheme: Boolean) {
+        _isThemeDark.value = darkTheme
+        settings.setDarkTheme(darkTheme)
     }
 
     fun enableTimeTemplates(enable: Boolean) {

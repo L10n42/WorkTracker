@@ -41,6 +41,7 @@ fun SettingsScreen(
     val everydayReportsEnable = viewModel.everydayReportEnable.value
     val reportTime = viewModel.reportTime.value
     val showTimeTemplates = viewModel.showTimeTemplates.value
+    val isThemeDark = viewModel.isThemeDark.value
     val focusManager = LocalFocusManager.current
 
     InfoSnackbarHandler(hostState = scaffoldState.snackbarHostState, snackbarState = viewModel.snackbarState)
@@ -90,6 +91,17 @@ fun SettingsScreen(
                 .padding(scaffoldPadding),
             contentPadding = PaddingValues(all = MaterialTheme.spacing.medium)
         ) {
+            item {
+                TitledSwitch(
+                    title = stringResource(R.string.dark_theme),
+                    modifier = Modifier.fillMaxWidth(),
+                    checked = isThemeDark,
+                    onSwitch = viewModel::setDarkTheme
+                )
+            }
+
+            settingsDivider()
+
             item {
                 TitledSwitch(
                     title = stringResource(R.string.show_time_templates),

@@ -5,18 +5,19 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.Title
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
 import com.kappdev.worktracker.ui.elevation
-import com.kappdev.worktracker.ui.theme.DarkGray
 import com.kappdev.worktracker.ui.theme.SuperDarkGray
+import com.kappdev.worktracker.ui.theme.getTopBarColor
 
 @Composable
 fun MainScreenTopBar(
@@ -24,7 +25,7 @@ fun MainScreenTopBar(
     openSheet: (sheet: MainScreenBottomSheet) -> Unit
 ) {
     TopAppBar(
-        backgroundColor = SuperDarkGray,
+        backgroundColor = getTopBarColor(),
         elevation = MaterialTheme.elevation.extraSmall,
         title = {
             Title(R.string.main_screen_title)

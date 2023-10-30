@@ -1,9 +1,12 @@
 package com.kappdev.worktracker.core.domain.repository
 
+import android.content.SharedPreferences
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
 import java.time.LocalTime
 
 interface SettingsRepository {
+
+    val sharedPref: SharedPreferences
 
     fun setActivityOrder(order: ActivityOrder)
 
@@ -16,6 +19,10 @@ interface SettingsRepository {
     fun enableTimeTemplate(enable: Boolean)
 
     fun isTimeTemplateEnabled(): Boolean
+
+    fun setDarkTheme(darkTheme: Boolean)
+
+    fun isThemeDark(): Boolean
 
     fun setReportTime(time: LocalTime)
 

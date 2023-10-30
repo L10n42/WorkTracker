@@ -24,6 +24,9 @@ val DarkGray = Color(0xFF191919)
 val LightGray = Color(0xFF242424)
 val SuperLightGray = Color(0xFFf1f1ef)
 
+val LightButtonColor = Color(0xFFE7E7E7)
+val DarkButtonColor = Color(0xFF272727)
+
 val onSurfaceDark = Color(0xFFd4d4d4)
 val onBackgroundDark = Color(0xFF7b7b7b)
 

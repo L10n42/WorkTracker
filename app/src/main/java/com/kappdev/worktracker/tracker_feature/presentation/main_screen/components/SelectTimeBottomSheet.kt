@@ -24,6 +24,7 @@ import com.kappdev.worktracker.tracker_feature.domain.model.inMillis
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.TimerPicker
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.VerticalSpace
 import com.kappdev.worktracker.ui.spacing
+import com.kappdev.worktracker.ui.theme.getButtonColor
 
 @Composable
 fun SelectTimeBottomSheet(
@@ -135,13 +136,13 @@ fun Buttons(
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         Button(
-            title = stringResource(id = R.string.btn_cancel),
+            title = stringResource(R.string.btn_cancel),
             titleColor = MaterialTheme.colors.onSurface,
             onClick = onCancelClick
         )
 
         Button(
-            title = stringResource(id = R.string.btn_ok),
+            title = stringResource(R.string.btn_ok),
             titleColor = MaterialTheme.colors.primary,
             onClick = onOkClick
         )
@@ -161,7 +162,7 @@ fun Button(
             .width(150.dp)
             .height(50.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.surface.copy(0.64f)
+            backgroundColor = getButtonColor()
         )
     ) {
         Text(

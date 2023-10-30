@@ -1,13 +1,17 @@
 package com.kappdev.worktracker.tracker_feature.presentation.common.components
 
-import android.graphics.Color.toArgb
 import android.view.LayoutInflater
 import android.widget.NumberPicker
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -73,7 +77,11 @@ fun TimerPicker(
 @Composable
 private fun TimerSeparator() {
     HorizontalSpace(space = MaterialTheme.spacing.small)
-    Text(text = ":", fontSize = 48.sp, color = Color.White)
+    Text(
+        text = ":",
+        fontSize = 48.sp,
+        color = if (MaterialTheme.colors.isLight) Color.Black else Color.White
+    )
     HorizontalSpace(space = MaterialTheme.spacing.small)
 }
 
@@ -86,16 +94,18 @@ private fun NumberPicker(
     onValueChange: (value: Int) -> Unit
 ) {
     var value by remember { mutableStateOf(timerValue) }
-    LaunchedEffect(key1 = timerValue) {
+    LaunchedEffect(timerValue) {
         value = timerValue
     }
 
     val backgroundColor = MaterialTheme.colors.background.toArgb()
+    val isThemeLight = MaterialTheme.colors.isLight
     AndroidView(
         modifier = modifier,
         update = { it.value = value },
         factory = { context ->
-            val view = LayoutInflater.from(context).inflate(R.layout.number_picker, null)
+            val layout = if (isThemeLight) R.layout.dark_number_picker else R.layout.white_number_picker
+            val view = LayoutInflater.from(context).inflate(layout, null)
             val numberPicker = view.findViewById<NumberPicker>(R.id.numberPicker)
             numberPicker.setBackgroundColor(backgroundColor)
             numberPicker.clipToOutline = true

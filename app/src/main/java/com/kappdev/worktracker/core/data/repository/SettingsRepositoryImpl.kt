@@ -1,6 +1,7 @@
 package com.kappdev.worktracker.core.data.repository
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
@@ -8,11 +9,13 @@ import com.kappdev.worktracker.tracker_feature.domain.util.OrderType
 import java.time.LocalTime
 
 class SettingsRepositoryImpl(
-    context: Context
+    private val context: Context
 ): SettingsRepository {
 
-    private val sharedPreferences = context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE)
-    private val editor = sharedPreferences.edit()
+    override val sharedPref: SharedPreferences
+        get() = context.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE)
+
+    private val editor = this.sharedPref.edit()
 
     override fun setActivityOrder(order: ActivityOrder) {
         val orderJson = OrderJson(order.id, order.orderType.id)
@@ -20,7 +23,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getActivityOrder(): ActivityOrder {
-        val json = sharedPreferences.getString(ACTIVITY_ORDER_KEY, null)?: return DefaultOrder
+        val json = this.sharedPref.getString(ACTIVITY_ORDER_KEY, null)?: return DefaultOrder
         val jsonOrder = Gson().fromJson(json, OrderJson::class.java)
         val orderType = OrderType.getById(jsonOrder.typeId)
         return ActivityOrder.getById(jsonOrder.orderId, orderType)?: DefaultOrder
@@ -31,7 +34,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun everydayReportsEnable(): Boolean {
-        return sharedPreferences.getBoolean(EVERYDAY_REPORTS_ENABLE_KEY, false)
+        return this.sharedPref.getBoolean(EVERYDAY_REPORTS_ENABLE_KEY, false)
     }
 
     override fun enableTimeTemplate(enable: Boolean) {
@@ -39,7 +42,15 @@ class SettingsRepositoryImpl(
     }
 
     override fun isTimeTemplateEnabled(): Boolean {
-        return sharedPreferences.getBoolean(TIME_TEMPLATE_KEY, false)
+        return this.sharedPref.getBoolean(TIME_TEMPLATE_KEY, false)
+    }
+
+    override fun setDarkTheme(darkTheme: Boolean) {
+        editor.putBoolean(DARK_THEME_KEY, darkTheme).apply()
+    }
+
+    override fun isThemeDark(): Boolean {
+        return this.sharedPref.getBoolean(DARK_THEME_KEY, true)
     }
 
     override fun setReportTime(time: LocalTime) {
@@ -48,7 +59,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getReportTime(): LocalTime {
-        val json = sharedPreferences.getString(REPORT_TIME_KEY, null)?: return DefaultReportTime
+        val json = this.sharedPref.getString(REPORT_TIME_KEY, null)?: return DefaultReportTime
         return Gson().fromJson(json, LocalTime::class.java)
     }
 
@@ -57,6 +68,8 @@ class SettingsRepositoryImpl(
     companion object {
         private val DefaultOrder = ActivityOrder.Name(OrderType.Ascending)
         private val DefaultReportTime = LocalTime.of(21, 0)
+
+        const val DARK_THEME_KEY = "DARK_THEME_KEY"
 
         private const val SETTINGS = "settings"
         private const val ACTIVITY_ORDER_KEY = "ACTIVITY_ORDER_KEY"

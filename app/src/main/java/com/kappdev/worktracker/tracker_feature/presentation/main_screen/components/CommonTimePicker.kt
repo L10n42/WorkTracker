@@ -21,6 +21,7 @@ import com.kappdev.worktracker.tracker_feature.domain.model.stringFormat
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.CommonDurations
 import com.kappdev.worktracker.ui.customShape
 import com.kappdev.worktracker.ui.spacing
+import com.kappdev.worktracker.ui.theme.getButtonColor
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -86,7 +87,7 @@ private fun CommonTimeButton(
         shape = MaterialTheme.customShape.medium,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.surface.copy(0.64f)
+            backgroundColor = getButtonColor()
         )
     ) {
         Text(
