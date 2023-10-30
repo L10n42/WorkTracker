@@ -1,22 +1,30 @@
 package com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowForwardIos
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.data.service.stopwatch.StopwatchService
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.AnimatedTimer
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.BackButton
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.timer.TimerButtons
 import com.kappdev.worktracker.ui.spacing
 
@@ -72,12 +80,21 @@ fun StopwatchTimerScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(all = MaterialTheme.spacing.large),
+                .padding(MaterialTheme.spacing.large),
             onFinish = {
                 stopwatchController.finish()
-                navController.navigate(Screen.Main.route)
+                navController.popBackStack()
             }
         )
+
+        BackButton(
+            Icons.Rounded.ArrowForwardIos,
+            modifier = Modifier
+                .padding(8.dp)
+                .rotate(90f)
+        ) {
+            navController.popBackStack()
+        }
     }
 }
 

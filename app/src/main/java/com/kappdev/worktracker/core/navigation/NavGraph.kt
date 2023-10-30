@@ -56,7 +56,7 @@ fun SetupNavGraph(
             },
             popEnterTransition = {
                 when {
-                    navigatesFrom(Screen.Settings) -> cornerScaleIn(Corner.BOTTOM_RIGHT)
+                    navigatesFrom(Screen.Settings) -> cornerScaleIn(Corner.TOP_LEFT)
                     else -> null
                 }
             }
@@ -75,7 +75,7 @@ fun SetupNavGraph(
         composable(
             Screen.Settings.route,
             enterTransition = { cornerScaleIn(Corner.TOP_RIGHT) },
-            popExitTransition = { cornerScaleOut(Corner.TOP_LEFT) }
+            popExitTransition = { cornerScaleOut(Corner.BOTTOM_RIGHT) }
         ) {
             SettingsScreen(navController)
         }
@@ -93,7 +93,9 @@ fun SetupNavGraph(
         composable(
             Screen.StopwatchTimer.route,
             enterTransition = { slideInUp() },
-            exitTransition = { slideOutDown() }
+            exitTransition = { slideOutDown() },
+            popEnterTransition = { slideInUp() },
+            popExitTransition = { slideOutDown() }
         ) {
             StopwatchTimerScreen(navController, stopwatchService, stopwatchController)
         }
@@ -101,7 +103,9 @@ fun SetupNavGraph(
         composable(
             Screen.CountdownTimer.route,
             enterTransition = { slideInUp() },
-            exitTransition = { slideOutDown() }
+            exitTransition = { slideOutDown() },
+            popEnterTransition = { slideInUp() },
+            popExitTransition = { slideOutDown() }
         ) {
             CountdownTimerScreen(navController, countdownService, countdownController)
         }
