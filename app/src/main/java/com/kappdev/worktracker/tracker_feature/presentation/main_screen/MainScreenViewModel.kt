@@ -5,17 +5,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kappdev.worktracker.core.navigation.Screen
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
 import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownController
-import com.kappdev.worktracker.core.domain.repository.SettingsRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetSortedActivities
 import com.kappdev.worktracker.tracker_feature.domain.use_case.RemoveActivitiesUseCase
 import com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -44,9 +42,6 @@ class MainScreenViewModel @Inject constructor(
 
     private val _activities = mutableStateOf<List<Activity>>(emptyList())
     val activities: State<List<Activity>> = _activities
-
-    private val _navigate = mutableStateOf<String?>(null)
-    val navigate: State<String?> = _navigate
 
     private val _order = mutableStateOf(settings.getActivityOrder())
     val order: State<ActivityOrder> = _order
@@ -94,16 +89,9 @@ class MainScreenViewModel @Inject constructor(
 
     private fun setDataState(state: DataState) { _dataState.value = state }
 
-    fun setScreenState(state: MainScreenState) { _screenState.value = state }
     fun switchSelectionModeOn() { _screenState.value = MainScreenState.SELECTION_MODE }
-    fun switchSelectionModeOff() { _screenState.value = MainScreenState.NORMAL_MODE }
+    private fun switchSelectionModeOff() { _screenState.value = MainScreenState.NORMAL_MODE }
 
     fun openDialog(dialog: MainScreenDialog) { _dialog.value = dialog }
     fun closeDialog() { _dialog.value = null }
-
-    fun openActivity(activity: Activity) {
-        navigate(Screen.ActivityReview.route + "?activityId=${activity.id}")
-    }
-    fun navigate(route: String) { _navigate.value = route }
-    fun clearNavigationRoute() { _navigate.value = null }
 }

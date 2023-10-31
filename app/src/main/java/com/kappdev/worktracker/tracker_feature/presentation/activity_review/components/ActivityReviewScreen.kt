@@ -29,7 +29,6 @@ fun ActivityReviewScreen(
     activityId: Long,
     viewModel: ActivityReviewViewModel = hiltViewModel()
 ) {
-    val navigate = viewModel.navigate.value
     val graphDate = viewModel.graphDate.value
     val activity = viewModel.currentActivity.value
 
@@ -46,20 +45,17 @@ fun ActivityReviewScreen(
         .padding(MaterialTheme.spacing.medium)
         .height(300.dp)
 
-    LaunchedEffect(key1 = navigate) {
-        if (navigate != null) {
-            navController.navigate(navigate)
-            viewModel.clearNavigationRoute()
-        }
-    }
-
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         viewModel.getDataFor(activityId)
     }
 
     Scaffold(
         topBar = {
-            ActivityReviewTopBar(viewModel)
+            ActivityReviewTopBar(
+                activity = activity,
+                onBack = navController::popBackStack,
+                onNavigate = navController::navigate
+            )
         }
     ) { scaffoldPadding ->
         Column(

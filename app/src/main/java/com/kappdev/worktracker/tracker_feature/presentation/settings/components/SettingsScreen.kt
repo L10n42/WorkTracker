@@ -73,16 +73,15 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            SettingsTopBar {
-                navController.popBackStack()
-            }
+            SettingsTopBar(onBack = navController::popBackStack)
         },
         snackbarHost = {
             SnackbarHost(
-                hostState = scaffoldState.snackbarHostState
-            ) { data ->
-                Snackbar(snackbarData = data)
-            }
+                hostState = scaffoldState.snackbarHostState,
+                snackbar = { data ->
+                    Snackbar(snackbarData = data)
+                }
+            )
         }
     ) { scaffoldPadding ->
         LazyColumn(

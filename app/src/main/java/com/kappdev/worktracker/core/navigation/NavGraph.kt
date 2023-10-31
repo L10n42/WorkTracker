@@ -39,13 +39,6 @@ fun SetupNavGraph(
     ) {
         composable(
             Screen.Main.route,
-            enterTransition = {
-                when {
-                    navigatesFrom(Screen.AddEditActivity) -> slideInRight()
-                    navigatesFrom(Screen.ActivityReview) -> slideInRight()
-                    else -> null
-                }
-            },
             exitTransition = {
                 when {
                     navigatesToward(Screen.AddEditActivity) -> slideOutLeft()
@@ -57,6 +50,8 @@ fun SetupNavGraph(
             popEnterTransition = {
                 when {
                     navigatesFrom(Screen.Settings) -> cornerScaleIn(Corner.TOP_LEFT)
+                    navigatesFrom(Screen.ActivityReview) -> slideInRight()
+                    navigatesFrom(Screen.AddEditActivity) -> slideInRight()
                     else -> null
                 }
             }
@@ -67,7 +62,9 @@ fun SetupNavGraph(
         composable(
             Screen.WorkStatistic.route,
             enterTransition = { screenFadeIn() },
-            exitTransition = { screenFadeOut() }
+            exitTransition = { screenFadeOut() },
+            popEnterTransition = { screenFadeIn() },
+            popExitTransition = { screenFadeOut() },
         ) {
             WorkStatisticScreen(navController)
         }
@@ -75,7 +72,9 @@ fun SetupNavGraph(
         composable(
             Screen.Settings.route,
             enterTransition = { cornerScaleIn(Corner.TOP_RIGHT) },
-            popExitTransition = { cornerScaleOut(Corner.BOTTOM_RIGHT) }
+            exitTransition = { cornerScaleOut(Corner.BOTTOM_RIGHT) },
+            popExitTransition = { cornerScaleOut(Corner.BOTTOM_RIGHT) },
+            popEnterTransition = { cornerScaleIn(Corner.TOP_RIGHT) }
         ) {
             SettingsScreen(navController)
         }
@@ -118,9 +117,8 @@ fun SetupNavGraph(
                     defaultValue = 0
                 }
             ),
-            enterTransition = {
-                slideInLeft()
-            },
+            enterTransition = { slideInLeft() },
+            popEnterTransition = { slideInRight() },
             exitTransition = {
                 when {
                     navigatesToward(Screen.AddEditActivity) -> slideOutLeft()
@@ -143,7 +141,8 @@ fun SetupNavGraph(
                 }
             ),
             enterTransition = { slideInLeft() },
-            exitTransition = { slideOutRight() }
+            exitTransition = { slideOutRight() },
+            popExitTransition = { slideOutRight() }
         ) {
             val activityId = it.arguments?.getLong("activityId")
             AddEditActivityScreen(navController, activityId)

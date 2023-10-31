@@ -25,13 +25,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
-import com.kappdev.worktracker.tracker_feature.domain.model.getColor
-import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenState
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 import com.kappdev.worktracker.ui.elevation
 import com.kappdev.worktracker.ui.spacing
-import kotlinx.coroutines.selects.select
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -42,6 +40,7 @@ fun ActivityCard(
     isSelected: Boolean,
     isStopwatchActive: Boolean,
     isCountdownActive: Boolean,
+    onNavigate: (route: String) -> Unit,
     onStart: () -> Unit,
     onStartTimer: () -> Unit
 ) {
@@ -69,7 +68,7 @@ fun ActivityCard(
                     if (isSelectionMode) {
                         if (isSelected) viewModel.deselect(activity) else viewModel.select(activity)
                     } else {
-                        viewModel.openActivity(activity)
+                        onNavigate(Screen.ActivityReview.route + "?activityId=${activity.id}")
                     }
                 },
                 onLongClick = {

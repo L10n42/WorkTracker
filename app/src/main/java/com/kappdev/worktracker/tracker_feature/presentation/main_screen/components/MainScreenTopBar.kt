@@ -16,12 +16,11 @@ import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.Title
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
 import com.kappdev.worktracker.ui.elevation
-import com.kappdev.worktracker.ui.theme.SuperDarkGray
 import com.kappdev.worktracker.ui.theme.getTopBarColor
 
 @Composable
 fun MainScreenTopBar(
-    navigate: (route: String) -> Unit,
+    onNavigate: (route: String) -> Unit,
     openSheet: (sheet: MainScreenBottomSheet) -> Unit
 ) {
     TopAppBar(
@@ -32,11 +31,11 @@ fun MainScreenTopBar(
         },
         actions = {
             ActionButton(icon = Icons.Default.Add) {
-                navigate(Screen.AddEditActivity.route)
+                onNavigate(Screen.AddEditActivity.route)
             }
 
             ActionButton(icon = Icons.Outlined.Analytics) {
-                navigate(Screen.WorkStatistic.route)
+                onNavigate(Screen.WorkStatistic.route)
             }
 
             ActionButton(icon = Icons.Default.Sort) {
@@ -44,7 +43,7 @@ fun MainScreenTopBar(
             }
 
             ActionButton(icon = Icons.Default.Settings) {
-                navigate(Screen.Settings.route)
+                onNavigate(Screen.Settings.route)
             }
         }
     )

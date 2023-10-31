@@ -11,13 +11,15 @@ import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScre
 fun TopBarController(
     screenState: MainScreenState,
     viewModel: MainScreenViewModel,
+    onNavigate: (route: String) -> Unit,
     openSheet: (sheet: MainScreenBottomSheet) -> Unit,
 ) {
     AnimatedContent(
         targetState = screenState,
         transitionSpec = {
             slideInVertically() with slideOutVertically()
-        }
+        },
+        label = "top bar state animation"
     ) { animScreenState ->
         when (animScreenState) {
             MainScreenState.SELECTION_MODE -> {
@@ -26,7 +28,7 @@ fun TopBarController(
             MainScreenState.NORMAL_MODE -> {
                 MainScreenTopBar(
                     openSheet = openSheet,
-                    navigate = viewModel::navigate
+                    onNavigate = onNavigate
                 )
             }
         }

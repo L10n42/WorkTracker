@@ -42,7 +42,6 @@ fun MainScreen(
     val stopwatchActivityId by stopwatchService.activityId
     val countdownActivityId by countdownService.activityId
 
-    val navigate = viewModel.navigate.value
     val activities = viewModel.activities.value
     val screenState = viewModel.screenState.value
     val dataState = viewModel.dataState.value
@@ -62,14 +61,7 @@ fun MainScreen(
         sheetState.show()
     }
 
-    LaunchedEffect(key1 = true) { viewModel.launch() }
-
-    LaunchedEffect(key1 = navigate) {
-        if (navigate != null) {
-            navController.navigate(navigate)
-            viewModel.clearNavigationRoute()
-        }
-    }
+    LaunchedEffect(Unit) { viewModel.launch() }
 
     if (!sheetState.isVisible) currentSheet = null
     MainScreenDialogController(dialog, viewModel)
@@ -85,7 +77,12 @@ fun MainScreen(
     ) {
         Scaffold(
             topBar = {
-                TopBarController(screenState, viewModel, openSheet = ::openSheet)
+                TopBarController(
+                    screenState = screenState,
+                    viewModel = viewModel,
+                    onNavigate = navController::navigate,
+                    openSheet = ::openSheet
+                )
             }
         ) { scaffoldPadding ->
 
@@ -94,7 +91,7 @@ fun MainScreen(
                 transitionSpec = {
                     fadeIn() with fadeOut()
                 },
-                label = ""
+                label = "screen state animation"
             ) { animDataState ->
                 when (animDataState) {
                     DataState.NO_DATA -> NoDataScreen()
@@ -116,6 +113,7 @@ fun MainScreen(
                                     isSelectionMode = screenState == MainScreenState.SELECTION_MODE,
                                     isStopwatchActive = isCurrentActivity && stopwatchState == ServiceState.Started,
                                     isCountdownActive = isCurrentActivity && countdownState != ServiceState.Idle,
+                                    onNavigate = navController::navigate,
                                     onStart = {
                                         when {
                                             (stopwatchState == ServiceState.Idle && countdownState == ServiceState.Idle) -> {

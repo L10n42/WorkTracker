@@ -4,9 +4,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.tracker_feature.domain.model.Activity
-import com.kappdev.worktracker.tracker_feature.domain.use_case.*
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetActivityByIdUseCase
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetCalendarDataFor
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetDayDataFor
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetMonthDataFor
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetWeekDataFor
+import com.kappdev.worktracker.tracker_feature.domain.use_case.GetYearDataFor
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -48,9 +52,6 @@ class ActivityReviewViewModel @Inject constructor(
 
     private val _currentActivity = mutableStateOf<Activity?>(null)
     val currentActivity: State<Activity?> = _currentActivity
-
-    private val _navigate = mutableStateOf<String?>(null)
-    val navigate: State<String?> = _navigate
 
     private var graphDataJob: Job? = null
     private var calendarDataJob: Job? = null
@@ -108,13 +109,6 @@ class ActivityReviewViewModel @Inject constructor(
         _calendarDate.value = date
         updateCalendarData()
     }
-
-    fun gotoEdit() = withActivityId { id ->
-        navigate(Screen.AddEditActivity.route + "?activityId=$id")
-    }
-
-    fun navigate(route: String) { _navigate.value = route }
-    fun clearNavigationRoute() { _navigate.value = null }
 
     private fun setTotalTime(value: String) { _totalTime.value = value }
 

@@ -92,16 +92,17 @@ fun AddEditActivityScreen(
     ) {
         Scaffold(
             topBar = {
-                AddEditActivityTopBar(viewModel) {
-                    navController.navigate(Screen.Main.route)
-                }
+                AddEditActivityTopBar(
+                    viewModel = viewModel,
+                    onBack = navController::popBackStack
+                )
             },
             floatingActionButtonPosition = FabPosition.Center,
             floatingActionButton = {
                 DoneButton {
                     if (viewModel.canSave()) {
                         viewModel.save()
-                        navController.navigate(Screen.Main.route)
+                        navController.popBackStack()
                     } else {
                         viewModel.detectErrorAndShowToast()
                     }
