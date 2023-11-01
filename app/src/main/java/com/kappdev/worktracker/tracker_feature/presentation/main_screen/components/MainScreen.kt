@@ -61,7 +61,13 @@ fun MainScreen(
         sheetState.show()
     }
 
-    LaunchedEffect(Unit) { viewModel.launch() }
+    if (viewModel.showServiceInfo.value) {
+        openSheet(MainScreenBottomSheet.ServiceInfo)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.launch()
+    }
 
     if (!sheetState.isVisible) currentSheet = null
     MainScreenDialogController(dialog, viewModel)

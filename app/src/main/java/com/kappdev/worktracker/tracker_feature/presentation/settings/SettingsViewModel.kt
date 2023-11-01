@@ -31,6 +31,9 @@ class SettingsViewModel @Inject constructor(
     var isLoading = mutableStateOf(false)
         private set
 
+    var showServiceInfo = mutableStateOf(false)
+        private set
+
     private val _everydayReportEnable = mutableStateOf(settings.everydayReportsEnable())
     val everydayReportEnable: State<Boolean> = _everydayReportEnable
 
@@ -94,6 +97,10 @@ class SettingsViewModel @Inject constructor(
     fun setEverydayReportsEnable(enable: Boolean) {
         _everydayReportEnable.value = enable
         settings.setEverydayReports(enable)
+    }
+
+    fun showServiceInfo(show: Boolean) {
+        showServiceInfo.value = show
     }
 
     private suspend fun loading(block: suspend () -> Unit) {

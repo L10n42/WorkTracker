@@ -3,6 +3,7 @@ package com.kappdev.worktracker.tracker_feature.presentation.main_screen.compone
 import androidx.compose.runtime.Composable
 import com.kappdev.worktracker.tracker_feature.data.util.ServiceState
 import com.kappdev.worktracker.tracker_feature.domain.model.inMillis
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.ServiceInfoSheet
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenBottomSheet
 import com.kappdev.worktracker.tracker_feature.presentation.main_screen.MainScreenViewModel
 
@@ -30,6 +31,10 @@ fun MainScreenBottomSheetController(
         }
         is MainScreenBottomSheet.Sort -> {
             ActivitiesOrderSheet(viewModel)
+        }
+        is MainScreenBottomSheet.ServiceInfo -> ServiceInfoSheet {
+            viewModel.viewServiceInfo()
+            closeSheet()
         }
     }
 }

@@ -31,6 +31,9 @@ class MainScreenViewModel @Inject constructor(
 
     val selectedActivities = mutableStateListOf<Activity>()
 
+    private val _showServiceInfo = mutableStateOf(settings.showServiceInfo())
+    val showServiceInfo: State<Boolean> = _showServiceInfo
+
     private val _screenState = mutableStateOf(MainScreenState.NORMAL_MODE)
     val screenState: State<MainScreenState> = _screenState
 
@@ -94,4 +97,9 @@ class MainScreenViewModel @Inject constructor(
 
     fun openDialog(dialog: MainScreenDialog) { _dialog.value = dialog }
     fun closeDialog() { _dialog.value = null }
+
+    fun viewServiceInfo() {
+        _showServiceInfo.value = false
+        settings.viewServiceInfo()
+    }
 }

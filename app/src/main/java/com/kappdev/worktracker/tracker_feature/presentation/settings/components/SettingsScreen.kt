@@ -9,16 +9,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -26,23 +32,42 @@ import com.kappdev.worktracker.R
 import com.kappdev.worktracker.core.presentation.InfoSnackbarHandler
 import com.kappdev.worktracker.core.presentation.common_components.LoadingDialog
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.SelectorField
+import com.kappdev.worktracker.tracker_feature.presentation.common.components.ServiceInfoSheet
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.TimePicker
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.VerticalSpace
 import com.kappdev.worktracker.tracker_feature.presentation.settings.SettingsViewModel
 import com.kappdev.worktracker.ui.spacing
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SettingsScreen(
     navController: NavHostController,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(
+            initialValue = BottomSheetValue.Collapsed,
+            confirmStateChange = { newState ->
+                if (newState == BottomSheetValue.Collapsed) viewModel.showServiceInfo(false)
+                true
+            }
+        )
+    )
     val everydayReportsEnable = viewModel.everydayReportEnable.value
     val reportTime = viewModel.reportTime.value
     val showTimeTemplates = viewModel.showTimeTemplates.value
     val isThemeDark = viewModel.isThemeDark.value
     val focusManager = LocalFocusManager.current
+    val showServiceInfo = viewModel.showServiceInfo.value
+
+    LaunchedEffect(showServiceInfo) {
+        if (showServiceInfo) {
+            scaffoldState.bottomSheetState.expand()
+        } else {
+            if (scaffoldState.bottomSheetState.isExpanded) scaffoldState.bottomSheetState.collapse()
+        }
+    }
 
     InfoSnackbarHandler(hostState = scaffoldState.snackbarHostState, snackbarState = viewModel.snackbarState)
 
@@ -71,7 +96,15 @@ fun SettingsScreen(
         }
     )
 
-    Scaffold(
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 0.dp,
+        sheetBackgroundColor = Color.Transparent,
+        sheetContent = {
+            ServiceInfoSheet {
+                viewModel.showServiceInfo(false)
+            }
+        },
         topBar = {
             SettingsTopBar(onBack = navController::popBackStack)
         },
@@ -99,7 +132,7 @@ fun SettingsScreen(
                 )
             }
 
-            settingsDivider()
+            settingsDivider(space = 8.dp)
 
             item {
                 TitledSwitch(
@@ -110,7 +143,7 @@ fun SettingsScreen(
                 )
             }
 
-            settingsDivider()
+            settingsDivider(space = 8.dp)
 
             item {
                 TitledSwitch(
@@ -142,7 +175,7 @@ fun SettingsScreen(
                 )
             }
 
-            settingsDivider()
+            settingsDivider(space = 8.dp)
 
             item {
                 SettingItem(
@@ -163,6 +196,17 @@ fun SettingsScreen(
                     }
                 )
             }
+
+            settingsDivider()
+
+            item {
+                SettingItem(
+                    titleRes = R.string.service_issue_setting,
+                    onClick = {
+                        viewModel.showServiceInfo(true)
+                    }
+                )
+            }
         }
     }
 }
@@ -171,10 +215,10 @@ private fun LazyListScope.settingsSpace() = item {
     VerticalSpace(space = 16.dp)
 }
 
-private fun LazyListScope.settingsDivider() = item {
+private fun LazyListScope.settingsDivider(space: Dp = 0.dp) = item {
     Column {
-        VerticalSpace(space = 16.dp)
+        VerticalSpace(space)
         Divider()
-        VerticalSpace(space = 16.dp)
+        VerticalSpace(space)
     }
 }

@@ -20,6 +20,10 @@ interface SettingsRepository {
 
     fun isTimeTemplateEnabled(): Boolean
 
+    fun showServiceInfo(): Boolean
+
+    fun viewServiceInfo()
+
     fun setDarkTheme(darkTheme: Boolean)
 
     fun isThemeDark(): Boolean
