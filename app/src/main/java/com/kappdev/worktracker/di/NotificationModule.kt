@@ -11,6 +11,7 @@ import com.kappdev.worktracker.core.data.repository.SettingsRepositoryImpl
 import com.kappdev.worktracker.tracker_feature.domain.repository.ActivityRepository
 import com.kappdev.worktracker.tracker_feature.domain.repository.SessionRepository
 import com.kappdev.worktracker.core.domain.repository.SettingsRepository
+import com.kappdev.worktracker.tracker_feature.data.data_source.MIGRATION_8_10
 import com.kappdev.worktracker.tracker_feature.domain.use_case.DoneNotification
 import dagger.Module
 import dagger.Provides
@@ -32,7 +33,7 @@ object NotificationModule {
             app,
             WorkDatabase::class.java,
             WorkDatabase.NAME
-        ).fallbackToDestructiveMigration().build()
+        ).build()
     }
 
     @Provides

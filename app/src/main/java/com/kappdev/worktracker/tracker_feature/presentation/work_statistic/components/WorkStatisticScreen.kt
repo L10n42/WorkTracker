@@ -58,15 +58,14 @@ fun WorkStatisticScreen(
             modifier = Modifier.padding(scaffoldPadding),
             transitionSpec = {
                 fadeIn() with fadeOut()
-            },
-            label = "screen state transition"
+            }
         ) { state ->
             when(state) {
                 DataState.READY -> Content(data, totalTime) {
-                    navController.popBackStack()
+                    navController.navigate(Screen.Main.route)
                 }
                 DataState.NO_DATA -> EmptyWorkScreen(date) {
-                    navController.popBackStack()
+                    navController.navigate(Screen.Main.route)
                 }
                 else -> SimpleLoadingScreen()
             }

@@ -78,8 +78,7 @@ fun CustomGraph(
         ) {
             val columnSpace by animateDpAsState(
                 targetValue = if (viewState == GraphViewState.WEEK) 12.dp else 4.dp,
-                animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-                label = "column space"
+                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
             )
 
             LazyRow(
@@ -152,8 +151,7 @@ private fun GraphColumn(
 
     val animFraction by animateFloatAsState(
         targetValue = targetFraction,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "bar height fraction"
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
     LaunchedEffect(key1 = value) {
@@ -188,14 +186,12 @@ private fun GraphColumn(
             viewState == GraphViewState.MONTH && value.second >= 3600L -> 36.dp
             else -> 20.dp
         },
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "column width"
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
     val textRotate by animateFloatAsState(
         targetValue = targetTextRotation,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "text rotate"
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
     Box(

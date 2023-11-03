@@ -15,7 +15,7 @@ sealed class ActivityOrder(val orderType: OrderType, val id: String) {
         private const val NAME_ID = "activity_name"
         private const val DATE_ID = "creation_timestamp"
 
-        fun getById(id: String, orderType: OrderType?): ActivityOrder? {
+        fun getById(id: String?, orderType: OrderType?): ActivityOrder? {
             val type = orderType ?: OrderType.Ascending
             return when (id) {
                 NAME_ID -> Name(type)

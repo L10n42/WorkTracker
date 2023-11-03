@@ -39,6 +39,14 @@ fun SetupNavGraph(
     ) {
         composable(
             Screen.Main.route,
+            enterTransition = {
+                when {
+                    navigatesFrom(Screen.Settings) -> cornerScaleIn(Corner.TOP_LEFT)
+                    navigatesFrom(Screen.ActivityReview) -> slideInRight()
+                    navigatesFrom(Screen.AddEditActivity) -> slideInRight()
+                    else -> null
+                }
+            },
             exitTransition = {
                 when {
                     navigatesToward(Screen.AddEditActivity) -> slideOutLeft()

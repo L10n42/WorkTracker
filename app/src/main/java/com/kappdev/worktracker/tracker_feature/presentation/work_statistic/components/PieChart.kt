@@ -49,7 +49,7 @@ fun PieChart(
         animationSpec = tween(
             durationMillis = animDuration,
             easing = LinearOutSlowInEasing
-        ), label = "chart size"
+        )
     )
     
     val animRotation by animateFloatAsState(
@@ -57,7 +57,7 @@ fun PieChart(
         animationSpec = tween(
             durationMillis = animDuration,
             easing = LinearOutSlowInEasing
-        ), label = "chart rotation"
+        )
     )
 
     Column(

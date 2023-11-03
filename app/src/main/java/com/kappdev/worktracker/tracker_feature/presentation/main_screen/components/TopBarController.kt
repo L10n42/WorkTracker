@@ -18,8 +18,7 @@ fun TopBarController(
         targetState = screenState,
         transitionSpec = {
             slideInVertically() with slideOutVertically()
-        },
-        label = "top bar state animation"
+        }
     ) { animScreenState ->
         when (animScreenState) {
             MainScreenState.SELECTION_MODE -> {

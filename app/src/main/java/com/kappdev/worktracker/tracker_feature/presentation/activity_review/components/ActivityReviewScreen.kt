@@ -68,7 +68,7 @@ fun ActivityReviewScreen(
                 targetState = graphDataState,
                 transitionSpec = {
                     fadeIn() with fadeOut()
-                }, label = ""
+                }
             ) { state ->
                 when (state) {
                     GraphDataState.LOADING -> {
@@ -102,7 +102,7 @@ fun ActivityReviewScreen(
                 targetState = graphViewState,
                 transitionSpec = {
                     fadeIn() with fadeOut()
-                }, label = ""
+                }
             ) { view ->
                 when (view) {
                     GraphViewState.DAY -> {

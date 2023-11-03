@@ -8,7 +8,7 @@ sealed class OrderType(val id: String) {
         private const val ASCENDING_ID = "ASC"
         private const val DESCENDING_ID = "DESC"
 
-        fun getById(id: String): OrderType? {
+        fun getById(id: String?): OrderType? {
             return when (id) {
                 ASCENDING_ID -> Ascending
                 DESCENDING_ID -> Descending

@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.kappdev.worktracker.ui.theme.ActivityColors
+import com.kappdev.worktracker.ui.theme.DEFAULT_ACTIVITY_COLOR
 
 @Entity(tableName = "activities")
 data class Activity(
@@ -17,7 +19,7 @@ data class Activity(
     @ColumnInfo(name = "creation_timestamp")
     val creationTimestamp: Long = 0,
 
-    @ColumnInfo(name = "activity_color")
+    @ColumnInfo(name = "activity_color", defaultValue = DEFAULT_ACTIVITY_COLOR)
     val color: Int = 0,
 
     @ColumnInfo(name = "target_in_seconds")

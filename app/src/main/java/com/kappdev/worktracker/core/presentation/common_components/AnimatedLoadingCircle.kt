@@ -27,9 +27,8 @@ fun AnimatedLoadingCircle(
     strokeColor: Color = MaterialTheme.colors.primary
 ) {
 
-    val transition = rememberInfiniteTransition(label = "loading circle transition")
+    val transition = rememberInfiniteTransition()
     val spinAngel = transition.animateFloat(
-        label = "circle spin angel transition",
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(

@@ -36,14 +36,12 @@ fun PieCard(
 
     val animPercent by animateFloatAsState(
         targetValue = targetPercent * 100,
-        animationSpec = animationSpec,
-        label = "percent"
+        animationSpec = animationSpec
     )
 
     val animProgress by animateFloatAsState(
         targetValue = targetPercent,
-        animationSpec = animationSpec,
-        label = "progress"
+        animationSpec = animationSpec
     )
 
     Row(

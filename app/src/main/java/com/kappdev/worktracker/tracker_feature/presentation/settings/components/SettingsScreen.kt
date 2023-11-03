@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.core.navigation.Screen
 import com.kappdev.worktracker.core.presentation.InfoSnackbarHandler
 import com.kappdev.worktracker.core.presentation.common_components.LoadingDialog
 import com.kappdev.worktracker.tracker_feature.presentation.common.components.SelectorField
@@ -106,7 +107,9 @@ fun SettingsScreen(
             }
         },
         topBar = {
-            SettingsTopBar(onBack = navController::popBackStack)
+            SettingsTopBar {
+                navController.navigate(Screen.Main.route)
+            }
         },
         snackbarHost = {
             SnackbarHost(

@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepattributes Signature
+-keep class com.kappdev.worktracker.tracker_feature.domain.util.OrderType { *; }
+-keep class * extends com.kappdev.worktracker.tracker_feature.domain.util.OrderType
+
+-keep class com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder { *; }
+-keep class * extends com.kappdev.worktracker.tracker_feature.domain.util.ActivityOrder
+
+-keep class java.time.LocalTime { *; }
+-keep class com.kappdev.worktracker.core.data.repository.SettingsRepositoryImpl { *; }

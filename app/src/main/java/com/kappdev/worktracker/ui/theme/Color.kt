@@ -38,6 +38,8 @@ val ErrorRed = Color(0xFFb85f66)
 val LightRed = Color(0xFFE27F91)
 val StrongRed = Color(0xFFDF1237)
 
+const val DEFAULT_ACTIVITY_COLOR = "4278249078" // 0xFF00e676 - Emerald Green
+
 val ActivityColors = listOf(
     Color(0xFFf44336),   // Red
     Color(0xFFe91e63),   // Pink

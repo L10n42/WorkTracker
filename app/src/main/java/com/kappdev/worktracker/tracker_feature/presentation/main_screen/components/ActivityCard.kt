@@ -46,14 +46,12 @@ fun ActivityCard(
 ) {
     val animatedSpace by animateDpAsState(
         targetValue = if (isSelectionMode) 40.dp else 0.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "space"
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
     val animateScale by animateFloatAsState(
         targetValue = if (isSelectionMode) 1f else 0f,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "scale"
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
 
     Row(

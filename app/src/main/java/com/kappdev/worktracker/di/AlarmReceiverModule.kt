@@ -2,11 +2,9 @@ package com.kappdev.worktracker.di
 
 import android.app.Application
 import android.app.NotificationManager
-import android.content.Context
 import androidx.core.content.ContextCompat
 import androidx.room.Room
-import com.kappdev.worktracker.core.data.repository.SettingsRepositoryImpl
-import com.kappdev.worktracker.core.domain.repository.SettingsRepository
+import com.kappdev.worktracker.tracker_feature.data.data_source.MIGRATION_8_10
 import com.kappdev.worktracker.tracker_feature.data.data_source.WorkDatabase
 import com.kappdev.worktracker.tracker_feature.data.repository.ActivityRepositoryImpl
 import com.kappdev.worktracker.tracker_feature.data.repository.SessionRepositoryImpl
@@ -16,8 +14,6 @@ import com.kappdev.worktracker.tracker_feature.domain.use_case.GetDailyReportFor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
@@ -41,7 +37,7 @@ object AlarmReceiverModule {
             app,
             WorkDatabase::class.java,
             WorkDatabase.NAME
-        ).fallbackToDestructiveMigration().build()
+        ).build()
     }
 
     @Provides

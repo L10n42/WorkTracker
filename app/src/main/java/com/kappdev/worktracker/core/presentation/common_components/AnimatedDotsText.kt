@@ -20,7 +20,7 @@ fun AnimatedDotsText(
     cycleDuration: Int = 800,
     style: TextStyle = TextStyle(fontSize = 18.sp)
 ) {
-    val transition = rememberInfiniteTransition(label = "dots transition")
+    val transition = rememberInfiniteTransition()
     val dotsVisible = transition.animateValue(
         initialValue = 1,
         targetValue = 4,
@@ -31,8 +31,7 @@ fun AnimatedDotsText(
                 easing = LinearEasing
             ),
             repeatMode = RepeatMode.Restart
-        ),
-        label = "dots amount transition"
+        )
     )
 
     Text(

@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.kappdev.worktracker.core.data.repository.SettingsRepositoryImpl
 import com.kappdev.worktracker.core.domain.repository.SettingsRepository
+import com.kappdev.worktracker.tracker_feature.data.data_source.MIGRATION_8_10
 import com.kappdev.worktracker.tracker_feature.data.data_source.WorkDatabase
 import com.kappdev.worktracker.tracker_feature.data.repository.*
 import com.kappdev.worktracker.tracker_feature.domain.repository.*
@@ -32,7 +33,7 @@ object AppModule {
             app,
             WorkDatabase::class.java,
             WorkDatabase.NAME
-        ).fallbackToDestructiveMigration().build()
+        ).build()
     }
 
     @Provides
