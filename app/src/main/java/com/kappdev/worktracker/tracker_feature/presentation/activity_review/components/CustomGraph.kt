@@ -160,7 +160,6 @@ private fun GraphColumn(
             shortForm = true,
             includeSec = viewState == GraphViewState.DAY && value.second < 60L,
             includeDays = viewState == GraphViewState.YEAR,
-            includeHours = viewState != GraphViewState.DAY,
             includeMin = !(viewState == GraphViewState.YEAR && value.second >= 3600L)
         )
     }
