@@ -1,5 +1,10 @@
 package com.kappdev.worktracker.tracker_feature.presentation.settings.components
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -20,8 +25,13 @@ import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -55,6 +65,7 @@ fun SettingsScreen(
             }
         )
     )
+    val context = LocalContext.current
     val everydayReportsEnable = viewModel.everydayReportEnable.value
     val reportTime = viewModel.reportTime.value
     val showTimeTemplates = viewModel.showTimeTemplates.value
@@ -73,6 +84,14 @@ fun SettingsScreen(
     InfoSnackbarHandler(hostState = scaffoldState.snackbarHostState, snackbarState = viewModel.snackbarState)
 
     LoadingDialog(isVisible = viewModel.isLoading.value)
+
+    var showAlarmPermissionDialog by remember { mutableStateOf(false) }
+    if (showAlarmPermissionDialog) {
+        AlarmPermissionAlertDialog(
+            onDismiss = { showAlarmPermissionDialog = false },
+            onGrant = { context.openExactAlarmSettingPage() }
+        )
+    }
 
     val timeDialogState = rememberMaterialDialogState()
     TimePicker(
@@ -153,12 +172,11 @@ fun SettingsScreen(
                     title = stringResource(R.string.everyday_reports_enable_title),
                     modifier = Modifier.fillMaxWidth(),
                     checked = everydayReportsEnable,
-                    onSwitch = { enable ->
-                        viewModel.setEverydayReportsEnable(enable)
-                        if (enable) {
-                            viewModel.updateRemainder()
+                    onSwitch = onSwitch@ { enable ->
+                        if (enable && viewModel.needAlarmPermission()) {
+                            showAlarmPermissionDialog = true
                         } else {
-                            viewModel.cancelRemainder()
+                            viewModel.setEverydayReportsEnable(enable)
                         }
                     }
                 )
@@ -211,6 +229,17 @@ fun SettingsScreen(
                 )
             }
         }
+    }
+}
+
+private fun Context.openExactAlarmSettingPage() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        startActivity(
+            Intent(
+                ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                Uri.parse("package:$packageName")
+            )
+        )
     }
 }
 

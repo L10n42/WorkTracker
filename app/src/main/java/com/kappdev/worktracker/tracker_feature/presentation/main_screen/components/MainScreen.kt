@@ -1,18 +1,40 @@
 package com.kappdev.worktracker.tracker_feature.presentation.main_screen.components
 
-import androidx.compose.animation.*
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.kappdev.worktracker.tracker_feature.data.service.countdown.CountdownService
@@ -37,6 +59,7 @@ fun MainScreen(
     viewModel: MainScreenViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val stopwatchState by stopwatchService.currentState
     val countdownState by countdownService.currentState
     val stopwatchActivityId by stopwatchService.activityId
@@ -48,7 +71,7 @@ fun MainScreen(
     val dialog = viewModel.dialog.value
     val selectedActivities = viewModel.selectedActivities
 
-    var currentSheet by rememberSaveable { mutableStateOf<MainScreenBottomSheet?>(null) }
+    var currentSheet by remember { mutableStateOf<MainScreenBottomSheet?>(null) }
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
@@ -65,8 +88,12 @@ fun MainScreen(
         openSheet(MainScreenBottomSheet.ServiceInfo)
     }
 
+    val requestPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     LaunchedEffect(Unit) {
         viewModel.launch()
+        if (needNotificationPermission(context)) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     if (!sheetState.isVisible) currentSheet = null
@@ -147,4 +174,9 @@ fun MainScreen(
             }
         }
     }
+}
+
+private fun needNotificationPermission(context: Context): Boolean {
+    return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
 }

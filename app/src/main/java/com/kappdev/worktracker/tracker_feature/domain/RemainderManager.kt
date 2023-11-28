@@ -5,10 +5,10 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.kappdev.worktracker.tracker_feature.data.receiver.AlarmReceiver
 import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.util.Calendar
 import javax.inject.Inject
 
 class RemainderManager @Inject constructor(
@@ -17,12 +17,14 @@ class RemainderManager @Inject constructor(
     private val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     fun startRemainder(time: LocalTime, id: Int = REMAINDER_NOTIFICATION_REQUEST_CODE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            return
+        }
         val intent = Intent(application, AlarmReceiver::class.java).let { intent ->
             PendingIntent.getBroadcast(application, id, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
-        val startTimeMillis = getStartTimeOf(time)
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTimeMillis, AlarmManager.INTERVAL_DAY, intent)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, getTime(time), intent)
     }
 
     fun stopRemainder(id: Int = REMAINDER_NOTIFICATION_REQUEST_CODE) {
@@ -33,12 +35,19 @@ class RemainderManager @Inject constructor(
         alarmManager.cancel(intent)
     }
 
-    private fun getStartTimeOf(time: LocalTime): Long {
-        val rightTime = time.withSecond(0)
-        val currentDate = ZonedDateTime.now(ZoneId.systemDefault()).toLocalDate()
-        val zonedDateTime = rightTime.atDate(currentDate).atZone(ZoneId.systemDefault())
+    private fun getTime(time: LocalTime): Long {
+        return Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, time.hour)
+            set(Calendar.MINUTE, time.minute)
+            set(Calendar.SECOND, 0)
 
-        return zonedDateTime.toInstant().toEpochMilli()
+            if (time.isAfter(LocalTime.now())) {
+                add(Calendar.DAY_OF_YEAR, 0)
+            } else {
+                add(Calendar.DAY_OF_YEAR, 1)
+            }
+        }.timeInMillis
     }
 
     companion object {

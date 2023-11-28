@@ -9,6 +9,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.kappdev.worktracker.MainActivity
 import com.kappdev.worktracker.R
+import com.kappdev.worktracker.core.domain.repository.SettingsRepository
+import com.kappdev.worktracker.tracker_feature.domain.RemainderManager
 import com.kappdev.worktracker.tracker_feature.domain.model.ReportData
 import com.kappdev.worktracker.tracker_feature.domain.use_case.GetDailyReportFor
 import com.kappdev.worktracker.tracker_feature.domain.util.TimeUtil
@@ -31,6 +33,13 @@ class AlarmReceiver : BroadcastReceiver() {
     @Named("SingletonReport")
     lateinit var getDailyReportFor: GetDailyReportFor
 
+    @Inject
+    @Named("SingletonAppSettingsRep")
+    lateinit var settings: SettingsRepository
+
+    @Inject
+    lateinit var remainderManager: RemainderManager
+
     override fun onReceive(context: Context, intent: Intent?) {
         CoroutineScope(Dispatchers.IO).launch {
             val todayReport = getTodayReport()
@@ -38,6 +47,9 @@ class AlarmReceiver : BroadcastReceiver() {
             val title = getTitleFrom(todayReport)
 
             sendReportNotification(context = context, content = content, title = title)
+            if (settings.everydayReportsEnable()) {
+                remainderManager.startRemainder(settings.getReportTime())
+            }
         }
     }
 

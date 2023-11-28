@@ -1,6 +1,10 @@
 package com.kappdev.worktracker.tracker_feature.presentation.settings
 
+import android.app.AlarmManager
+import android.app.Application
+import android.content.Context
 import android.net.Uri
+import android.os.Build
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -25,7 +29,8 @@ class SettingsViewModel @Inject constructor(
     @Named("AppSettingsRep") private val settings: SettingsRepository,
     private val remainderManager: RemainderManager,
     private val shareDatabase: ShareDatabase,
-    private val importDatabase: ImportDatabase
+    private val importDatabase: ImportDatabase,
+    private val app: Application
 ) : ViewModel() {
 
     var isLoading = mutableStateOf(false)
@@ -97,10 +102,20 @@ class SettingsViewModel @Inject constructor(
     fun setEverydayReportsEnable(enable: Boolean) {
         _everydayReportEnable.value = enable
         settings.setEverydayReports(enable)
+        if (enable) {
+            updateRemainder()
+        } else {
+            cancelRemainder()
+        }
     }
 
     fun showServiceInfo(show: Boolean) {
         showServiceInfo.value = show
+    }
+
+    fun needAlarmPermission(): Boolean {
+        val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()
     }
 
     private suspend fun loading(block: suspend () -> Unit) {

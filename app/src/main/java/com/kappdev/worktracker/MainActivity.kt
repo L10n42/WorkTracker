@@ -1,10 +1,13 @@
 package com.kappdev.worktracker
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.compose.setContent
@@ -12,11 +15,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -34,7 +40,6 @@ import com.kappdev.worktracker.tracker_feature.domain.repository.CountdownContro
 import com.kappdev.worktracker.tracker_feature.domain.repository.StopwatchController
 import com.kappdev.worktracker.tracker_feature.presentation.countdown_timer.componets.CountdownBar
 import com.kappdev.worktracker.tracker_feature.presentation.stopwatch_timer.components.StopwatchBar
-import com.kappdev.worktracker.ui.theme.SuperDarkGray
 import com.kappdev.worktracker.ui.theme.WorkTrackerTheme
 import com.kappdev.worktracker.ui.theme.getTopBarColor
 import dagger.hilt.android.AndroidEntryPoint
