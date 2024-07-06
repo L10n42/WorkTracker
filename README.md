@@ -1,5 +1,7 @@
 # Work Tracker
-## Screenshots
+Hack your productivity with **Work Tracker** – the perfect tool for effective time management.
+
+### Screenshots
 
 <p float="left"; align="middle">
   <img src="https://github.com/L10n42/WorkTracker/assets/108233306/ced65a4e-6b0f-48fd-9837-9affc9ca3c54" width="32%" />
